@@ -20,14 +20,11 @@
         </RouterLink>
        </nav>
       
-       <h2 class="text-titolo"> 
-        <a href="/lista-partecipanti">Organizzazione Evento</a>
-        <component :is="currentView" />
-      </h2>
       
+       <h1 @click="loadParticipantsList">Organizzazione Evento</h1>
+      <!-- Contenitore per il caricamento dinamico del componente -->
+      <router-view></router-view>
       
-          
-        
         </div>
       </div>
   
@@ -100,8 +97,8 @@
   
   
   <script>
-  import { RouterLink } from 'vue-router';
-
+  
+  
   
     export default {
   
@@ -215,11 +212,19 @@
         openImageGallery() {
         this.$refs.fileInput.click();
       },
+
+      loadParticipantsList() {
+      
+      // Naviga alla route della lista partecipanti
+      this.$router.push('/lista-partecipanti');
+
+      },
     },
   };
   
   </script>
   
+
   <style scoped>
   
   .chat-container {
@@ -626,6 +631,7 @@
     z-index: 1000; /* Imposta un valore alto per lo z-index per assicurarsi che sia sopra altri elementi */
     padding: 10px 20px; /* Spaziatura interna del contenitore della data */
     border-radius: 8px; /* Bordi arrotondati */
+    top: 43%;
   }
   
   /* Stili per la visualizzazione della data nell'intestazione */
