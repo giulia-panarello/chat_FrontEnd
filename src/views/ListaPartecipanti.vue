@@ -12,7 +12,7 @@
         <div class="group-details">
             <h2 class="event-title">Organizzazione Evento</h2>
             <div class="event-info">
-          <p><strong>Posizione:</strong> Ferrara</p>
+          <p><strong>Posizione:</strong>Ferrara</p>
           <p><strong>Data:</strong> 15/08/2024</p>
           <p><strong>Ingresso:</strong> 10€</p>
         </div>
@@ -28,7 +28,8 @@
           </div>
           <ul>
             <li v-for="(participant, index) in chat.participants" :key="index" class="participant-item">
-              {{ participant }}
+                <router-link :to="{ name: 'chat-privata', params: { participant: participant }}">{{ participant }}</router-link>
+
               <button class="remove-btn" @click="removeParticipant(index)">Rimuovi</button>
             </li>
           </ul>
