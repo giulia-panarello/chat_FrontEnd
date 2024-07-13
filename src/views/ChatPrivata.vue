@@ -1,10 +1,11 @@
 <template>
-
+ 
     <!-- Input per selezionare un file immagine -->
     <input ref="fileInput" type="file" accept="image/*" capture="camera" style="display: none;" @change="handleFileInputChange">
+   
     <!-- Contenitore principale della chat -->
     <div class="chat-container">
-  
+    
       <!-- Intestazione del gruppo di chat -->
       <div class="group-container">
         <div class="chat-header">
@@ -12,6 +13,11 @@
           <!-- Icona del gruppo -->
           <img class="utente-icon" src="https://cdn.icon-icons.com/icons2/2760/PNG/512/profile_icon_176363.png" alt="utente-icon">
          <!-- Titolo del gruppo -->
+         <nav>        
+        <RouterLink to="/" class="back-link"> 
+          <font-awesome-icon icon="arrow-left" class="icon" />
+        </RouterLink>
+       </nav>
         <h1 class="text-titolo">{Utente}</h1>
         <div class="phone-icon-container">
             <font-awesome-icon icon="phone" @click="showPhoneNumber" style="cursor: pointer;" />
@@ -648,6 +654,15 @@
     font-size: 24px; /* Dimensione dell'icona */
   }
   
+    
+  .back-link {
+  position: fixed; /* Posiziona l'elemento in modo fisso rispetto alla finestra del browser */
+  left: 10px; /* Distanza dal margine sinistro della pagina */
+  top: 9%; /* Posiziona l'icona verticalmente al centro */
+  z-index: 1000; /* Assicura che l'icona sia sopra gli altri contenuti, se necessario */
+  font-size: 24px; /* Dimensione dell'icona */
+  color: #ffffff; /* Colore dell'icona */
+  }
   
   
   </style>
