@@ -15,8 +15,7 @@
          <!-- Titolo del gruppo -->
          
        
-      
-       <h1 @click="loadParticipantsList">Organizzazione Evento</h1>
+       <h1 class="titolo" @click="loadParticipantsList">Organizzazione Evento</h1>
       <!-- Contenitore per il caricamento dinamico del componente -->
       <router-view></router-view>
       
@@ -83,7 +82,7 @@
         <!-- Barra di input per scrivere un nuovo messaggio -->
         <input v-model="newMessage" @keyup.enter="sendMessage" placeholder="Scrivi un messaggio...">
   
-        <button @click="sendMessage">Invia</button>
+        <button class="invia" @click="sendMessage">Invia</button>
         
         </div>
     </div>
@@ -250,9 +249,8 @@
   
   
   /* Stili per il titolo del gruppo */
-  .text-titolo {
-    /* Imposta lo stile del testo come corsivo */
-    font-style: italic;
+  .titolo {
+    font-weight: bold;
     /* Permette al titolo di espandersi per riempire lo spazio disponibile */
     flex-grow: 1;
     /* Imposta la larghezza massima del titolo al 100% */
@@ -650,7 +648,10 @@
    
   }
   
- 
+ .invia{
+  font-weight: bold;
+  font-size: 1rem;
+ }
 
 
 </style>
