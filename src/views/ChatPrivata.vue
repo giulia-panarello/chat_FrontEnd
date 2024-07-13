@@ -83,7 +83,7 @@
         <!-- Barra di input per scrivere un nuovo messaggio -->
         <input v-model="newMessage" @keyup.enter="sendMessage" placeholder="Scrivi un messaggio...">
   
-        <button @click="sendMessage">Invia</button>
+        <button class="invia" @click="sendMessage">Invia</button>
         
         </div>
     </div>
@@ -246,8 +246,11 @@
     
   }
   
-  
-  
+  .invia{
+  font-weight: bold;
+  font-size: 1rem;
+ }
+
   
   /* Stili per il titolo del gruppo */
   .text-titolo {
