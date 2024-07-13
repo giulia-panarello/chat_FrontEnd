@@ -13,9 +13,8 @@
           <!-- Icona del gruppo -->
           <img class="group-icon" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvoX2HbQn78YpCfCeyV6oqkp1lQbjQOG2kNn2gKzHbPPTkamA2" alt="group-icon">
          <!-- Titolo del gruppo -->
-         
+         <router-link to="/lista-partecipanti" > <h1 class="titolo" >Organizzazione Evento</h1> </router-link>
        
-       <h1 class="titolo" @click="loadParticipantsList">Organizzazione Evento</h1>
       <!-- Contenitore per il caricamento dinamico del componente -->
       <router-view></router-view>
       
@@ -207,12 +206,7 @@
         this.$refs.fileInput.click();
       },
 
-      loadParticipantsList() {
-      
-      // Naviga alla route della lista partecipanti
-      this.$router.push('/lista-partecipanti');
-
-      },
+  
     },
   };
   
@@ -255,6 +249,7 @@
     flex-grow: 1;
     /* Imposta la larghezza massima del titolo al 100% */
     max-width: 100%;
+    color: #fff;
     
     
   } 
