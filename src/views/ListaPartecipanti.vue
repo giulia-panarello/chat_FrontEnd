@@ -226,7 +226,7 @@ export default {
 .add-btn {
   background: none;
   border: none;
-  color: rgb(15, 143, 64);
+  color: rgb(16, 131, 68);
   cursor: pointer;
   font-weight: bold;
   font-size: 1rem;
