@@ -14,12 +14,7 @@
           <img class="group-icon" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvoX2HbQn78YpCfCeyV6oqkp1lQbjQOG2kNn2gKzHbPPTkamA2" alt="group-icon">
          <!-- Titolo del gruppo -->
          
-       <nav>        
-        <RouterLink to="/" class="back-link"> 
-          <font-awesome-icon icon="arrow-left" class="icon" />
-        </RouterLink>
-       </nav>
-      
+       
       
        <h1 @click="loadParticipantsList">Organizzazione Evento</h1>
       <!-- Contenitore per il caricamento dinamico del componente -->
@@ -263,6 +258,7 @@
     /* Imposta la larghezza massima del titolo al 100% */
     max-width: 100%;
     
+    
   } 
   
   
@@ -461,7 +457,7 @@
   .message-content img {
     /* Imposta l'immagine come elemento block */
     display: block;
-    /* Imposta la larghezza dell'immagine al 100% del contenitore */
+    /* Imposta la larghezza dell'immagine per tutta la grandezza del contenitore */
     width: 100px;
     /* Imposta la larghezza massima dell'immagine */
     max-width: 100%;
@@ -654,15 +650,7 @@
    
   }
   
-  .back-link {
-  position: fixed; /* Posiziona l'elemento in modo fisso rispetto alla finestra del browser */
-  left: 10px; /* Distanza dal margine sinistro della pagina */
-  top: 9%; /* Posiziona l'icona verticalmente al centro */
-  z-index: 1000; /* Assicura che l'icona sia sopra gli altri contenuti, se necessario */
-  font-size: 24px; /* Dimensione dell'icona */
-  color: #ffffff; /* Colore dell'icona */
-}
-
+ 
 
 
 </style>
