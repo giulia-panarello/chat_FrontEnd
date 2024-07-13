@@ -28,7 +28,7 @@
           </div>
           <ul>
             <li v-for="(participant, index) in chat.participants" :key="index" class="participant-item">
-                <router-link :to="{ name: 'chat-privata', params: { participant: participant }}">{{ participant }}</router-link>
+                <router-link :to="{ name: 'chat-privata', params: { participant: participant }}" class="participant-link">{{ participant }}</router-link>
 
               <button class="remove-btn" @click="removeParticipant(index)">Rimuovi</button>
             </li>
@@ -211,6 +211,7 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 5px 0;
+  color: #083b71;
 }
 
 .remove-btn {
@@ -249,6 +250,13 @@ export default {
   font-size: 24px; /* Dimensione dell'icona */
   color: #146ac7; /* Colore dell'icona */
 }
+
+.participant-link {
+  color: #083b71; /* Cambia il colore del link dei partecipanti */
+
+  text-decoration: none; /* Rimuovi il sottolineato dal link */
+}
+
 </style>
 
 
