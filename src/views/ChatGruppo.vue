@@ -15,9 +15,6 @@
          <!-- Titolo del gruppo -->
          <router-link to="/lista-partecipanti" > <h1 class="titolo" >Organizzazione Evento</h1> </router-link>
        
-      <!-- Contenitore per il caricamento dinamico del componente -->
-      <router-view></router-view>
-      
         </div>
       </div>
   
@@ -36,7 +33,7 @@
       <!-- Iterazione attraverso i messaggi -->
         <div v-for="(message, index) in messages" :key="index" :class="{'sent-message': message.sender === 'Tu', 'received-message': message.sender !== 'Tu'}">
         <!-- Icona del mittente -->
-          <div>
+          <div class="user-icon">
             <i class="fas fa-user-circle user icon"></i>
           </div>
   
@@ -80,7 +77,6 @@
         </div>
         <!-- Barra di input per scrivere un nuovo messaggio -->
         <input v-model="newMessage" @keyup.enter="sendMessage" placeholder="Scrivi un messaggio...">
-  
         <button class="invia" @click="sendMessage">Invia</button>
         
         </div>
@@ -91,9 +87,7 @@
   
   <script>
   
-  
-  
-    export default {
+  export default {
   
     // Definizione dei dati della componente
       data() {
@@ -108,8 +102,6 @@
           newMessage: '',
           // Flag per mostrare o nascondere le opzioni aggiuntive
           showAdditionalOptions: false,
-          // Data predefinita per i messaggi
-          date: '2024-05-16' // Aggiungi il campo data al messaggio
           
         };
       },
@@ -161,8 +153,7 @@
       },
   
       
-  
-        // Metodo per gestire il cambio di un file immagine
+      // Metodo per gestire il cambio di un file immagine
         handleFileInputChange(event) {
         const file = event.target.files[0];
         if (file) {
@@ -212,72 +203,53 @@
   
   </script>
   
-
   <style scoped>
   
+  /* Modifiche di stile del contenitore principale della chat */
   .chat-container {
-    /* Fissa la posizione della chat */
+   
     position: fixed;
-    /* Sposta la chat sotto la barra "Scrivi un messaggio" */
     margin-top: 80px;
-    /* Occupa l'intero spazio disponibile in larghezza */
     left: 0;
     right: 0;
-    
-    /* Fissa la chat in basso */
     bottom: 0;
-    /* Imposta l'altezza massima della chat pari all'altezza della finestra */
     height: 100vh;
-    /* Imposta un'immagine di sfondo per la chat */
     background-image: url('https://i.pinimg.com/originals/c4/23/12/c4231254ad6f3a92d902a8356212809c.jpg');
-    /* Ridimensiona l'immagine di sfondo per coprire l'intera area */
     background-size: cover;
-    /* Posiziona l'immagine di sfondo al centro */
     background-position: center;
     display: flex;
     flex-direction: column;
     
   }
   
-  
-  
+
   
   /* Stili per il titolo del gruppo */
   .titolo {
-    font-weight: bold;
-    /* Permette al titolo di espandersi per riempire lo spazio disponibile */
-    flex-grow: 1;
-    /* Imposta la larghezza massima del titolo al 100% */
+  
     max-width: 100%;
     color: #fff;
-    
+    font-size: 30px;
+    font-weight: bold;
     
   } 
   
   
-  /* Stili per il l'intestazione del gruppo */
+  /* Stili per il contenitore dell'intestazione contenente il titolo e l'icona */
   .group-container {
-    /* Imposta il display come flex per allineare gli elementi in riga */
+    
     display: flex;
-    /* Allinea verticalmente gli elementi al centro */
     align-items: center;
-    /* Aggiunge padding intorno al contenitore */
     padding: 10px;
-    /* Imposta il colore di sfondo del contenitore */
     background-color: #146ac7;
-    /* Allinea il contenuto del contenitore all'inizio */
     justify-content: flex-start;
-    /* Imposta il colore del testo su bianco */
     color: white;
   }
   
-  .group-name {
-    margin: 0;
-    font-size: 24px;
-    font-weight: bold;
-  }
+
   
-  .group-container img {
+  /* Stile dell'icona del gruppo */
+  .group-icon {
     width: 80px;
     height: 80px;
     border-radius: 50%;
@@ -286,317 +258,210 @@
   
   /* Stili per l'intestazione della chat */
   .chat-header {
-    /* Imposta il display come flex per allineare gli elementi in riga */
+    
     display: flex;
-    /* Allinea verticalmente gli elementi al centro */
     align-items: center;
-    /* Distribuisci uniformemente lo spazio tra gli elementi */
     justify-content: space-between;
-    /* Aggiunge margine sopra e sotto all'intestazione */
     margin: 20px auto;
-    /* Aggiunge spazio intorno all'intestazione */
-    padding: 10px;
-    /* Imposta la larghezza massima dell'intestazione */
     max-width: 300px;
   }
   
   
-  /* Stili per le immagini nell'intestazione della chat */
-  .chat-header img {
-    /* Rimpicciolisce l'immagine dell'icona */
-    width: 80px;
-    height: 80px;
-    /* Arrotonda i bordi dell'icona */
-    border-radius: 50%;
-  }
   
-  /* Stili per la visualizzazione dei messaggi */
+  /* Stili per la visualizzazione dei messaggi nel contenitore della chat */
   .chat-messages {
-    /* Imposta l'altezza massima dei messaggi */
     max-height: 700px;
-    /* Abilita lo scorrimento verticale quando i messaggi diventano più lunghi */
     overflow-y: auto;
     flex-grow: 1;
   
-    
   }
   
   /* Stili per i messaggi */
   .message {
-    /* Aggiunge margine inferiore ai messaggi per separarli */
     margin-bottom: 10px;
   }
   
   /* Stili per il mittente del messaggio */
   .sender {
-    /* Imposta il testo in grassetto */
-    font-weight: bold;
-  }
-  
-  .message-sender {
-    font-weight: bold;
-  }
-  
-  
-  /* Stili per il contenitore dell'input */
-  .input-wrapper {
-    /* Imposta il display come flex per allineare gli elementi in riga */
-    display: flex;
-    /* Allinea verticalmente gli elementi al centro */
-    align-items: center;
-    /* Imposta la posizione come relativa per consentire il posizionamento assoluto */
-    position: relative;
-  }
-  
-  /* Stili per l'input dell'utente */
-  .input-wrapper input {
-    /* Imposta il flessibile per occupare lo spazio rimanente */
-    flex: 1;
-  }
-  
-  
-  /* Stili per l'icona nell'input */
-  .input-wrapper i {
-    /* Aggiunge margine a sinistra per separare l'icona dall'input */
-    margin-left: 10px;
+   font-weight: bold;
+   color: #0b4c92;
   }
   
   
   /* Stili per l'area di input della chat */
   .chat-input {
-    position: fixed; /* Fissa la barra di input in basso rispetto alla finestra */
-    bottom: 0; /* Posiziona la barra di input alla fine della finestra */
+    position: fixed; 
+    bottom: 0; 
     left: 0;
     right: 0;
-    background-color: white;
-   
-    padding: 10px;
+    background-color: #146ac7;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    z-index: 100; /* Assicura che la barra di input sia sopra i messaggi */
+    z-index: 100; 
   }
   
-  
-  
-  /* Stili per l'input dell'utente */
-  .chat-input input {
-    /* Imposta la larghezza dell'input meno quella del pulsante Invia */
-    width: calc(100% - 100px);
-    /* Aggiunge padding all'input */
-    padding: 10px;
-    /* Imposta lo stile del bordo */
+    /* Stili per la barra di input per scrivere un messaggio */
+    .chat-input input {
    
-    border: 10px solid #146ac7;
-    /* Arrotonda i bordi dell'input */
+    width: 100%;
+    padding: 10px;
     border-radius: 5px;
   }
+  
   
   /* Stili per il pulsante di invio */
-  .chat-input button {
-    /* Imposta la larghezza del pulsante */
+  .invia {
+   
     width: 100px;
-    /* Aggiunge padding al pulsante */
     padding: 20px;
-    /* Rimuove il margine sinistro per separare il pulsante dall'input */
     margin-left: 0;
-    /* Rimuove lo stile del bordo */
     border: none;
-    /* Arrotonda i bordi del pulsante */
     border-radius: 5px;
-    /* Imposta il colore di sfondo del pulsante */
     background-color: #146ac7;
-    /* Imposta il colore del testo su bianco */
     color: white;
-    /* Cambia il cursore quando ci si passa sopra */
     cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
   }
-  
   
   
   /* Stili per i messaggi inviati dall'utente */
   .sent-message {
-    /* Imposta il display come flex per allineare gli elementi in riga */
+    
     display: flex;
-    /* Allinea gli elementi alla fine del contenitore */
     justify-content: flex-end;
   }
   
+   
+  /* Stili per il contenitore con messaggi inviati dall'utente */
+  .sent-message .message-content {
+   
+   background-color: #b6f886;
+    max-width: 100%;
+    margin: 10px;
+    padding: 0px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    position: relative;
+   
+ }
+
   /* Stili per i messaggi ricevuti */
   .received-message {
-    /* Imposta il display come flex per allineare gli elementi in riga */
     display: flex;
+    
   }
   
-  /* Stili per il contenitore del messaggio */
-  .message-content {
-    /* Imposta la larghezza massima del contenitore del messaggio */
+  /* Stili per il contenitore dei messaggi ricevuti */
+  .received-message .message-content {
+    
     max-width: 100%;
-    /* Aggiunge margine intorno al contenitore del messaggio */
     margin: 10px;
-    /* Imposta il padding del contenitore del messaggio */
     padding: 0px;
-    /* Arrotonda i bordi del contenitore del messaggio */
     border-radius: 10px;
-    /* Imposta il colore di sfondo del contenitore del messaggio */
-    background-color: #f0f0f0;
-    /* Aggiunge margine inferiore al contenitore del messaggio */
+    background-color: #f8b17e;
     margin-bottom: 10px;
-    /* Imposta la posizione come relativa per consentire il posizionamento assoluto */
     position: relative;
+    
   }
   
-  /* Stili per le immagini all'interno dei messaggi */
+  /* Stili per le immagini all'interno dei messaggi, qunado mando delle immagini da galleria */
   .message-content img {
-    /* Imposta l'immagine come elemento block */
+    
     display: block;
-    /* Imposta la larghezza dell'immagine per tutta la grandezza del contenitore */
     width: 100px;
-    /* Imposta la larghezza massima dell'immagine */
     max-width: 100%;
-    /* Arrotonda i bordi dell'immagine */
     border-radius: 5px;
-    /* Cambia il cursore quando ci si passa sopra */
     cursor: pointer;
   }
   
   
-  
-  /* Stili per i messaggi inviati dall'utente */
-  .sent-message .message-content {
-    /* Imposta il colore di sfondo del contenitore del messaggio inviato */
-    background-color: #DCF8C6;
-    /* Imposta il colore del testo su bianco */
-    color: rgb(0, 0, 0);
-  }
-  
+ 
   /* Stili per il testo dei messaggi */
   .text {
-    /* Imposta la dimensione del testo */
     font-size: 16px;
   }
   
-  /* Stili per il timestamp dei messaggi */
+  /* Stili per l'orario in cui vengono mandati i messaggi */
   .timestamp {
-    /* Imposta la dimensione del testo */
+   
     font-size: 12px;
-    /* Imposta il colore del testo su grigio */
-    color: #888;
+    color: #3c3c3c;
   }
   
   /* Stili per l'icona dell'utente */
   .user-icon {
-    /* Imposta la dimensione dell'icona */
-    font-size: 50px;
-    /* Imposta il colore dell'icona */
-    color: #007bff;
-    /* Imposta il colore di riempimento di sfondo dell'icona */
-    background-color: #24517e;
-    /* Imposta lo spessore e lo stile del bordo dell'icona */
-    border: 2px solid #146ac7;
-    /* Arrotonda i bordi dell'icona */
-    border-radius: 50%;
-    /* Aggiunge padding intorno all'icona */
+   
+    font-size: 20px;
+    color: #0e56a3;
     padding: 10px;
   }
   
-  /* Stili per le opzioni aggiuntive */
+  /* Stili per il pulsante delle opzioni aggiungive '+' */
   .additional-features {
-    /* Imposta il colore di sfondo */
+    
     background-color: #146ac7;
-    /* Imposta il colore del testo su bianco */
     color: #fff;
-    /* Imposta la larghezza dell'elemento */
     width: 30px;
-    /* Imposta l'altezza dell'elemento */
     height: 56px;
-    /* Aggiunge padding all'elemento */
     padding: 18px;
     padding-left: 20px;
     padding-right: 20px;
-    
-    /* Arrotonda i bordi dell'elemento */
     border-radius: 5px;
-    /* Imposta il display come flex per allineare gli elementi in colonna */
     display: flex;
-    /* Allinea gli elementi al centro orizzontalmente */
     justify-content: center;
-    /* Allinea gli elementi al centro verticalmente */
     align-items: center;
-    /* Cambia il cursore quando ci si passa sopra */
     cursor: pointer;
-    /* Imposta la posizione come relativa per consentire il posizionamento assoluto */
     position: relative;
-    /* Imposta lo z-index per sovrapporre l'icona "+" alla galleria */
     z-index: 1;
-    /* Imposta la dimensione dell'icona */
-    font-size: 15px;
+    font-size: 20px;
+    
   }
   
   
   
-  /* Stili per le opzioni aggiuntive */
+  /* Stili per l'opzione aggiuntiva "Galleria" */
   .additional-options {
-    /* Imposta la posizione come assoluta */
+   
     position: absolute;
-    /* Posiziona l'elemento sopra l'input */
     bottom: calc(100% + 10px);
-    /* Allinea l'elemento alla sinistra */
-    left: 0;
-    /* Allinea l'elemento alla destra */
-    right: 0;
-    /* Imposta l'altezza dell'elemento */
+    left: 10px;
     bottom: 60px;
-    /* Imposta il colore di sfondo */
-    background-color: #fff;
-    /* Aggiunge una leggera ombra al bordo */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    /* Arrotonda i bordi dell'elemento */
+    background-color: #c0e1f5;
+    color: #0e4c8e;
+    font-size: 20px;
+    border: 3px solid #0e4c8e;
     border-radius: 5px;
-    /* Aggiunge padding all'elemento */
     padding: 10px;
-    /* Imposta il display come flex per allineare gli elementi in colonna */
+    padding-left: 45px;
+    padding-right: 120px;
+    border-radius: 5px;
     display: flex;
-    /* Imposta la direzione dei flex in colonna */
     flex-direction: column;
     z-index: 1;
+  
   }
   
-  /* Stili per le opzioni aggiuntive */
-  .additional-options > div {
-    /* Aggiunge padding all'elemento */
-    padding: 10px;
-    /* Cambia il cursore quando ci si passa sopra */
-    cursor: pointer;
-  }
-  
-  .additional-options > div:hover {
-    background-color: #f0f0f0;
-  }
   
   
   /* Stili per l'immagine espansa nel messaggio */
   .expanded-message-image {
-    /* Imposta la larghezza massima dell'immagine */
+   
     max-width: 100%;
-    /* Imposta l'altezza massima dell'immagine */
     max-height: 100%;
-    /* Cambia il cursore quando ci si passa sopra */
     cursor: pointer;
   }
   
   /* Stili per l'overlay dell'immagine espansa */
   .overlay {
-    /* Imposta la posizione come fissa */
+    
     position: fixed;
-    /* Posiziona l'elemento in cima a tutti gli altri elementi */
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    /* Aggiunge un colore di sfondo semi-trasparente */
     background-color: rgba(0, 0, 0, 0.7);
-    /* Imposta il display come flex per allineare gli elementi al centro */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -605,48 +470,35 @@
   
   /* Stili per l'immagine all'interno dell'overlay */
   .overlay img {
-    /* Imposta la larghezza massima dell'immagine */
     max-width: 90%;
-    /* Imposta l'altezza massima dell'immagine */
     max-height: 90vh;
   }
   
   /* Stili per il contenitore della data */
   .message-date-container {
-    position: fixed; /* Fissa la posizione del contenitore della data */
-    bottom: 380px; /* Distanza dal bordo inferiore della finestra */
-    left: 50%; /* Allinea il contenitore della data a metà della larghezza della finestra */
-    transform: translateX(-50%); /* Centra il contenitore rispetto alla larghezza della finestra */
-    z-index: 1000; /* Imposta un valore alto per lo z-index per assicurarsi che sia sopra altri elementi */
-    padding: 10px 20px; /* Spaziatura interna del contenitore della data */
-    border-radius: 8px; /* Bordi arrotondati */
+    position: fixed; 
+    bottom: 380px; 
+    left: 50%; 
+    transform: translateX(-50%); 
+    z-index: 1000;
+    padding: 10px 20px; 
+    border-radius: 8px; 
     top: 43%;
   }
   
   /* Stili per la visualizzazione della data nell'intestazione */
   .message-date-header {
    
-    /* Imposta uno sfondo bianco per la data */
     background-color: rgb(255, 255, 255);
-    /* Aggiunge ombra al bordo */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    /* Imposta il padding */
+    border: 2px solid #0e56a3;
     padding: 8px 20px;
-    /* Imposta la dimensione del testo */
     font-size: 16px;
-    /* Imposta il colore del testo su grigio */
-    color: #146ac7;
-    /* Arrotonda i bordi */
+    color: #0e56a3;
     border-radius: 20px;
-    /* Aggiunge margine sopra per separare la data dal resto dell'intestazione */
     margin-top: -130px;
    
   }
   
- .invia{
-  font-weight: bold;
-  font-size: 1rem;
- }
-
 
 </style>
+
