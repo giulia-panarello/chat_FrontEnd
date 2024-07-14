@@ -256,6 +256,7 @@
     margin-right: 10px;
   }
   
+   
   /* Stili per l'intestazione della chat */
   .chat-header {
     
@@ -265,8 +266,6 @@
     margin: 20px auto;
     max-width: 300px;
   }
-  
-  
   
   /* Stili per la visualizzazione dei messaggi nel contenitore della chat */
   .chat-messages {
@@ -337,7 +336,7 @@
   /* Stili per il contenitore con messaggi inviati dall'utente */
   .sent-message .message-content {
    
-   background-color: #b6f886;
+   background-color: #c3fd99;
     max-width: 100%;
     margin: 10px;
     padding: 0px;
@@ -501,4 +500,5 @@
   
 
 </style>
+
 
