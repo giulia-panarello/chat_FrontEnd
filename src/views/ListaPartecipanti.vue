@@ -1,16 +1,22 @@
 <template>
     <div class="container">
-        <nav>        
+       <!-- Barra di navigazione: link per tornare alla pagina principale -->
+        <nav> 
+        <!-- RouterLink per navigare alla home page -->     
         <RouterLink to="/" class="back-link"> 
+          <!-- Icona di ritorno indietro -->
           <font-awesome-icon icon="arrow-left" class="icon" />
         </RouterLink>
        </nav>
 
       <!-- Informazioni gruppo -->
       <div class="group-info">
+        <!-- Icona del gruppo -->
         <img class="group-icon" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvoX2HbQn78YpCfCeyV6oqkp1lQbjQOG2kNn2gKzHbPPTkamA2" alt="group-icon">
         <div class="group-details">
+          <!-- Titolo dell'evento -->
             <h2 class="event-title">Organizzazione Evento</h2>
+            <!-- Dettagli dell'evento -->
             <div class="event-info">
           <p><strong>📍Posizione:</strong> Ferrara</p>
           <p><strong>📆 Data:</strong> 15/08/2024</p>
@@ -23,16 +29,21 @@
       <div v-if="isGroupInfoModalOpen" class="modal">
         <div class="modal-content">
             <div style="display: flex; justify-content: space-between; align-items: center;">
+            <!-- Titolo del modale -->
             <h2 class="membri">Membri Gruppo</h2>
+            <!-- Pulsante per aprire il modale di aggiunta partecipanti -->
             <button class="add-participant-btn" @click="openAddParticipantModal">+</button>
           </div>
           <ul>
+             <!-- Iterazione sui partecipanti per mostrarli in una lista -->
             <li v-for="(participant, index) in chat.participants" :key="index" class="participant-item">
-                <router-link :to="{ name: 'chat-privata', params: { participant: participant }}" class="participant-link">{{ participant }}</router-link>
-
+                <!-- RouterLink per aprire la chat privata con il partecipante selezionato -->
+                <router-link :to="{ name: 'chat-privata', params: { participant: participant }}" class="participant-item">{{ participant }}</router-link>
+               <!-- Pulsante per rimuovere il partecipante -->
               <button class="remove-btn" @click="removeParticipant(index)">Rimuovi</button>
             </li>
           </ul>
+            <!-- Pulsante per chiudere il modale -->
           <button class="chiudi" @click="closeGroupInfoModal">Chiudi</button>
         </div>
       </div>
@@ -42,11 +53,14 @@
         <div class="modal-content">
           <h2 class="aggiungi">Aggiungi membri</h2>
           <ul>
+            <!-- Iterazione sugli utenti disponibili per mostrarli in una lista -->
             <li v-for="(user, index) in availableUsers" :key="index" class="participant-item">
               {{ user }}
+              <!-- Pulsante per aggiungere un partecipante -->
               <button class="add-btn" @click="addParticipant(user)">Aggiungi</button>
             </li>
           </ul>
+           <!-- Pulsante per chiudere il modale -->
           <button class="chiudi" @click="closeAddParticipantModal">Chiudi</button>
         </div>
       </div>
@@ -76,29 +90,41 @@ export default {
   },
   methods: {
     
+    // Apertura del modale delle informazioni del gruppo
     openGroupInfoModal() {
       this.isGroupInfoModalOpen = true;
     },
+
+    // Chiusura del modale delle informazioni del gruppo
     closeGroupInfoModal() {
       this.isGroupInfoModalOpen = false;
     },
+
+    // Apertura del modale di aggiunta partecipanti
     openAddParticipantModal() {
       this.isAddParticipantModalOpen = true;
     },
+
+    // Chiusura del modale di aggiunta partecipanti
     closeAddParticipantModal() {
       this.isAddParticipantModalOpen = false;
     },
+
     removeParticipant(index) {
+      // Rimozione di un partecipante dalla lista
       this.chat.participants.splice(index, 1);
-      this.updateAvailableUsers();
+      this.updateAvailableUsers(); // Aggiornamento della lista degli utenti disponibili
     },
     addParticipant(user) {
+       // Aggiunta di un partecipante alla lista
       this.chat.participants.push(user);
-      this.updateAvailableUsers();
+      this.updateAvailableUsers(); // Aggiornamento della lista degli utenti disponibili
     },
     updateAvailableUsers() {
+      // Aggiornamento della lista degli utenti disponibili per l'aggiunta
       const allUsers = ['Mario', 'Luigi', 'Peach', 'Edoardo', 'Giulia', 'Francesco'];
-      this.availableUsers = allUsers.filter(user => !this.chat.participants.includes(user));
+      // Filtraggio degli utenti già presenti nella 
+      this.availableUsers = allUsers.filter(user => !this.chat.participants.includes(user)); 
     }
   }
 };
@@ -108,13 +134,13 @@ export default {
 <style>
 
 
-/* Allineamento al centro e utilizzo dello spazio intero */
+/* Contenitore principale: centra il contenuto e utilizza l'intero spazio disponibile */
 .container{
   
   display: flex;
   justify-content: center;
   align-items: stretch;
-  flex-direction: column; /* Centra il contenuto verticalmente */
+  flex-direction: column; 
   position: fixed;
   margin-top: 80px;
   left: 0;
@@ -128,6 +154,7 @@ export default {
   flex-direction: column;
 }
 
+/* Modifiche di stile sul pulsante "chiudi" */
 .chiudi{
     padding: 10px;
     font-weight: bold;
@@ -137,6 +164,7 @@ export default {
     color: #146ac7;
 }
 
+/* Modifiche di stile sul pulsante "info partecipanti" */
 .info-part{
     color: #083b71; 
     padding: 15px;
@@ -148,32 +176,38 @@ export default {
 
 }
 
+/* Modifiche di stile sul pulsante "aggiungi" per aggiungere i partecipanti */
 .aggiungi{
     color:#146ac7;
     font-weight: bold;
 }
 
+/* Modifiche di stile per "Membri Gruppo" nel riquadro della lista dei partecipanti */
 .membri{
     color:#146ac7;
     font-weight: bold;
 }
+
+/* Modifiche di stile per il riquadro in cui c'è il titolo del gruppo e i dettagli */
 .group-info {
   background-color: #146ac7;
   border: 1px solid #ffffff;
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center; /* Centra il testo */
+  text-align: center; 
   
 }
 
+/* Modifiche di stile per l'icona del gruppo */
 .group-icon {
-  width: 150px; /* Modifica la larghezza come desiderato */
-  height: 150px; /* Modifica l'altezza come desiderato */
-  border-radius: 50%; /* Aggiunge bordi arrotondati per l'icona */
-  margin-bottom: 10px; /* Spazio sotto l'icona */
+  width: 150px; 
+  height: 150px; 
+  border-radius: 50%; 
+  margin-bottom: 10px; 
 }
 
+/* Modifiche di stile per il titolo "Organizzazione Evento" */
 .group-details h2 {
   margin: 0;
   font-size: 2rem;
@@ -181,6 +215,7 @@ export default {
   font-weight: bold;
 }
 
+/* Modifiche di stile per le informazioni dell'evento */
 .group-details p {
   margin: 0;
   color: #81e8ff;
@@ -199,6 +234,7 @@ export default {
   align-items: center;
 }
 
+/* Modifiche di stile per il riquadro contenente la lista */
 .modal-content {
   background: #96c6f9;
   padding: 50px;
@@ -206,6 +242,7 @@ export default {
   font-size: 1.5rem;
 }
 
+/* Modifiche di stile per i nomi dei partecipanti */
 .participant-item {
   display: flex;
   justify-content: space-between;
@@ -214,6 +251,9 @@ export default {
   color: #083b71;
 }
 
+
+
+/* Modifiche di stile sul pulsante "rimuovi" */
 .remove-btn {
   background: none;
   border: none;
@@ -223,6 +263,7 @@ export default {
   font-size: 1rem;
 }
 
+/* Modifiche di stile sul pulsante "aggiungi" */
 .add-btn {
   background: none;
   border: none;
@@ -232,6 +273,7 @@ export default {
   font-size: 1rem;
 }
 
+/* Modifiche di stile sul pulsante "+" */
 .add-participant-btn {
   background: none;
   border: none;
@@ -242,21 +284,19 @@ export default {
   margin-left: 20px;
 }
 
+/* Modifiche di stile sull'icona con la freccia per tornare nella pagina principale */
 .back-link {
-  position: fixed; /* Posiziona l'elemento in modo fisso rispetto alla finestra del browser */
-  left: 10px; /* Distanza dal margine sinistro della pagina */
-  top: 9%; /* Posiziona l'icona verticalmente al centro */
-  z-index: 1000; /* Assicura che l'icona sia sopra gli altri contenuti, se necessario */
-  font-size: 24px; /* Dimensione dell'icona */
-  color: #146ac7; /* Colore dell'icona */
+  position: fixed; 
+  left: 10px; 
+  top: 9%; 
+  z-index: 1000; 
+  font-size: 24px; 
+  color: #146ac7;
 }
 
-.participant-link {
-  color: #083b71; /* Cambia il colore del link dei partecipanti */
-
-  text-decoration: none; /* Rimuovi il sottolineato dal link */
-}
 
 </style>
+
+
 
 
