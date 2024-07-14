@@ -160,8 +160,10 @@ export default {
     font-weight: bold;
     font-size: 1rem;
     margin-top: 15px;
-    border: 2px solid #146ac7;
-    color: #146ac7;
+    border: 2px solid #083b71;
+    color: #083b71;
+    background-color: #9cc7f4;
+  
 }
 
 /* Modifiche di stile sul pulsante "info partecipanti" */
@@ -172,7 +174,9 @@ export default {
     margin-top: 20px;
     width: 50%;
     margin-left: 25%;
-    border: 2px solid #146ac7;
+    border: 2px solid #083b71;
+    color: #083b71;
+    background-color: #ffffff;
 
 }
 
@@ -184,7 +188,7 @@ export default {
 
 /* Modifiche di stile per "Membri Gruppo" nel riquadro della lista dei partecipanti */
 .membri{
-    color:#146ac7;
+    color: #146ac7;
     font-weight: bold;
 }
 
@@ -236,7 +240,7 @@ export default {
 
 /* Modifiche di stile per il riquadro contenente la lista */
 .modal-content {
-  background: #96c6f9;
+  background: #ffffff;
   padding: 50px;
   border-radius: 5px;
   font-size: 1.5rem;
@@ -296,7 +300,5 @@ export default {
 
 
 </style>
-
-
 
 
