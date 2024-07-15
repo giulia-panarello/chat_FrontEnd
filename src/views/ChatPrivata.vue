@@ -190,9 +190,23 @@
           // Se il messaggio è un'immagine e non è già espansa, espandilo
           if (!message.isExpanded) {
             message.isExpanded = true;
+            this.hideDateContainer(true);
           } else {
             // Se il messaggio è già espanso, riducilo
             message.isExpanded = false;
+            this.hideDateContainer(false);
+          }
+        }
+      },
+
+      // Metodo per nascondere o mostrare il contenitore della data
+      hideDateContainer(hide) {
+          const dateContainer = document.querySelector('.message-date-container');
+          if (dateContainer) {
+            if (hide) {
+              dateContainer.classList.add('hide-date-container');
+          } else {
+              dateContainer.classList.remove('hide-date-container');
           }
         }
       },
@@ -442,7 +456,7 @@
    bottom: calc(100% + 10px);
    left: 10px;
    bottom: 60px;
-   background-color: #c0e1f5;
+   background-color: #ffffff;
    color: #0e4c8e;
    font-size: 20px;
    border: 3px solid #0e4c8e;
@@ -530,6 +544,12 @@ z-index: 1000;
 font-size: 24px; 
 color: #ffffff; 
 }
+
+  /* Nascondi il contenitore della data */
+  .hide-date-container {
+  display: none;
+}
+
 
 
 </style>
