@@ -230,6 +230,7 @@ export default {
   font-size: 1.5rem;
 }
 
+/* Modifiche di stile per la modale sulle informazioni gruppo */
 .modal {
   position: fixed;
   top: 0;
@@ -304,12 +305,14 @@ export default {
   color: #146ac7;
 }
 
+/* Stile per permettere lo scroll della lista dei partecipanti */
 .participants-list {
   max-height: 200px; 
   overflow-y: auto;  
   margin-top: 10px;
 }
 
+/* Stile per permettere lo scroll della lista dei membri da aggiungere */
 .available-users-list {
   max-height: 200px; 
   overflow-y: auto;  
@@ -318,5 +321,6 @@ export default {
 
 
 </style>
+
 
 
