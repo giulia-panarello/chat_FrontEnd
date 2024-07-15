@@ -34,6 +34,7 @@
             <!-- Pulsante per aprire il modale di aggiunta partecipanti -->
             <button class="add-participant-btn" @click="openAddParticipantModal">+</button>
           </div>
+          <div class="participants-list">
           <ul>
              <!-- Iterazione sui partecipanti per mostrarli in una lista -->
             <li v-for="(participant, index) in chat.participants" :key="index" class="participant-item">
@@ -43,6 +44,7 @@
               <button class="remove-btn" @click="removeParticipant(index)">Rimuovi</button>
             </li>
           </ul>
+        </div>
             <!-- Pulsante per chiudere il modale -->
           <button class="chiudi" @click="closeGroupInfoModal">Chiudi</button>
         </div>
@@ -52,6 +54,7 @@
       <div v-if="isAddParticipantModalOpen" class="modal">
         <div class="modal-content">
           <h2 class="aggiungi">Aggiungi membri</h2>
+          <div class="available-users-list">
           <ul>
             <!-- Iterazione sugli utenti disponibili per mostrarli in una lista -->
             <li v-for="(user, index) in availableUsers" :key="index" class="participant-item">
@@ -60,6 +63,7 @@
               <button class="add-btn" @click="addParticipant(user)">Aggiungi</button>
             </li>
           </ul>
+        </div>
            <!-- Pulsante per chiudere il modale -->
           <button class="chiudi" @click="closeAddParticipantModal">Chiudi</button>
         </div>
@@ -253,6 +257,8 @@ export default {
   align-items: center;
   padding: 5px 0;
   color: #083b71;
+  max-height: 100px; 
+  overflow-y: auto;
 }
 
 
@@ -298,7 +304,20 @@ export default {
   color: #146ac7;
 }
 
+.participants-list {
+  max-height: 200px; 
+  overflow-y: auto;  
+  margin-top: 10px;
+}
+
+.available-users-list {
+  max-height: 200px; 
+  overflow-y: auto;  
+  margin-top: 10px;
+}
+
 
 </style>
+
 
 
