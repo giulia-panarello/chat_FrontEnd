@@ -465,7 +465,7 @@
     cursor: pointer;
   }
   
-  /* Stili per l'overlay dell'immagine espansa */
+  /* Stili per l'overlay dell'immagine espansa, ovvero lo sfondo trasparente sotto l'immagine espansa quando la clicco dal messaggio per ingrandirla  */
   .overlay {
     
     position: fixed;
@@ -480,7 +480,7 @@
   }
   
   
-  /* Stili per l'immagine all'interno dell'overlay, quando clicco l'immagine e si espande nello schermo */
+  /* Stili per l'immagine all'interno dell'overlay (quando clicco l'immagine e si espande nello schermo) */
   .overlay img {
     max-width: 90%;
     max-height: 90vh;
