@@ -2,9 +2,9 @@
     <div class="container">
        <!-- Barra di navigazione: link per tornare alla pagina principale -->
         <nav> 
-        <!-- RouterLink per navigare alla home page -->     
+        <!-- RouterLink per navigare alla home page (chat di gruppo) -->     
         <RouterLink to="/" class="back-link"> 
-          <!-- Icona di ritorno indietro -->
+          <!-- Icona di ritorno indietro (freccia)-->
           <font-awesome-icon icon="arrow-left" class="icon" />
         </RouterLink>
        </nav>
@@ -50,7 +50,7 @@
         </div>
       </div>
   
-      <!-- Modale aggiunta partecipanti -->
+      <!-- Modale per aggiunta partecipanti -->
       <div v-if="isAddParticipantModalOpen" class="modal">
         <div class="modal-content">
           <h2 class="aggiungi">Aggiungi membri</h2>
@@ -69,7 +69,7 @@
         </div>
       </div>
   
-      <!-- Pulsante per aprire il modale informazioni gruppo -->
+      <!-- Pulsante per aprire il modale per informazioni dei membri partecipanti o da aggiungere -->
       <button class="info-part" @click="openGroupInfoModal">Info partecipanti</button>
     </div>
   </template>
@@ -99,7 +99,7 @@ export default {
       this.isGroupInfoModalOpen = true;
     },
 
-    // Chiusura del modale delle informazioni del gruppo
+    // Chiusura del modale delle informazioni del gruppo sui partecipanti
     closeGroupInfoModal() {
       this.isGroupInfoModalOpen = false;
     },
@@ -127,7 +127,7 @@ export default {
     updateAvailableUsers() {
       // Aggiornamento della lista degli utenti disponibili per l'aggiunta
       const allUsers = ['Mario', 'Luigi', 'Peach', 'Edoardo', 'Giulia', 'Francesco'];
-      // Filtraggio degli utenti già presenti nella 
+      // Filtraggio degli utenti già presenti nella lista
       this.availableUsers = allUsers.filter(user => !this.chat.participants.includes(user)); 
     }
   }
@@ -321,6 +321,7 @@ export default {
 
 
 </style>
+
 
 
 
