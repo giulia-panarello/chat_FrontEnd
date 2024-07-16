@@ -473,7 +473,7 @@
  
  
  
- /* Stile per l'immagine espansa nel messaggio */
+ /* Stile per l'immagine espansa nel messaggio quando viene mandata */
  .expanded-message-image {
   
    max-width: 100%;
@@ -481,7 +481,7 @@
    cursor: pointer;
  }
  
- /* Stile per l'overlay dell'immagine espansa */
+ /* Stile per l'overlay dell'immagine espansa (sfondo trasparente sotto l'immagine espansa) */
  .overlay {
    
    position: fixed;
@@ -496,7 +496,7 @@
  }
  
  
- /* Stile per l'immagine all'interno dell'overlay */
+ /* Stile per l'immagine all'interno dell'overlay quando clicco l'immagine e si estende sullo schermo  */
  .overlay img {
    max-width: 90%;
    max-height: 90vh;
@@ -545,7 +545,7 @@ font-size: 24px;
 color: #ffffff; 
 }
 
-  /* Nascondi il contenitore della data */
+  /* Nascondi il contenitore della data quando clicco e apro un'immagine */
   .hide-date-container {
   display: none;
 }
