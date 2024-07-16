@@ -237,7 +237,7 @@
   
 
   
-  /* Stili per il titolo del gruppo */
+  /* Stile per il titolo del gruppo */
   .titolo {
   
     max-width: 100%;
@@ -248,7 +248,7 @@
   } 
   
   
-  /* Stili per il contenitore dell'intestazione contenente il titolo e l'icona */
+  /* Stile per il contenitore dell'intestazione contenente il titolo e l'icona */
   .group-container {
     
     display: flex;
@@ -270,7 +270,7 @@
   }
   
    
-  /* Stili per l'intestazione della chat */
+  /* Stile per l'intestazione della chat */
   .chat-header {
     
     display: flex;
@@ -280,7 +280,7 @@
     max-width: 300px;
   }
   
-  /* Stili per la visualizzazione dei messaggi nel contenitore della chat */
+  /* Stile per la visualizzazione dei messaggi nel contenitore della chat */
   .chat-messages {
     max-height: 700px;
     overflow-y: auto;
@@ -288,19 +288,19 @@
   
   }
   
-  /* Stili per i messaggi */
+  /* Stile per i messaggi */
   .message {
     margin-bottom: 10px;
   }
   
-  /* Stili per il mittente del messaggio */
+  /* Stile per il mittente del messaggio */
   .sender {
    font-weight: bold;
    color: #0b4c92;
   }
   
   
-  /* Stili per l'area di input della chat */
+  /* Stile per l'area di input della chat contenente la barra per scrivere un messaggio, il pulsante di invio e delle opzioni aggiuntive */
   .chat-input {
     position: fixed; 
     bottom: 0; 
@@ -313,7 +313,7 @@
     z-index: 100; 
   }
   
-    /* Stili per la barra di input per scrivere un messaggio */
+    /* Stile per la barra di input per scrivere un messaggio */
     .chat-input input {
    
     width: 100%;
@@ -322,7 +322,7 @@
   }
   
   
-  /* Stili per il pulsante di invio */
+  /* Stile per il pulsante di invio */
   .invia {
    
     width: 100px;
@@ -338,7 +338,7 @@
   }
   
   
-  /* Stili per i messaggi inviati dall'utente */
+  /* Stile per i messaggi inviati dall'utente */
   .sent-message {
     
     display: flex;
@@ -346,7 +346,7 @@
   }
   
    
-  /* Stili per il contenitore con messaggi inviati dall'utente */
+  /* Stile per il contenitore con messaggi inviati dall'utente */
   .sent-message .message-content {
    
    background-color: #c3fd99;
@@ -359,13 +359,13 @@
    
  }
 
-  /* Stili per i messaggi ricevuti */
+  /* Stile per i messaggi ricevuti */
   .received-message {
     display: flex;
     
   }
   
-  /* Stili per il contenitore dei messaggi ricevuti */
+  /* Stile per il contenitore dei messaggi ricevuti */
   .received-message .message-content {
     
     max-width: 100%;
@@ -378,7 +378,7 @@
     
   }
   
-  /* Stili per le immagini all'interno dei messaggi, qunado mando delle immagini da galleria */
+  /* Stile per le immagini all'interno dei messaggi, qunado mando delle immagini da galleria */
   .message-content img {
     
     display: block;
@@ -390,19 +390,19 @@
   
   
  
-  /* Stili per il testo dei messaggi */
+  /* Stile per il testo dei messaggi */
   .text {
     font-size: 16px;
   }
   
-  /* Stili per l'orario in cui vengono mandati i messaggi */
+  /* Stile per l'orario in cui vengono mandati i messaggi */
   .timestamp {
    
     font-size: 12px;
     color: #3c3c3c;
   }
   
-  /* Stili per l'icona dell'utente */
+  /* Stile per l'icona dell'utente */
   .user-icon {
    
     font-size: 20px;
@@ -410,7 +410,7 @@
     padding: 10px;
   }
   
-  /* Stili per il pulsante delle opzioni aggiungive '+' */
+  /* Stile per il pulsante delle opzioni aggiungive '+' */
   .additional-features {
     
     background-color: #146ac7;
@@ -433,7 +433,7 @@
   
   
   
-  /* Stili per l'opzione aggiuntiva "Galleria" */
+  /* Stile per l'opzione aggiuntiva "Galleria" */
   .additional-options {
    
     position: absolute;
@@ -457,7 +457,7 @@
   
   
   
-  /* Stili per l'immagine espansa nel messaggio */
+  /* Stile per l'immagine espansa nel messaggio quando mando un'immagine */
   .expanded-message-image {
    
     max-width: 100%;
@@ -480,7 +480,7 @@
   }
   
   
-  /* Stili per l'immagine all'interno dell'overlay */
+  /* Stili per l'immagine all'interno dell'overlay, quando clicco l'immagine e si espande nello schermo */
   .overlay img {
     max-width: 90%;
     max-height: 90vh;
@@ -511,13 +511,14 @@
    
   }
   
-  /* Nascondi il contenitore della data */
+  /* Nascondi il contenitore della data quando apro un'immagine*/
 .hide-date-container {
   display: none;
 }
 
 
 </style>
+
 
 
 
