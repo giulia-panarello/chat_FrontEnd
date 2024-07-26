@@ -388,7 +388,7 @@
    margin: 10px;
    padding: 0px;
    border-radius: 10px;
-   background-color: #f8b17e;
+   background-color: #efb5f1;
    margin-bottom: 10px;
    position: relative;
    
