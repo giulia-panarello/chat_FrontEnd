@@ -13,6 +13,11 @@
           <!-- Icona del gruppo -->
           <img class="group-icon" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvoX2HbQn78YpCfCeyV6oqkp1lQbjQOG2kNn2gKzHbPPTkamA2" alt="group-icon">
          <!-- Titolo del gruppo -->
+         <nav>        
+          <RouterLink to="/" class="back-link"> 
+            <font-awesome-icon icon="arrow-left" class="icon" />
+          </RouterLink>
+        </nav>
          <router-link to="/lista-partecipanti" > <h1 class="titolo" >Organizzazione Evento</h1> </router-link>
        
         </div>
@@ -516,8 +521,20 @@
   display: none;
 }
 
+/* Stile per l'icona con la freccia che porta alla pagina precedente */
+.back-link {
+position: fixed; 
+left: 10px; 
+top: 9%; 
+z-index: 1000; 
+font-size: 24px; 
+color: #ffffff; 
+}
 
 </style>
+
+
+
 
 
 
