@@ -6,12 +6,7 @@
   
   <script>
   export default {
-    name: 'App',
-    methods: {
-      goToChat() {
-        this.$router.push({ name: 'chat-gruppo' });
-      },
-    },
+    name: 'App'
   };
   </script>
   
@@ -23,4 +18,5 @@
   }
   
   </style>
+  
   
