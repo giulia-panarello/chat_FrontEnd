@@ -10,11 +10,11 @@
     <div class="group-container">
       <div class="chat-header">
 
-        <!-- Icona del gruppo -->
+        <!-- Icona -->
         <img class="utente-icon" src="https://cdn.icon-icons.com/icons2/2760/PNG/512/profile_icon_176363.png" alt="utente-icon">
-       <!-- Titolo del gruppo -->
+       <!-- Nome utente -->
        <nav>        
-      <RouterLink to="/lista-partecipanti" class="back-link"> 
+      <RouterLink to="/" class="back-link"> 
         <font-awesome-icon icon="arrow-left" class="icon" />
       </RouterLink>
      </nav>
