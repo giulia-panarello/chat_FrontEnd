@@ -106,7 +106,7 @@
 .search-bar input {
   width: 100%; /* Occupa tutta la larghezza disponibile */
   padding: 10px;
-  background-color: #d8f0c1;
+  background-color: #f1d1f2;
   border-radius: 25px; /* Arrotonda i bordi dell'input */
   border: 5px solid #0a3665; /* Bordo dell'input */
   box-sizing: border-box; /* Includi padding e border nella larghezza totale */
