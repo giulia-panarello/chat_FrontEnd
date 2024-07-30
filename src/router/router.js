@@ -6,9 +6,9 @@ import ListaChat from '@/views/ListaChat.vue';
 
 const routes = [
   { path: '/', component: ListaChat, name: 'lista-chat' },
-  { path: '/chat-gruppo', component: ChatGruppo, name: 'chat-gruppo' },
+  { path: '/chat-gruppo/:id', component: ChatGruppo, name: 'chat-gruppo' },
   { path: '/lista-partecipanti', component: ListaPartecipanti, name: 'lista-partecipanti' },
-  { path: '/chat-privata', component: ChatPrivata, name: 'chat-privata' },
+  { path: '/chat-privata/:id/:userName', component: ChatPrivata, name: 'chat-privata' },
 ];
 
 const router = createRouter({
