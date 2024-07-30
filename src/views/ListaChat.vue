@@ -68,14 +68,6 @@ export default {
       }
     },
     
-    updatePrivateChatNames() {
-      this.chats.forEach(chat => {
-    if (chat.type === 'private' && chat.participantIds.length > 0) {
-      chat.name = this.users[chat.participantIds[0]] || 'Nome sconosciuto'; // Imposta il nome dell'utente per le chat private
-    }
-    });
-  },
-    
     goToChat(chat) {
       if (chat.type === 'private') {
         const participantName = this.users[chat.participantIds[0]] || 'Nome sconosciuto';
