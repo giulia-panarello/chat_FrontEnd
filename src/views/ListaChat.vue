@@ -27,42 +27,86 @@
     </div>
   </template>
   
-  <script>
-  export default {
+<script>
+
+import axios from 'axios';
+
+
+export default {
     name: 'ChatList',
     data() {
       return {
-        chats: [
-          { id: 1, name: 'Alice', lastMessage: 'Hi there!', type: 'private' },
-          { id: 2, name: 'Bob', lastMessage: 'How are you?', type: 'private' },
-          { id: 2, name: 'Organizzazione Evento', icon : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvoX2HbQn78YpCfCeyV6oqkp1lQbjQOG2kNn2gKzHbPPTkamA2', lastMessage: 'How are you?', type: 'group' },
-          // Altri oggetti chat
-
-        ],
-        filteredChats: []
+        chats: [],
+        users: [],
+        filteredChats: [],
+        searchQuery: ''
       };
     },
 
     created() {
-    this.filteredChats = this.chats; // Imposta l'iniziale lista delle chat filtrate
+    // Recupera gli utenti e le chat quando il componente è creato
+    this.fetchUsers().then(() => {
+      this.fetchChats();
+    });
   },
+
     methods: {
-      goToChat(chat) {
-        if (chat.type === 'private') {
-          this.$router.push({ name: 'chat-privata', params: { id: chat.id } });
-        } else if (chat.type === 'group') {
-          this.$router.push({ name: 'chat-gruppo', params: { id: chat.id } });
-        }
-     },
+
+    
+      async fetchChats() {
+      try {
+        const response = await axios.get('/api/chats');
+        this.chats = response.data.map(chat => ({
+          id: chat.id,
+          name: chat.name,
+          lastMessage: chat.lastMessage,
+          type: chat.type,
+          participantIds: chat.participantIds
+        }));
+        this.updatePrivateChatNames();
+        this.filterChats(); // Filtra i dati appena recuperati
+      } catch (error) {
+        console.error('Errore nel recupero dei dati dal DB:', error);
+      }
+    },
+    
+    async fetchUsers() {
+      try {
+        const response = await axios.get('/api/users');
+        this.users = response.data.reduce((acc, user) => {
+          acc[user.id] = user.name;
+          return acc;
+        }, {});
+      } catch (error) {
+        console.error('Errore nel recupero degli utenti:', error);
+      }
+    },
+    
+    updatePrivateChatNames() {
+      this.chats.forEach(chat => {
+    if (chat.type === 'private' && chat.participantIds.length > 0) {
+      chat.name = this.users[chat.participantIds[0]] || 'Nome sconosciuto'; // Imposta il nome dell'utente per le chat private
+    }
+    });
+  },
+    
+    goToChat(chat) {
+      if (chat.type === 'private') {
+        const participantName = this.users[chat.participantIds[0]] || 'Nome sconosciuto';
+        this.$router.push({ name: 'chat-privata', params: { id: chat.id, userName: participantName } });
+      } else if (chat.type === 'group') {
+        this.$router.push({ name: 'chat-gruppo', params: { id: chat.id } });
+      }
+    },
+
      filterChats() {
       const query = this.searchQuery.toLowerCase();
       this.filteredChats = this.chats.filter(chat => 
         chat.name.toLowerCase().includes(query)
       );
     }
-
-    }
-  };
+  }
+};
   </script>
   
   <style scoped>
