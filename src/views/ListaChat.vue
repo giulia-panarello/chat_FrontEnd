@@ -60,7 +60,6 @@ export default {
           name: chat.name,
           lastMessage: chat.lastMessage,
           type: chat.type,
-          participantIds: chat.participantIds
         }));
         this.updatePrivateChatNames();
         this.filterChats(); // Filtra i dati appena recuperati
