@@ -18,12 +18,11 @@
             <font-awesome-icon icon="arrow-left" class="icon" />
           </RouterLink>
         </nav>
-         <router-link to="/lista-partecipanti" > <h1 class="titolo" >Organizzazione Evento</h1> </router-link>
+         <router-link to="/lista-partecipanti" > <h1 class="titolo" >{{ groupName }}</h1> </router-link>
        
         </div>
       </div>
   
-        
       
        <!-- Contenitore della data -->
         <div class="message-date-container">
@@ -36,14 +35,14 @@
   
      
       <!-- Iterazione attraverso i messaggi -->
-        <div v-for="(message, index) in messages" :key="index" :class="{'sent-message': message.sender === 'Tu', 'received-message': message.sender !== 'Tu'}">
+        <div v-for="(message, index) in messages" :key="index" :class="{'sent-message': message.senderId === 'Tu', 'received-message': message.senderId !== 'Tu'}">
         <!-- Icona del mittente -->
           <div class="user-icon">
             <i class="fas fa-user-circle user icon"></i>
           </div>
   
           <!-- Nome del mittente -->
-          <div class="sender">{{ message.sender }}</div>
+          <div class="sender">{{ users[message.senderId] || 'Unknown' }}</div>
   
         <!-- Contenuto del messaggio -->
         <div class="message-content">
@@ -92,6 +91,8 @@
   
   <script>
   
+  import axios from 'axios';
+
   export default {
   
     // Definizione dei dati della componente
@@ -99,19 +100,25 @@
         return {
   
           // Array di messaggi iniziali
-          messages: [
-            { sender: 'Giulia', text: 'Ciao a tutti!', timestamp: this.getCurrentTime(), type: 'text', isExpanded: false },
-            { sender: 'Tu', text: 'Ciao Giulia!', timestamp: this.getCurrentTime(), type: 'text', isExpanded: false },
-          ],
+          messages: [],
           // Nuovo messaggio inserito dall'utente
           newMessage: '',
           // Flag per mostrare o nascondere le opzioni aggiuntive
           showAdditionalOptions: false,
+          // Nome del gruppo
+          groupName: '',
+          users: {} 
           
         };
       },
-  
-      // Definizione dei metodi della componente
+      
+        async created() {
+        await this.fetchMessages(); // Carica i messaggi quando il componente viene creato
+        await this.fetchGroupName(); // Carica il nome del gruppo
+      },
+
+
+    // Definizione dei metodi della componente
     methods: {
   
      
@@ -143,19 +150,27 @@
     },
   
    
-    // Metodo per inviare un nuovo messaggio di testo
-        sendMessage() {
-          if (this.newMessage.trim() !== '') {
-            const timestamp = this.getCurrentTime(); // Ottieni l'orario corrente
-            this.messages.push({
-              sender: 'Tu',
-              text: this.newMessage.trim(),
-              timestamp: timestamp,
-              type: 'text'
-            });
-          this.newMessage = '';
+    // Invia un messaggio di testo al server. Se newMessage non è vuoto, viene creato un oggetto message e inviato tramite axios.post. Dopo l'invio, il messaggio viene aggiunto all'array messages e il campo di input viene svuotato.
+    async sendMessage() {
+      if (this.newMessage.trim() !== '') {
+        const timestamp = this.getCurrentTime();
+        const message = {
+          sender: 'Tu',
+          text: this.newMessage.trim(),
+          timestamp: timestamp,
+          type: 'text',
+        };
+
+        try {
+          await axios.post(`/api/chats/${this.chatId}/messages`, message);
+          this.messages.push(message);
+        } catch (error) {
+          console.error('Errore durante l\'invio del messaggio:', error);
         }
-      },
+
+        this.newMessage = '';
+      }
+    },
   
       
       // Metodo per gestire il cambio di un file immagine
@@ -179,7 +194,18 @@
         }
       }, 
   
-  
+      // Nasconde o mostra il contenitore della data in base al valore del parametro hide. Utilizza querySelector per selezionare l'elemento e classList per aggiungere o rimuovere una classe che gestisce la visibilità.
+      hideDateContainer(hide) {
+        const dateContainer = document.querySelector('.message-date-container');
+        if (dateContainer) {
+          if (hide) {
+            dateContainer.classList.add('hide-date-container');
+          } else {
+            dateContainer.classList.remove('hide-date-container');
+          }
+        }
+      },
+
         // Metodo per gestire il clic su un messaggio
         handleMessageClick(message) {
           if (message.type === 'image') {
@@ -215,8 +241,41 @@
         this.$refs.fileInput.click();
       },
 
-  
+      async fetchMessages() {
+      try {
+      const response = await axios.get(`/api/chats/${this.chatId}/messages`);
+      this.messages = response.data;
+
+    // Supponiamo che ci sia un endpoint per ottenere i dettagli degli utenti
+      const usersResponse = await axios.get('/api/users');
+      this.users = usersResponse.data.reduce((acc, user) => {
+      acc[user.id] = user.name;
+      return acc;
+    }, {});
+  } catch (error) {
+    console.error('Errore durante il recupero dei messaggi:', error);
+  }
+},
+
+
+    async fetchGroupName() {
+        try {
+          const response = await axios.get(`/api/groups/${this.groupId}`);
+          this.groupName = response.data.name;
+        } catch (error) {
+          console.error('Errore durante il recupero del nome del gruppo:', error);
+        }
+      }
     },
+
+    computed: {
+      chatId() {
+        return this.$route.params.chatId; // Ottieni l'ID della chat dalla route
+      },
+      groupId() {
+        return this.$route.params.groupId; 
+    }
+    }
   };
   
   </script>
@@ -532,6 +591,11 @@ color: #ffffff;
 }
 
 </style>
+
+
+
+
+
 
 
 
