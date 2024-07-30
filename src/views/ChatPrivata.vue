@@ -18,14 +18,13 @@
         <font-awesome-icon icon="arrow-left" class="icon" />
       </RouterLink>
      </nav>
-      <h1 class="text-titolo">{Utente}</h1>
+      <h1 class="text-titolo">{{ userName }}</h1>
       <div class="phone-icon-container">
           <font-awesome-icon icon="phone" @click="showPhoneNumber" style="cursor: pointer;" />
         </div>
       </div>
     </div>
 
-      
     
      <!-- Contenitore della data -->
       <div class="message-date-container">
@@ -90,29 +89,31 @@
 
 
 <script>
-
-
+import axios from 'axios';
 
   export default {
 
   // Definizione dei dati della componente
     data() {
       return {
-        
+        phoneNumber: '', // proprietà per il numero di cellulare
         userName: '', // Nome dell'utente da recuperare dal backend
-        // Array di messaggi iniziali
-        messages: [
-        { sender: 'Tu', text: 'Ciao!', timestamp: this.getCurrentTime(), type: 'text' }
-      ],
+        // Array di messaggi 
+        messages: [],
         // Nuovo messaggio inserito dall'utente
         newMessage: '',
         // Flag per mostrare o nascondere le opzioni aggiuntive
         showAdditionalOptions: false,
-        // Data predefinita per i messaggi
-        date: '2024-05-16' // Aggiungi il campo data al messaggio
+        chatId: this.$route.params.chatId
         
       };
     },
+
+    async created() {
+    await this.fetchUserData();
+    await this.fetchMessages();
+  },
+
 
     // Definizione dei metodi della componente
   methods: {
@@ -145,22 +146,57 @@
     return date.toLocaleDateString(undefined, options); // Formatta la data come desiderato
   },
 
+  async fetchUserData() {
+  try {
+    const response = await axios.get(`/api/users/${this.$route.params.userId}`);
+    this.userName = response.data.name;
+    this.phoneNumber = response.data.phoneNumber;
+  } catch (error) {
+    console.error('Errore nel recupero dei dati dell\'utente:', error);
+  }
+},
+
+
+// Questo metodo fa una richiesta al backend per ottenere tutti i messaggi della chat
+async fetchMessages() {
+  try {
+    const response = await axios.get(`/api/chats/${this.chatId}/messages`);
+    this.messages = response.data.messages.map(message => ({
+      ...message,
+      isExpanded: false
+    }));
+  } catch (error) {
+    console.error('Errore nel recupero dei messaggi:', error);
+  }
+},
+
  
   // Metodo per inviare un nuovo messaggio di testo
-      sendMessage() {
-        if (this.newMessage.trim() !== '') {
-          const timestamp = this.getCurrentTime(); // Ottieni l'orario corrente
-          this.messages.push({
-            sender: 'Tu',
-            text: this.newMessage.trim(),
-            timestamp: timestamp,
-            type: 'text'
-          });
-        this.newMessage = '';
-      }
-    },
+  async sendMessage() {
+  if (this.newMessage.trim() !== '') {
+    const timestamp = new Date().toISOString();
+    const message = {
+      sender: 'Tu',
+      text: this.newMessage.trim(),
+      timestamp: timestamp,
+      type: 'text'
+    };
 
-    
+    try {
+      await axios.post(`/api/chats/${this.chatId}/messages`, message);
+      this.messages.push(message);
+      this.newMessage = '';
+      // Scrolla verso il basso per mostrare l'ultimo messaggio
+      this.$nextTick(() => {
+        const chatMessages = this.$el.querySelector('.chat-messages');
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      });
+    } catch (error) {
+      console.error('Errore nell\'invio del messaggio:', error);
+    }
+  }
+},
+
 
       // Metodo per gestire il cambio di un file immagine
       handleFileInputChange(event) {
@@ -221,11 +257,8 @@
     },
 
     showPhoneNumber() {
-      // Metodo per mostrare il numero di telefono
-      const phoneNumber = '+1234567890';
-      alert(`Phone number: ${phoneNumber}`);
+      alert(`Phone number: ${this.phoneNumber}`);
     }
-  
 
   },
 };
