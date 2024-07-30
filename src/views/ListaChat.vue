@@ -44,10 +44,9 @@ export default {
     },
 
     created() {
-    // Recupera gli utenti e le chat quando il componente è creato
-    this.fetchUsers().then(() => {
+    // Recupera le chat quando il componente è creato
       this.fetchChats();
-    });
+
   },
 
     methods: {
@@ -67,18 +66,6 @@ export default {
         this.filterChats(); // Filtra i dati appena recuperati
       } catch (error) {
         console.error('Errore nel recupero dei dati dal DB:', error);
-      }
-    },
-    
-    async fetchUsers() {
-      try {
-        const response = await axios.get('/api/users');
-        this.users = response.data.reduce((acc, user) => {
-          acc[user.id] = user.name;
-          return acc;
-        }, {});
-      } catch (error) {
-        console.error('Errore nel recupero degli utenti:', error);
       }
     },
     
