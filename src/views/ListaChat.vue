@@ -70,13 +70,11 @@ export default {
     
     goToChat(chat) {
       if (chat.type === 'private') {
-        const participantName = this.users[chat.participantIds[0]] || 'Nome sconosciuto';
-        this.$router.push({ name: 'chat-privata', params: { id: chat.id, userName: participantName } });
+        this.$router.push({ name: 'chat-privata', params: { id: chat.id, userName: chat.name } });
       } else if (chat.type === 'group') {
         this.$router.push({ name: 'chat-gruppo', params: { id: chat.id } });
       }
     },
-
      filterChats() {
       const query = this.searchQuery.toLowerCase();
       this.filteredChats = this.chats.filter(chat => 
