@@ -1,139 +1,216 @@
 <template>
-    <div class="container">
-       <!-- Barra di navigazione: link per tornare alla pagina principale -->
-        <nav> 
-        <!-- RouterLink per navigare alla home page (chat di gruppo) -->     
-        <RouterLink to="/" class="back-link"> 
-          <!-- Icona di ritorno indietro (freccia)-->
-          <font-awesome-icon icon="arrow-left" class="icon" />
-        </RouterLink>
-       </nav>
+  <div class="container">
+     <!-- Barra di navigazione: link per tornare alla pagina principale -->
+      <nav> 
+      <!-- RouterLink per navigare alla home page (chat di gruppo) -->     
+      <RouterLink to="/" class="back-link"> 
+        <!-- Icona di ritorno indietro (freccia)-->
+        <font-awesome-icon icon="arrow-left" class="icon" />
+      </RouterLink>
+     </nav>
 
-      <!-- Informazioni gruppo -->
-      <div class="group-info">
-        <!-- Icona del gruppo -->
-        <img class="group-icon" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvoX2HbQn78YpCfCeyV6oqkp1lQbjQOG2kNn2gKzHbPPTkamA2" alt="group-icon">
-        <div class="group-details">
-          <!-- Titolo dell'evento -->
-            <h2 class="event-title">Organizzazione Evento</h2>
-            <!-- Dettagli dell'evento -->
-            <div class="event-info">
-          <p><strong>📍Posizione:</strong> Ferrara</p>
-          <p><strong>📆 Data:</strong> 15/08/2024</p>
-          <p><strong>💵 Ingresso:</strong> 10€</p>
-        </div>
-        </div>
-      </div>
-  
-      <!-- Modale informazioni gruppo -->
-      <div v-if="isGroupInfoModalOpen" class="modal">
-        <div class="modal-content">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-            <!-- Titolo del modale -->
-            <h2 class="membri">Membri Gruppo</h2>
-            <!-- Pulsante per aprire il modale di aggiunta partecipanti -->
-            <button class="add-participant-btn" @click="openAddParticipantModal">+</button>
+    <!-- Informazioni gruppo -->
+    <div class="group-info">
+      <!-- Icona del gruppo -->
+      <img class="group-icon" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvoX2HbQn78YpCfCeyV6oqkp1lQbjQOG2kNn2gKzHbPPTkamA2" alt="group-icon">
+      <div class="group-details">
+        <!-- Titolo dell'evento -->
+          <h2 class="event-title">{{ group.title || 'Titolo Evento' }}</h2>
+            
+        <!-- Descrizione del gruppo -->
+        <div class="description-container">
+          <!-- Visualizzazione della descrizione -->
+          <p v-if="!isEditing" class="event-description">{{ group.description || 'Descrizione non disponibile' }}</p>
+        
+          <!-- Modifica della descrizione -->
+          <div v-if="isEditing">
+            <textarea v-model="newDescription" placeholder="Inserisci nuova descrizione..."></textarea>
+            <button class="save-description-btn" @click="updateDescription">Salva</button>
+            <button class="cancel-description-btn" @click="toggleEditMode">Annulla</button>
           </div>
-          <div class="participants-list">
-          <ul>
-             <!-- Iterazione sui partecipanti per mostrarli in una lista -->
-            <li v-for="(participant, index) in chat.participants" :key="index" class="participant-item">
-                <!-- RouterLink per aprire la chat privata con il partecipante selezionato -->
-                <router-link :to="{ name: 'chat-privata', params: { participant: participant }}" class="participant-item">{{ participant }}</router-link>
-               <!-- Pulsante per rimuovere il partecipante -->
-              <button class="remove-btn" @click="removeParticipant(index)">Rimuovi</button>
-            </li>
-          </ul>
         </div>
-            <!-- Pulsante per chiudere il modale -->
-          <button class="chiudi" @click="closeGroupInfoModal">Chiudi</button>
+
+        <!-- Pulsante per modificare la descrizione -->
+        <button v-if="!isEditing" class="edit-description-btn" @click="toggleEditMode">Modifica Descrizione</button>
         </div>
-      </div>
-  
-      <!-- Modale per aggiunta partecipanti -->
-      <div v-if="isAddParticipantModalOpen" class="modal">
-        <div class="modal-content">
-          <h2 class="aggiungi">Aggiungi membri</h2>
-          <div class="available-users-list">
-          <ul>
-            <!-- Iterazione sugli utenti disponibili per mostrarli in una lista -->
-            <li v-for="(user, index) in availableUsers" :key="index" class="participant-item">
-              {{ user }}
-              <!-- Pulsante per aggiungere un partecipante -->
-              <button class="add-btn" @click="addParticipant(user)">Aggiungi</button>
-            </li>
-          </ul>
-        </div>
-           <!-- Pulsante per chiudere il modale -->
-          <button class="chiudi" @click="closeAddParticipantModal">Chiudi</button>
-        </div>
-      </div>
-  
-      <!-- Pulsante per aprire il modale per informazioni dei membri partecipanti o da aggiungere -->
-      <button class="info-part" @click="openGroupInfoModal">Info partecipanti</button>
     </div>
-  </template>
-  
 
-  <script>
+    <!-- Modale informazioni gruppo -->
+    <div v-if="isGroupInfoModalOpen" class="modal">
+      <div class="modal-content">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+          <!-- Titolo del modale -->
+          <h2 class="membri">Membri Gruppo</h2>
+          <!-- Pulsante per aprire il modale di aggiunta partecipanti -->
+          <button class="add-participant-btn" @click="openAddParticipantModal">+</button>
+        </div>
+        <div class="participants-list">
+        <ul>
+           <!-- Iterazione sui partecipanti per mostrarli in una lista -->
+          <li v-for="(participant, index) in participants" :key="participant.id" class="participant-item">
+              <!-- RouterLink per aprire la chat privata con il partecipante selezionato -->
+              <router-link :to="{ name: 'chat-privata', params: { participantId: participant.id }}" class="participant-item">{{ participant.name }}</router-link>
+             <!-- Pulsante per rimuovere il partecipante -->
+            <button class="remove-btn" @click="removeParticipant(participant.id)">Rimuovi</button>
+          </li>
+        </ul>
+      </div>
+          <!-- Pulsante per chiudere il modale -->
+        <button class="chiudi" @click="closeGroupInfoModal">Chiudi</button>
+      </div>
+    </div>
+
+    <!-- Modale per aggiunta partecipanti -->
+    <div v-if="isAddParticipantModalOpen" class="modal">
+      <div class="modal-content">
+        <h2 class="aggiungi">Aggiungi membri</h2>
+        <div class="available-users-list">
+        <ul>
+          <!-- Iterazione sugli utenti disponibili per mostrarli in una lista -->
+          <li v-for="(user, index) in availableUsers" :key="index" class="participant-item">
+            {{ user }}
+            <!-- Pulsante per aggiungere un partecipante -->
+            <button class="add-btn" @click="addParticipant(user)">Aggiungi</button>
+          </li>
+        </ul>
+      </div>
+         <!-- Pulsante per chiudere il modale -->
+        <button class="chiudi" @click="closeAddParticipantModal">Chiudi</button>
+      </div>
+    </div>
+
+    <!-- Pulsante per aprire il modale per informazioni dei membri partecipanti o da aggiungere -->
+    <button class="info-part" @click="openGroupInfoModal">Info partecipanti</button>
+  </div>
+</template>
+
+
+<script>
+
+import axios from 'axios';
+
 export default {
-  data() {
-    return {
-      
-      
-      chat: {
-        participants: ['Mario', 'Luigi', 'Peach'],
-        messages: []
-      },
-      availableUsers: ['Edoardo', 'Giulia', 'Francesco'],
-      isGroupInfoModalOpen: false,
-      isAddParticipantModalOpen: false,
-      currentUser: 'Mario',
-      
-    };
-  },
-  methods: {
+data() {
+  return {
     
-    // Apertura del modale delle informazioni del gruppo
-    openGroupInfoModal() {
-      this.isGroupInfoModalOpen = true;
+    allUsers: [],
+    participants: [],
+    availableUsers: [],
+    isGroupInfoModalOpen: false,
+    isAddParticipantModalOpen: false,
+
+    group: {
+      description: '',
+      id: '',
+      title: ''
+    },
+    isEditing: false,
+    newDescription: ''
+   
+  };
+},
+
+
+
+created() {
+  // Recupera i partecipanti e gli utenti disponibili quando il componente viene creato
+  this.fetchUsers();
+  this.fetchGroupInfo();
+},
+
+methods: {
+  
+  async fetchGroupInfo() {
+      try {
+        const response = await axios.get(`/api/groups`); 
+        this.group = response.data;
+      } catch (error) {
+        console.error('Errore nel recupero delle informazioni del gruppo:', error);
+      }
     },
 
-    // Chiusura del modale delle informazioni del gruppo sui partecipanti
-    closeGroupInfoModal() {
-      this.isGroupInfoModalOpen = false;
+
+      // Recupera tutti gli utenti e filtra i partecipanti e gli utenti disponibili
+      async fetchUsers() {
+      try {
+        const response = await axios.get('/api/users');
+        this.allUsers = response.data.map(user => ({
+          id: user.id,
+          name: user.name,
+          is_participant: user.is_participant || false 
+        }));
+        this.participants = this.allUsers.filter(user => user.is_participant);
+        this.availableUsers = this.allUsers.filter(user => !user.is_participant);
+      } catch (error) {
+        console.error('Errore nel recupero degli utenti:', error);
+      }
     },
 
-    // Apertura del modale di aggiunta partecipanti
-    openAddParticipantModal() {
-      this.isAddParticipantModalOpen = true;
+
+
+  // Apertura del modale delle informazioni del gruppo
+  openGroupInfoModal() {
+    this.isGroupInfoModalOpen = true;
+  },
+
+  // Chiusura del modale delle informazioni del gruppo sui partecipanti
+  closeGroupInfoModal() {
+    this.isGroupInfoModalOpen = false;
+  },
+
+  // Apertura del modale di aggiunta partecipanti
+  openAddParticipantModal() {
+    this.isAddParticipantModalOpen = true;
+  },
+
+  // Chiusura del modale di aggiunta partecipanti
+  closeAddParticipantModal() {
+    this.isAddParticipantModalOpen = false;
+  },
+
+  async removeParticipant(id) {
+      try {
+        await axios.put(`/api/users/${id}`, { is_participant: false });
+        this.fetchUsers(); // Aggiorna la lista degli utenti disponibili e dei partecipanti
+      } catch (error) {
+        console.error('Errore nella rimozione del partecipante:', error);
+      }
     },
 
-    // Chiusura del modale di aggiunta partecipanti
-    closeAddParticipantModal() {
-      this.isAddParticipantModalOpen = false;
+    async addParticipant(user) {
+      try {
+        await axios.put(`/api/users/${user.id}`, { is_participant: true });
+        this.fetchUsers(); // Aggiorna la lista degli utenti disponibili e dei partecipanti
+      } catch (error) {
+        console.error('Errore nell\'aggiunta del partecipante:', error);
+      }
     },
 
-    removeParticipant(index) {
-      // Rimozione di un partecipante dalla lista
-      this.chat.participants.splice(index, 1);
-      this.updateAvailableUsers(); // Aggiornamento della lista degli utenti disponibili
+
+
+    // Attiva/disattiva la modalità di modifica della descrizione
+    toggleEditMode() {
+      this.isEditing = !this.isEditing;
+      if (this.isEditing) {
+        this.newDescription = this.group.description; // Carica la descrizione corrente per modifica
+      }
     },
-    addParticipant(user) {
-       // Aggiunta di un partecipante alla lista
-      this.chat.participants.push(user);
-      this.updateAvailableUsers(); // Aggiornamento della lista degli utenti disponibili
-    },
-    updateAvailableUsers() {
-      // Aggiornamento della lista degli utenti disponibili per l'aggiunta
-      const allUsers = ['Mario', 'Luigi', 'Peach', 'Edoardo', 'Giulia', 'Francesco'];
-      // Filtraggio degli utenti già presenti nella lista
-      this.availableUsers = allUsers.filter(user => !this.chat.participants.includes(user)); 
+
+    // Salva la nuova descrizione
+    async updateDescription() {
+      try {
+        await axios.put(`/api/groups/${this.group.id}`, {
+          description: this.newDescription
+        });
+        this.group.description = this.newDescription;
+        this.isEditing = false;
+      } catch (error) {
+        console.error('Errore nell\'aggiornamento della descrizione del gruppo:', error);
+      }
     }
   }
 };
 </script>
-
 
 <style>
 
@@ -154,8 +231,7 @@ export default {
   background-image: url('https://i.pinimg.com/originals/c4/23/12/c4231254ad6f3a92d902a8356212809c.jpg');
   background-size: cover;
   background-position: center;
-  display: flex;
-  flex-direction: column;
+ 
 }
 
 /* Modifiche di stile sul pulsante "chiudi" */
@@ -204,6 +280,9 @@ export default {
   flex-direction: column;
   align-items: center;
   text-align: center; 
+  padding: 20px;
+  border-radius: 10px;
+  margin: 20px;
   
 }
 
@@ -299,7 +378,7 @@ export default {
 .back-link {
   position: fixed; 
   left: 10px; 
-  top: 9%; 
+  top: 4%; 
   z-index: 1000; 
   font-size: 24px; 
   color: #146ac7;
@@ -320,7 +399,63 @@ export default {
 }
 
 
+
+.description-container {
+  margin: 20px 0;
+}
+
+.event-description {
+  font-size: 1.2rem;
+  margin: 10px 0;
+}
+
+textarea {
+  width: 100%;
+  height: 100px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+
+.edit-description-btn {
+  background-color: #efa8ed;
+  color: #083b71;
+  font-weight: bold;
+  font-size: 15px;
+  margin: 5px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  
+}
+
+.save-description-btn {
+  background-color: #4CAF50;
+  color: white;
+  font-weight: bold;
+  margin: 5px;
+  cursor: pointer;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+}
+
+.cancel-description-btn {
+  background-color: #f44336;
+  color: white;
+  font-weight: bold;
+  margin: 5px;
+  cursor: pointer;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+}
+
 </style>
+
 
 
 
