@@ -91,7 +91,11 @@ export default {
   height: 100vh;
   width: 100vw;
   overflow-y: auto;
-  padding: 0;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
   margin: 0;
   display: flex;
   flex-direction: column;
@@ -99,8 +103,7 @@ export default {
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
-  box-sizing: border-box;
- 
+  box-sizing: border-box; 
 }
 
 .header {
