@@ -1,31 +1,41 @@
 <template>
-    <div class="chat-list-container">
-      <div class="header">
-        <h1 class='nome'>Chat</h1>
-        <div class="search-bar">
-          <input 
-            v-model="searchQuery" 
-            type="text" 
-            placeholder="Cerca chat..."
-            @input="filterChats"
-     
-          />
-          
-        </div>
+  <div class="chat-list-container">
+    <div class="header">
+      <h1 class='nome'>Chat</h1>
+      <div class="search-bar">
+        <input 
+          v-model="searchQuery" 
+          type="text" 
+          placeholder="Cerca chat..."
+          @input="filterChats"
+   
+        />
+        
       </div>
-      <ul class="chat-list">
-        <li v-for="chat in filteredChats" :key="chat.id" @click="goToChat(chat)">
-          <div class="chat-item">
-            <img class="utente-icon" src="https://cdn.icon-icons.com/icons2/2760/PNG/512/profile_icon_176363.png" alt="utente-icon">
-            <div class="chat-info">
-              <h2>{{ chat.name }}</h2>
-              <p>{{ chat.lastMessage }}</p>
-            </div>
-          </div>
-        </li>
-      </ul>
+      <img 
+        class="new-group-icon" 
+        src="https://cdn-icons-png.flaticon.com/512/1828/1828817.png" 
+        alt="Crea nuovo gruppo" 
+        @click="toggleMenu"
+    />
+    <div v-if="showMenu" class="menu">
+        <button @click="createNewGroup">Crea Nuovo Gruppo</button>
+        <button @click="newChat">Nuova Chat</button>
+      </div>      
     </div>
-  </template>
+    <ul class="chat-list">
+      <li v-for="chat in filteredChats" :key="chat.id" @click="goToChat(chat)">
+        <div class="chat-item">
+          <img class="utente-icon" src="https://static.vecteezy.com/ti/vettori-gratis/p3/24191738-profilo-icona-o-simbolo-nel-rosa-e-blu-colore-vettoriale.jpg" alt="utente-icon">
+          <div class="chat-info">
+            <h2>{{ chat.name }}</h2>
+            <p>{{ chat.lastMessage }}</p>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</template>
   
 <script>
 
@@ -39,14 +49,16 @@ export default {
         chats: [],
         users: [],
         filteredChats: [],
-        searchQuery: ''
+        searchQuery: '',
+        showMenu: false
       };
     },
 
     created() {
-    // Recupera le chat quando il componente è creato
+    // Recupera gli utenti e le chat quando il componente è creato
+    this.fetchUsers().then(() => {
       this.fetchChats();
-
+    });
   },
 
     methods: {
@@ -60,6 +72,7 @@ export default {
           name: chat.name,
           lastMessage: chat.lastMessage,
           type: chat.type,
+          participantIds: chat.participantIds
         }));
         this.updatePrivateChatNames();
         this.filterChats(); // Filtra i dati appena recuperati
@@ -68,18 +81,52 @@ export default {
       }
     },
     
+    async fetchUsers() {
+      try {
+        const response = await axios.get('/api/users');
+        this.users = response.data.reduce((acc, user) => {
+          acc[user.id] = user.name;
+          return acc;
+        }, {});
+      } catch (error) {
+        console.error('Errore nel recupero degli utenti:', error);
+      }
+    },
+    
+    updatePrivateChatNames() {
+      this.chats.forEach(chat => {
+    if (chat.type === 'private' && chat.participantIds.length > 0) {
+      chat.name = this.users[chat.participantIds[0]] || 'Nome sconosciuto'; // Imposta il nome dell'utente per le chat private
+    }
+    });
+  },
+    
     goToChat(chat) {
       if (chat.type === 'private') {
-        this.$router.push({ name: 'chat-privata', params: { id: chat.id, userName: chat.name } });
+        const participantName = this.users[chat.participantIds[0]] || 'Nome sconosciuto';
+        this.$router.push({ name: 'chat-privata', params: { id: chat.id, userName: participantName } });
       } else if (chat.type === 'group') {
         this.$router.push({ name: 'chat-gruppo', params: { id: chat.id } });
       }
     },
+
      filterChats() {
       const query = this.searchQuery.toLowerCase();
       this.filteredChats = this.chats.filter(chat => 
         chat.name.toLowerCase().includes(query)
       );
+    },
+
+    createNewGroup() {
+      // Naviga verso la pagina di creazione di un nuovo gruppo
+      this.$router.push({ name: 'crea-nuovo-gruppo' });
+    },
+
+    newChat() {
+      this.$router.push({ name: 'seleziona-utente' });
+    },
+    toggleMenu() {
+      this.showMenu = !this.showMenu;
     }
   }
 };
@@ -103,7 +150,8 @@ export default {
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
-  box-sizing: border-box; 
+  box-sizing: border-box;
+ 
 }
 
 .header {
@@ -129,7 +177,7 @@ export default {
 .search-bar input {
   width: 100%; /* Occupa tutta la larghezza disponibile */
   padding: 10px;
-  background-color: #f1d1f2;
+  background-color: #eabccd;
   border-radius: 25px; /* Arrotonda i bordi dell'input */
   border: 5px solid #0a3665; /* Bordo dell'input */
   box-sizing: border-box; /* Includi padding e border nella larghezza totale */
@@ -173,7 +221,45 @@ export default {
 
 /* Colore del placeholder */
 .search-bar input::placeholder {
-  color: #0a3665; /* Cambia il colore del placeholder */
+  color: #0a3665; 
   
 }
+
+.new-group-icon {
+  width: 40px; /* Larghezza dell'icona */
+  height: 40px; /* Altezza dell'icona */
+  cursor: pointer; /* Mostra il cursore a forma di mano quando si passa sopra l'icona */
+  margin-left: 20px; /* Spazio tra l'icona e la barra di ricerca */
+  
+}
+
+.menu {
+  position: absolute;
+  right: 20px;
+  top: 80px;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.menu button {
+  padding: 10px 20px;
+  background-color: #eabccd;; /* Rosa */
+  color: #0a3665;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 5px;
+  
+}
+
+.menu button:hover {
+  background-color: #f97daa;; /* Colore rosa intenso leggermente più scuro per l'hover */
+}
+
 </style>
