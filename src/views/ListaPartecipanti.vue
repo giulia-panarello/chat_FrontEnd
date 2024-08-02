@@ -1,27 +1,30 @@
 <template>
-  <div class="container">
-     <!-- Barra di navigazione: link per tornare alla pagina principale -->
-      <nav> 
-      <!-- RouterLink per navigare alla home page (chat di gruppo) -->     
-      <RouterLink to="/" class="back-link"> 
-        <!-- Icona di ritorno indietro (freccia)-->
-        <font-awesome-icon icon="arrow-left" class="icon" />
-      </RouterLink>
-     </nav>
+    <div class="container">
+       <!-- Barra di navigazione: link per tornare alla pagina principale -->
+        <nav> 
+        <!-- RouterLink per navigare alla home page (chat di gruppo) -->     
+        <RouterLink to="/chat-gruppo" class="back-link"> 
+          <!-- Icona di ritorno indietro (freccia)-->
+          <font-awesome-icon icon="arrow-left" class="icon" />
+        </RouterLink>
+       </nav>
 
-    <!-- Informazioni gruppo -->
-    <div class="group-info">
-      <!-- Icona del gruppo -->
-      <img class="group-icon" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvoX2HbQn78YpCfCeyV6oqkp1lQbjQOG2kNn2gKzHbPPTkamA2" alt="group-icon">
-      <div class="group-details">
-        <!-- Titolo dell'evento -->
-          <h2 class="event-title">{{ group.title || 'Titolo Evento' }}</h2>
-            
+      <!-- Informazioni gruppo -->
+      <div class="group-info">
+        <!-- Icona del gruppo -->
+        <img class="group-icon" src="https://us.123rf.com/450wm/classica2/classica22001/classica2200100008/138940341-illustrazione-design-piatto-migliore-icona.jpg?ver=6" alt="group-icon">
+        <div class="group-details">
+          <!-- Titolo dell'evento -->
+            <h2 class="event-title">Organizzazione Evento</h2>
+
         <!-- Descrizione del gruppo -->
         <div class="description-container">
           <!-- Visualizzazione della descrizione -->
-          <p v-if="!isEditing" class="event-description">{{ group.description || 'Descrizione non disponibile' }}</p>
+          <div v-if="!isEditing">
+            <p class="event-description">{{ group.description || 'Descrizione non disponibile' }}</p>
+          </div>
         
+           
           <!-- Modifica della descrizione -->
           <div v-if="isEditing">
             <textarea v-model="newDescription" placeholder="Inserisci nuova descrizione..."></textarea>
@@ -32,59 +35,70 @@
 
         <!-- Pulsante per modificare la descrizione -->
         <button v-if="!isEditing" class="edit-description-btn" @click="toggleEditMode">Modifica Descrizione</button>
+              
+          </div>
         </div>
-    </div>
-
-    <!-- Modale informazioni gruppo -->
-    <div v-if="isGroupInfoModalOpen" class="modal">
-      <div class="modal-content">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-          <!-- Titolo del modale -->
-          <h2 class="membri">Membri Gruppo</h2>
-          <!-- Pulsante per aprire il modale di aggiunta partecipanti -->
-          <button class="add-participant-btn" @click="openAddParticipantModal">+</button>
+  
+      <!-- Modale informazioni gruppo -->
+      <div v-if="isGroupInfoModalOpen" class="modal">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+            <!-- Titolo del modale -->
+            <h2 class="membri">Membri Gruppo</h2>
+            <!-- Pulsante per aprire il modale di aggiunta partecipanti -->
+            <button class="add-participant-btn" @click="openAddParticipantModal">+</button>
+          </div>
+          <input
+            type="text"
+            v-model="searchQuery"
+            placeholder="Cerca partecipante..."
+            class="search-bar"
+          />
+          <div class="participants-list">
+          <ul>
+             <!-- Iterazione sui partecipanti per mostrarli in una lista -->
+            <li v-for="(participant, index) in filteredParticipants" :key="index" class="participant-item">
+                <!-- RouterLink per aprire la chat privata con il partecipante selezionato -->
+                <router-link :to="{ name: 'chat-privata', params: { participant: participant }}" class="participant-item">{{ participant }}</router-link>
+               <!-- Pulsante per rimuovere il partecipante -->
+              <button class="remove-btn" @click="removeParticipant(index)">Rimuovi</button>
+            </li>
+          </ul>
         </div>
-        <div class="participants-list">
-        <ul>
-           <!-- Iterazione sui partecipanti per mostrarli in una lista -->
-          <li v-for="(participant, index) in participants" :key="participant.id" class="participant-item">
-              <!-- RouterLink per aprire la chat privata con il partecipante selezionato -->
-              <router-link :to="{ name: 'chat-privata', params: { participantId: participant.id }}" class="participant-item">{{ participant.name }}</router-link>
-             <!-- Pulsante per rimuovere il partecipante -->
-            <button class="remove-btn" @click="removeParticipant(participant.id)">Rimuovi</button>
-          </li>
-        </ul>
+            <!-- Pulsante per chiudere il modale -->
+          <button class="chiudi" @click="closeGroupInfoModal">Chiudi</button>
+        </div>
       </div>
-          <!-- Pulsante per chiudere il modale -->
-        <button class="chiudi" @click="closeGroupInfoModal">Chiudi</button>
+  
+      <!-- Modale per aggiunta partecipanti -->
+      <div v-if="isAddParticipantModalOpen" class="modal">
+        <div class="modal-content">
+          <h2 class="aggiungi">Aggiungi membri</h2>
+
+          <!-- Barra di ricerca -->
+  
+          <div class="available-users-list">
+          <ul>
+
+
+            <!-- Iterazione sugli utenti disponibili per mostrarli in una lista -->
+            <li v-for="(user, index) in filteredUsers" :key="index" class="participant-item">
+              {{ user.name }}
+              <!-- Pulsante per aggiungere un partecipante -->
+              <button class="add-btn" @click="addParticipant(user)">Aggiungi</button>
+            </li>
+          </ul>
+        </div>
+           <!-- Pulsante per chiudere il modale -->
+          <button class="chiudi" @click="closeAddParticipantModal">Chiudi</button>
+        </div>
       </div>
+  
+      <!-- Pulsante per aprire il modale per informazioni dei membri partecipanti o da aggiungere -->
+      <button class="info-part" @click="openGroupInfoModal">Info partecipanti</button>
     </div>
-
-    <!-- Modale per aggiunta partecipanti -->
-    <div v-if="isAddParticipantModalOpen" class="modal">
-      <div class="modal-content">
-        <h2 class="aggiungi">Aggiungi membri</h2>
-        <div class="available-users-list">
-        <ul>
-          <!-- Iterazione sugli utenti disponibili per mostrarli in una lista -->
-          <li v-for="(user, index) in availableUsers" :key="index" class="participant-item">
-            {{ user }}
-            <!-- Pulsante per aggiungere un partecipante -->
-            <button class="add-btn" @click="addParticipant(user)">Aggiungi</button>
-          </li>
-        </ul>
-      </div>
-         <!-- Pulsante per chiudere il modale -->
-        <button class="chiudi" @click="closeAddParticipantModal">Chiudi</button>
-      </div>
-    </div>
-
-    <!-- Pulsante per aprire il modale per informazioni dei membri partecipanti o da aggiungere -->
-    <button class="info-part" @click="openGroupInfoModal">Info partecipanti</button>
-  </div>
-</template>
-
-
+  </template>
+  
 <script>
 
 import axios from 'axios';
@@ -105,18 +119,25 @@ data() {
       title: ''
     },
     isEditing: false,
-    newDescription: ''
-   
+    newDescription: '',
+    searchQuery: ''   
   };
 },
 
+  computed: {
+    filteredParticipants() {
+      // Filtra i partecipanti in base al valore della query di ricerca
+      return this.chat.participants.filter(participant =>
+        participant.toLowerCase().includes(this.searchQuery.toLowerCase())
+      );
+    },
 
-
+},
 created() {
   // Recupera i partecipanti e gli utenti disponibili quando il componente viene creato
   this.fetchUsers();
   this.fetchGroupInfo();
-},
+  this.searchUsers();},
 
 methods: {
   
@@ -451,6 +472,15 @@ textarea {
   cursor: pointer;
   padding: 10px;
   border: none;
+  border-radius: 5px;
+}
+
+.search-bar {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  font-size: 1rem;
+  
   border-radius: 5px;
 }
 
