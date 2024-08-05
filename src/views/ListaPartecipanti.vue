@@ -138,19 +138,17 @@ methods: {
   
   async fetchGroupInfo() {
       try {
-        const response = await axios.get(`/api/groups`); 
+        const response = await axios.get(`/api/groups/${this.chatId}`);
         this.group = response.data;
       } catch (error) {
         console.error('Errore nel recupero delle informazioni del gruppo:', error);
       }
     },
 
-
     async fetchParticipants() {
       try {
-        const response = await axios.get('/api/participants');
-        this.chat.participants = response.data;
-        this.updateAvailableUsers();
+        const response = await axios.get(`/api/chats/${this.chatId}/participants`);
+        this.participants = response.data;
       } catch (error) {
         console.error('Error fetching participants:', error);
       }
@@ -163,7 +161,7 @@ methods: {
       } catch (error) {
         console.error('Error fetching available users:', error);
       }
-    },    
+    },
 
 
   // Apertura del modale delle informazioni del gruppo
