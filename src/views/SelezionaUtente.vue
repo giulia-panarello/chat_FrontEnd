@@ -1,17 +1,23 @@
 <template>
-
+    <!-- Barra di navigazione con un link per tornare indietro nella pagina principale-->
     <nav>        
         <RouterLink to="/" class="back-link"> 
-            <font-awesome-icon icon="arrow-left" class="icon" />
+          <!-- Icona che rappresenta una freccia per tornare indietro -->
+          <font-awesome-icon icon="arrow-left" class="icon" />
         </RouterLink>
     </nav>
+
+    <!-- Contenitore principale per la selezione dell'utente -->
     <div class="seleziona-utente-container">
 
+    <!-- Sezione dell'intestazione che contiene il titolo della pagina -->
     <div class="header">
       <h1 class="titolo">Seleziona Utente</h1>
     </div>
   
+    <!-- Lista degli utenti -->
       <ul>
+        <!-- Itera su tutti gli utenti e crea un elemento della lista per ciascuno, Ogni elemento della lista è cliccabile e avvia una chat con l'utente selezionato-->
         <li v-for="user in users" :key="user.id" @click="startChat(user)">
           {{ user.name }}
         </li>
@@ -27,17 +33,20 @@ import axios from 'axios';
     name: 'SelezionaUtente',
     data() {
       return {
-        users: []
+        users: []  // Array per memorizzare la lista degli utenti
       };
     },
 
     created() {
+    
+    // Recupera gli utenti quando il componente viene creato
     this.fetchUsers();
   },
 
     methods: {
 
-        fetchUsers() {
+    // Recupera la lista degli utenti dal server
+    fetchUsers() {
       axios.get('/api/users')
         .then(response => {
           this.users = response.data;
@@ -47,6 +56,7 @@ import axios from 'axios';
         });
     },
 
+    // Avvia una chat con l'utente selezionato
       startChat(user) {
         this.$router.push({ name: 'chat-privata', params: { id: user.id } });
       }
@@ -56,6 +66,7 @@ import axios from 'axios';
   
   <style scoped>
 
+  /* Contenitore principale per la selezione dell'utente */
   .seleziona-utente-container {
     padding: 20px;
     display: flex;
@@ -78,6 +89,7 @@ import axios from 'axios';
   
   }
   
+  /* Stile della lista di utenti */
   .seleziona-utente-container ul {
   list-style-type: none;
   padding: 0;
@@ -89,6 +101,7 @@ import axios from 'axios';
   overflow-y: auto;
 }
 
+/* Stile degli elementi della lista di utenti */
 .seleziona-utente-container li {
   display: flex;
   align-items: center;
@@ -100,6 +113,7 @@ import axios from 'axios';
   border: 1px solid #ccc; /* Bordo sottile per gli elementi della lista */
 }
 
+/* Intestazione della pagina */
   .header {
   display: flex;
   align-items: center;
@@ -116,15 +130,19 @@ import axios from 'axios';
   
 }
 
+/* Stile del titolo  */
 .titolo{
     font-weight: bold;
     font-size: 30px;
 }
   
+
+/* Colore della sezione di ogni chat al passaggio del mouse */
   .seleziona-utente-container li:hover {
     background-color: #eabccd; 
   }
 
+  /* Stile dell'icona per tornare indietro */
   .back-link {
     position: fixed; 
     left: 25px; 
