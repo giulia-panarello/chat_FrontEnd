@@ -79,14 +79,6 @@
       </div>
     </div>
 
-    <!-- Modulo di aggiunta membro -->
-    <div class="add-member-form">
-      <form @submit.prevent="addMembro">
-        <input v-model="membro.nome" placeholder="Nome del Membro" required />
-        <button type="submit">Aggiungi Membro</button>
-      </form>
-    </div>
-
     <!-- Pulsante per aprire il modale per informazioni dei membri partecipanti o da aggiungere -->
     <button class="info-part" @click="openGroupInfoModal">Info partecipanti</button>
   </div>
@@ -100,9 +92,6 @@ import axios from 'axios';
 export default {
 data() {
   return {
-    membro: {
-        nome: ''
-      },
     allUsers: [],
     participants: [],
     availableUsers: [],
@@ -120,12 +109,20 @@ data() {
   };
 },
 
-computed: {
-    chatId() {
-      return parseInt(this.$route.params.chatId, 10);
-    }
-  },
+  computed: {
+    filteredParticipants() {
+      // Filtra i partecipanti in base al valore della query di ricerca
+      return this.chat.participants.filter(participant =>
+        participant.toLowerCase().includes(this.searchQuery.toLowerCase())
+      );
+    },
 
+    filteredUsers() {
+      return this.availableUsers.filter(user =>
+        user.name.toLowerCase().includes(this.searchQueryUsers.toLowerCase())
+      );
+    },
+},
 
 created() {
   // Recupera i partecipanti, gli utenti disponibili e le info quando il componente viene creato
@@ -212,15 +209,6 @@ methods: {
       }
     },
     
-    async addMembro() {
-      try {
-        const risposta = await axios.post(`/api/chats/${this.chatId}/membri`, this.membro);
-        console.log('Membro aggiunto:', risposta.data);
-        this.membro.nome = ''; // Resetta il campo dopo l'aggiunta
-      } catch (errore) {
-        console.error('Errore durante l\'aggiunta del membro:', errore);
-      }
-    },
 
     // Salva la nuova descrizione
     async updateDescription() {
