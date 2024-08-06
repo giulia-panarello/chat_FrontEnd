@@ -44,10 +44,16 @@
           <!-- Pulsante per aprire il modale di aggiunta partecipanti -->
           <button class="add-participant-btn" @click="openAddParticipantModal">+</button>
         </div>
+        <input
+          type="text"
+          v-model="searchQueryParticipants"
+          placeholder="Cerca partecipante..."
+          class="search-bar"
+        />
         <div class="participants-list">
         <ul>
            <!-- Iterazione sui partecipanti per mostrarli in una lista -->
-          <li v-for="(participant, index) in participants" :key="participant.id" class="participant-item">
+          <li v-for="participant in filteredParticipants" :key="participant.id" class="participant-item">
               <!-- RouterLink per aprire la chat privata con il partecipante selezionato -->
               <router-link :to="{ name: 'chat-privata', params: { participantId: participant.id }}" class="participant-item">{{ participant.name }}</router-link>
              <!-- Pulsante per rimuovere il partecipante -->
@@ -64,13 +70,22 @@
     <div v-if="isAddParticipantModalOpen" class="modal">
       <div class="modal-content">
         <h2 class="aggiungi">Aggiungi membri</h2>
+
+      <!-- Barra di ricerca -->
+      <input
+          type="text"
+          v-model="searchQueryUsers"
+          placeholder="Cerca utente..."
+          class="search-bar"
+          @input="searchUsers"
+      />
         <div class="available-users-list">
         <ul>
           <!-- Iterazione sugli utenti disponibili per mostrarli in una lista -->
-          <li v-for="(user, index) in availableUsers" :key="index" class="participant-item">
-            {{ user }}
+          <li v-for="user in filteredUsers" :key="user.id" class="participant-item">
+            {{ user.name }}
             <!-- Pulsante per aggiungere un partecipante -->
-            <button class="add-btn" @click="addParticipant(user)">Aggiungi</button>
+            <button class="add-btn" @click="addParticipant(user.id)">Aggiungi</button>
           </li>
         </ul>
       </div>
@@ -92,7 +107,7 @@ import axios from 'axios';
 export default {
 data() {
   return {
-    allUsers: [],
+
     participants: [],
     availableUsers: [],
     isGroupInfoModalOpen: false,
@@ -104,25 +119,27 @@ data() {
       title: ''
     },
     isEditing: false,
-    newDescription: ''
+    newDescription: '',
+    searchQueryUsers: '',
+    searchQueryParticipants: ''
    
   };
 },
 
-  computed: {
-    filteredParticipants() {
-      // Filtra i partecipanti in base al valore della query di ricerca
-      return this.chat.participants.filter(participant =>
-        participant.toLowerCase().includes(this.searchQuery.toLowerCase())
-      );
-    },
-
+computed: {
+  filteredParticipants() {
+    return this.participants.filter(participant =>
+      participant.name.toLowerCase().includes(this.searchQueryParticipants.toLowerCase())
+    );
+  },
     filteredUsers() {
-      return this.availableUsers.filter(user =>
-        user.name.toLowerCase().includes(this.searchQueryUsers.toLowerCase())
-      );
-    },
+    return this.availableUsers.filter(user =>
+      user.name.toLowerCase().includes(this.searchQueryUsers.toLowerCase())
+    );
+  },
+
 },
+
 
 created() {
   // Recupera i partecipanti, gli utenti disponibili e le info quando il componente viene creato
@@ -135,7 +152,7 @@ methods: {
   
   async fetchGroupInfo() {
       try {
-        const response = await axios.get(`/api/groups/${this.chatId}`);
+        const response = await axios.get(`/api/groups/${this.group.id}`);
         this.group = response.data;
       } catch (error) {
         console.error('Errore nel recupero delle informazioni del gruppo:', error);
@@ -144,7 +161,7 @@ methods: {
 
     async fetchParticipants() {
       try {
-        const response = await axios.get(`/api/chats/${this.chatId}/participants`);
+        const response = await axios.get(`/api/chats/${this.group.id}/participants`);
         this.participants = response.data;
       } catch (error) {
         console.error('Error fetching participants:', error);
@@ -182,24 +199,25 @@ methods: {
   },
 
   async removeParticipant(participantId) {
-      try {
-        await axios.post(`/api/chats/${this.chatId}/remove-participant`, { participantId });
-        this.participants = this.participants.filter(p => p.id !== participantId);
-        this.updateAvailableUsers();
-      } catch (error) {
-        console.error('Error removing participant:', error);
-      }
-    },
+    try {
+        await axios.post('/api/remove-participant', { participantId });
+        this.participants = this.participants.filter(participant => participant.id !== participantId);
+    } catch (error) {
+        console.error('Errore nella rimozione del partecipante:', error);
+    }
+},
 
-    async addParticipant(user) {
-      try {
-        await axios.post(`/api/chats/${this.chatId}/add-participant`, { user });
-        this.participants.push(user);
-        this.updateAvailableUsers();
-      } catch (error) {
-        console.error('Error adding participant:', error);
-      }
-    },
+
+async addParticipant(userId) {
+    try {
+        await axios.post('/api/add-participant', { userId });
+        this.participants.push(this.availableUsers.find(user => user.id === userId));
+    } catch (error) {
+        console.error('Errore nell\'aggiunta del partecipante:', error);
+    }
+},
+
+
 
     // Attiva/disattiva la modalità di modifica della descrizione
     toggleEditMode() {
@@ -468,36 +486,8 @@ textarea {
   border-radius: 5px;
 }
 
-.add-member-form {
-  margin: 20px;
-}
-
-.add-member-form form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.add-member-form input {
-  margin-bottom: 10px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  width: 200px;
-}
-
-.add-member-form button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  background-color: #4CAF50;
-  color: white;
-  cursor: pointer;
-  font-size: 1rem;
-}
 
 </style>
-
 
 
 
