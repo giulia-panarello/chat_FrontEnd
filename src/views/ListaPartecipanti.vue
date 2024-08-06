@@ -12,7 +12,7 @@
     <!-- Informazioni gruppo -->
     <div class="group-info">
       <!-- Icona del gruppo -->
-      <img class="group-icon" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvoX2HbQn78YpCfCeyV6oqkp1lQbjQOG2kNn2gKzHbPPTkamA2" alt="group-icon">
+      <img class="group-icon" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8GaWwlQtPhY4LVhaahYOB8wS4qTmGO6sB_g&s alt="group-icon">
       <div class="group-details">
         <!-- Titolo dell'evento -->
           <h2 class="event-title">{{ group.title || 'Titolo Evento' }}</h2>
