@@ -108,30 +108,33 @@ export default {
 data() {
   return {
 
-    participants: [],
-    availableUsers: [],
-    isGroupInfoModalOpen: false,
-    isAddParticipantModalOpen: false,
-
-    group: {
-      description: '',
-      id: '',
-      title: ''
-    },
-    isEditing: false,
-    newDescription: '',
-    searchQueryUsers: '',
-    searchQueryParticipants: ''
+    participants: [], // Lista dei partecipanti al gruppo
+      availableUsers: [], // Lista degli utenti disponibili per essere aggiunti al gruppo
+      isGroupInfoModalOpen: false, // Stato del modale con le informazioni del gruppo
+      isAddParticipantModalOpen: false, // Stato del modale per aggiungere partecipanti
+      group: {
+        description: '', // Descrizione del gruppo
+        id: '', // ID del gruppo
+        title: '' // Titolo del gruppo
+      },
+      isEditing: false, // Stato della modalità di modifica della descrizione
+      newDescription: '', // Nuova descrizione del gruppo in fase di modifica
+      searchQueryUsers: '', // Query di ricerca per gli utenti disponibili
+      searchQueryParticipants: '' // Query di ricerca per i partecipanti
    
   };
 },
 
 computed: {
+
+   // Filtra i partecipanti in base alla query di ricerca
   filteredParticipants() {
     return this.participants.filter(participant =>
       participant.name.toLowerCase().includes(this.searchQueryParticipants.toLowerCase())
     );
   },
+
+  // Filtra gli utenti disponibili in base alla query di ricerca
     filteredUsers() {
     return this.availableUsers.filter(user =>
       user.name.toLowerCase().includes(this.searchQueryUsers.toLowerCase())
@@ -150,6 +153,7 @@ created() {
 
 methods: {
   
+  // Recupera le informazioni del gruppo
   async fetchGroupInfo() {
       try {
         const response = await axios.get(`/api/groups/${this.group.id}`);
@@ -159,6 +163,7 @@ methods: {
       }
     },
 
+  // Recupera i partecipanti del gruppo
     async fetchParticipants() {
       try {
         const response = await axios.get(`/api/chats/${this.group.id}/participants`);
@@ -168,6 +173,7 @@ methods: {
       }
     },
 
+    // Recupera gli utenti disponibili
     async fetchAvailableUsers() {
       try {
         const response = await axios.get('/api/available-users');
@@ -198,6 +204,7 @@ methods: {
     this.isAddParticipantModalOpen = false;
   },
 
+  // Rimuove un partecipante dal gruppo
   async removeParticipant(participantId) {
     try {
         await axios.post('/api/remove-participant', { participantId });
@@ -207,7 +214,7 @@ methods: {
     }
 },
 
-
+// Aggiunge un partecipante al gruppo
 async addParticipant(userId) {
     try {
         await axios.post('/api/add-participant', { userId });
@@ -219,7 +226,7 @@ async addParticipant(userId) {
 
 
 
-    // Attiva/disattiva la modalità di modifica della descrizione
+// Attiva/disattiva la modalità di modifica della descrizione
     toggleEditMode() {
       this.isEditing = !this.isEditing;
       if (this.isEditing) {
@@ -228,7 +235,7 @@ async addParticipant(userId) {
     },
     
 
-    // Salva la nuova descrizione
+// Salva la nuova descrizione
     async updateDescription() {
       try {
         await axios.put(`/api/groups/${this.group.id}`, {
@@ -430,17 +437,18 @@ async addParticipant(userId) {
   margin-top: 10px;
 }
 
-
-
+/* Contenitore per la descrizione del gruppo */
 .description-container {
   margin: 20px 0;
 }
 
+/* Stile per la descrizione dell'evento */
 .event-description {
   font-size: 1.2rem;
   margin: 10px 0;
 }
 
+/* Stile per la textarea della descrizione (in modalità di modifica della descrizione) */
 textarea {
   width: 100%;
   height: 100px;
@@ -450,7 +458,7 @@ textarea {
   margin-bottom: 10px;
 }
 
-
+/* Pulsante per attivare la modifica della descrizione */
 .edit-description-btn {
   background-color: #efa8ed;
   color: #083b71;
@@ -464,6 +472,7 @@ textarea {
   
 }
 
+/* Pulsante per salvare la nuova descrizione */
 .save-description-btn {
   background-color: #4CAF50;
   color: white;
@@ -475,6 +484,7 @@ textarea {
   border-radius: 5px;
 }
 
+/* Pulsante per annullare la modifica della descrizione */
 .cancel-description-btn {
   background-color: #f44336;
   color: white;
@@ -488,6 +498,8 @@ textarea {
 
 
 </style>
+
+
 
 
 
