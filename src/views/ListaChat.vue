@@ -1,34 +1,47 @@
 <template>
   <div class="chat-list-container">
+    <!-- Intestazione della pagina con titolo, barra di ricerca e icona per la creazione di nuovi gruppi -->
     <div class="header">
+      <!-- Titolo della sezione chat -->
       <h1 class='nome'>Chat</h1>
+
+      <!-- Barra di ricerca per filtrare le chat -->
       <div class="search-bar">
         <input 
           v-model="searchQuery" 
           type="text" 
           placeholder="Cerca chat..."
           @input="filterChats"
-   
-        />
-        
+        /> 
       </div>
+
+      <!-- Icona per creare un nuovo gruppo o chat -->
       <img 
         class="new-group-icon" 
         src="https://cdn-icons-png.flaticon.com/512/1828/1828817.png" 
         alt="Crea nuovo gruppo" 
         @click="toggleMenu"
     />
+
+    <!-- Menu per la creazione di nuove chat e gruppi, visibile solo se showMenu è true -->
     <div v-if="showMenu" class="menu">
         <button @click="createNewGroup">Crea Nuovo Gruppo</button>
         <button @click="newChat">Nuova Chat</button>
       </div>      
     </div>
+
+    <!-- Lista delle chat filtrate -->
     <ul class="chat-list">
       <li v-for="chat in filteredChats" :key="chat.id" @click="goToChat(chat)">
         <div class="chat-item">
+
+          <!-- Icona dell'utente o del gruppo -->
           <img class="utente-icon" src="https://static.vecteezy.com/ti/vettori-gratis/p3/24191738-profilo-icona-o-simbolo-nel-rosa-e-blu-colore-vettoriale.jpg" alt="utente-icon">
+           <!-- Informazioni della chat -->
           <div class="chat-info">
+            <!-- Nome della chat -->
             <h2>{{ chat.name }}</h2>
+            <!-- Ultimo messaggio della chat -->
             <p>{{ chat.lastMessage }}</p>
           </div>
         </div>
@@ -46,11 +59,11 @@ export default {
     name: 'ChatList',
     data() {
       return {
-        chats: [],
-        users: [],
-        filteredChats: [],
-        searchQuery: '',
-        showMenu: false
+      chats: [], // Array per memorizzare le chat
+      users: [], // Array per memorizzare gli utenti
+      filteredChats: [], // Array per memorizzare le chat filtrate
+      searchQuery: '', // Stringa di ricerca per filtrare le chat
+      showMenu: false // Booleano per mostrare o nascondere il menu
       };
     },
 
@@ -63,7 +76,7 @@ export default {
 
     methods: {
 
-    
+    // Chiamata al backend per recuperare la lista delle chat
       async fetchChats() {
       try {
         const response = await axios.get('/api/chats');
@@ -74,13 +87,14 @@ export default {
           type: chat.type,
           participantIds: chat.participantIds
         }));
-        this.updatePrivateChatNames();
-        this.filterChats(); // Filtra i dati appena recuperati
+        this.updatePrivateChatNames(); // Aggiorna i nomi delle chat private
+        this.filterChats(); // Filtra le chat basate sulla query di ricerca
       } catch (error) {
         console.error('Errore nel recupero dei dati dal DB:', error);
       }
     },
     
+    // Chiamata al backend per recupera la lista degli utenti 
     async fetchUsers() {
       try {
         const response = await axios.get('/api/users');
@@ -93,6 +107,7 @@ export default {
       }
     },
     
+    // Aggiorna i nomi delle chat private con i nomi degli utenti
     updatePrivateChatNames() {
       this.chats.forEach(chat => {
     if (chat.type === 'private' && chat.participantIds.length > 0) {
@@ -101,6 +116,7 @@ export default {
     });
   },
     
+   // Naviga verso la chat selezionata
     goToChat(chat) {
       if (chat.type === 'private') {
         const participantName = this.users[chat.participantIds[0]] || 'Nome sconosciuto';
@@ -110,6 +126,7 @@ export default {
       }
     },
 
+     // Filtra le chat in base alla query di ricerca
      filterChats() {
       const query = this.searchQuery.toLowerCase();
       this.filteredChats = this.chats.filter(chat => 
@@ -117,14 +134,18 @@ export default {
       );
     },
 
+    // Naviga verso la pagina di creazione di un nuovo gruppo
     createNewGroup() {
-      // Naviga verso la pagina di creazione di un nuovo gruppo
+      
       this.$router.push({ name: 'crea-nuovo-gruppo' });
     },
 
+    // Naviga verso la pagina di selezione utente per una nuova chat vuota con un nuovo utente
     newChat() {
       this.$router.push({ name: 'seleziona-utente' });
     },
+
+    // Mostra o nasconde il menu per creare un nuovo gruppo o una nuova chat
     toggleMenu() {
       this.showMenu = !this.showMenu;
     }
@@ -134,6 +155,7 @@ export default {
   
   <style scoped>
 
+/* Contenitore principale della lista chat */
 .chat-list-container {
   height: 100vh;
   width: 100vw;
@@ -154,6 +176,7 @@ export default {
  
 }
 
+/* Intestazione della pagina chat */
 .header {
   display: flex;
   align-items: center;
@@ -162,36 +185,40 @@ export default {
   box-sizing: border-box;
 }
 
+/* Titolo della sezione chat */
 .nome {
   color: #ffffff;
   font-size: 50px;
   font-weight: bold;
-  margin: 0; /* Rimuove il margine per un allineamento preciso */
-  margin-right: 20px; /* Spazio tra il titolo e la barra di ricerca */
+  margin: 0; 
+  margin-right: 20px; 
 }
 
+/* Barra di ricerca per le chat */
 .search-bar {
-  flex: 1; /* Occupa tutto lo spazio rimanente a destra del titolo */
+  flex: 1; 
 }
 
 .search-bar input {
-  width: 100%; /* Occupa tutta la larghezza disponibile */
+  width: 100%; 
   padding: 10px;
   background-color: #eabccd;
-  border-radius: 25px; /* Arrotonda i bordi dell'input */
-  border: 5px solid #0a3665; /* Bordo dell'input */
-  box-sizing: border-box; /* Includi padding e border nella larghezza totale */
+  border-radius: 25px; 
+  border: 5px solid #0a3665; 
+  box-sizing: border-box; 
 }
 
+/* Stile lista delle chat */
 .chat-list {
   list-style-type: none;
   padding: 0;
   margin: 0;
   width: 100%;
-  max-width: 600px; /* Larghezza massima della lista delle chat */
-  margin: 0 auto; /* Centra orizzontalmente */
+  max-width: 600px; 
+  margin: 0 auto; 
 }
 
+/* Elemento della chat */
 .chat-item {
   display: flex;
   align-items: center;
@@ -202,37 +229,42 @@ export default {
   cursor: pointer;
 }
 
+/* Icona dell'utente */
 .utente-icon {
   width: 50px;
   height: 50px;
-  border-radius: 50%; /* Arrotonda i bordi dell'icona dell'utente */
+  border-radius: 50%; 
   margin-right: 10px;
 }
 
+/* Informazioni della chat: nome della chat (utente o di gruppo) */
 .chat-info h2 {
   margin: 0;
   font-size: 18px;
 }
 
+/* Informazioni della chat: stile dell'ultimo messaggio mandato/ricevuto */
 .chat-info p {
   margin: 0;
   color: #888;
 }
 
-/* Colore del placeholder */
+/* Stile del placeholder 'cerca chat...' nella barra di ricerca */
 .search-bar input::placeholder {
   color: #0a3665; 
   
 }
 
+/* Icona per creare nuovi gruppi e chat */
 .new-group-icon {
-  width: 40px; /* Larghezza dell'icona */
-  height: 40px; /* Altezza dell'icona */
-  cursor: pointer; /* Mostra il cursore a forma di mano quando si passa sopra l'icona */
-  margin-left: 20px; /* Spazio tra l'icona e la barra di ricerca */
+  width: 40px; 
+  height: 40px; 
+  cursor: pointer; 
+  margin-left: 20px; 
   
 }
 
+/* Menu per la creazione di nuovi gruppi e chat */
 .menu {
   position: absolute;
   right: 20px;
@@ -246,6 +278,7 @@ export default {
   z-index: 1000;
 }
 
+/* Pulsanti del menu */
 .menu button {
   padding: 10px 20px;
   background-color: #eabccd;; /* Rosa */
@@ -258,8 +291,10 @@ export default {
   
 }
 
+
+/* Colore del pulsante al passaggio del mouse */
 .menu button:hover {
-  background-color: #f97daa;; /* Colore rosa intenso leggermente più scuro per l'hover */
+  background-color: #f97daa;; 
 }
 
 </style>
