@@ -96,22 +96,20 @@ import axios from 'axios';
   // Definizione dei dati della componente
     data() {
       return {
-        phoneNumber: '', // proprietà per il numero di cellulare
-        userName: '', // Nome dell'utente da recuperare dal backend
+        userName: this.$route.params.chatName, // Nome dell'utente da recuperare dal backend
         // Array di messaggi 
         messages: [],
         // Nuovo messaggio inserito dall'utente
         newMessage: '',
         // Flag per mostrare o nascondere le opzioni aggiuntive
         showAdditionalOptions: false,
-        chatId: this.$route.params.chatId
-        
+        // contiene info dettagliate sull'utente (nel caso si vogliano mostrare)
+        member = '';
       };
     },
 
     async created() {
-    await this.fetchUserData();
-    await this.fetchMessages();
+     await this.fetchChatData();
   },
 
 
@@ -146,27 +144,18 @@ import axios from 'axios';
     return date.toLocaleDateString(undefined, options); // Formatta la data come desiderato
   },
 
-  async fetchUserData() {
+  // recupera i dati dalla chat (in questo caso privata)
+  async fetchChatData() {
+   /*
+     in quando l'array messages fa parte dell'oggetto chat
+     le informazioni della chat e i messaggi vengono forniti insieme!!
+   */
   try {
-    const response = await axios.get(`/api/users/${this.$route.params.userId}`);
-    this.userName = response.data.name;
-    this.phoneNumber = response.data.phoneNumber;
+    const response = await axios.get(`/api/chats/${this.userName}`);
+    this.messages = response.data.messages;
+    this.member = response.data.members[0]; // qui sono contenuti dettagli sull'utente (nome, cognome, data di nascita...)
   } catch (error) {
     console.error('Errore nel recupero dei dati dell\'utente:', error);
-  }
-},
-
-
-// Questo metodo fa una richiesta al backend per ottenere tutti i messaggi della chat
-async fetchMessages() {
-  try {
-    const response = await axios.get(`/api/chats/${this.chatId}/messages`);
-    this.messages = response.data.messages.map(message => ({
-      ...message,
-      isExpanded: false
-    }));
-  } catch (error) {
-    console.error('Errore nel recupero dei messaggi:', error);
   }
 },
 
