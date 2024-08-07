@@ -32,7 +32,7 @@
 
     <!-- Lista delle chat filtrate -->
     <ul class="chat-list">
-      <li v-for="chat in filteredChats" :key="chat.id" @click="goToChat(chat)">
+      <li v-for="chat in filteredChats" :key="chat.name" @click="goToChat(chat)">
         <div class="chat-item">
 
           <!-- Icona dell'utente o del gruppo -->
@@ -68,61 +68,38 @@ export default {
     },
 
     created() {
-    // Recupera gli utenti e le chat quando il componente è creato
-    this.fetchUsers().then(() => {
-      this.fetchChats();
-    });
+    // Recupera le chat quando il componente è creato
+    this.fetchChats();
   },
 
     methods: {
 
-    // Chiamata al backend per recuperare la lista delle chat
+    // Chiamata al backend per recuperare la lista delle chat (utenti e gruppi sono considerati insieme)
       async fetchChats() {
+        /*
+          recupera la lista completa e formattata delle chat
+          non è richiesta nessun'altra funzione
+        */
       try {
         const response = await axios.get('/api/chats');
         this.chats = response.data.map(chat => ({
-          id: chat.id,
-          name: chat.name,
+          name: chat.name, // il nome della chat è univoco e usato come id
           lastMessage: chat.lastMessage,
           type: chat.type,
-          participantIds: chat.participantIds
         }));
-        this.updatePrivateChatNames(); // Aggiorna i nomi delle chat private
-        this.filterChats(); // Filtra le chat basate sulla query di ricerca
       } catch (error) {
         console.error('Errore nel recupero dei dati dal DB:', error);
       }
     },
-    
-    // Chiamata al backend per recupera la lista degli utenti 
-    async fetchUsers() {
-      try {
-        const response = await axios.get('/api/users');
-        this.users = response.data.reduce((acc, user) => {
-          acc[user.id] = user.name;
-          return acc;
-        }, {});
-      } catch (error) {
-        console.error('Errore nel recupero degli utenti:', error);
-      }
-    },
-    
-    // Aggiorna i nomi delle chat private con i nomi degli utenti
-    updatePrivateChatNames() {
-      this.chats.forEach(chat => {
-    if (chat.type === 'private' && chat.participantIds.length > 0) {
-      chat.name = this.users[chat.participantIds[0]] || 'Nome sconosciuto'; // Imposta il nome dell'utente per le chat private
-    }
-    });
-  },
+  
     
    // Naviga verso la chat selezionata
     goToChat(chat) {
       if (chat.type === 'private') {
-        const participantName = this.users[chat.participantIds[0]] || 'Nome sconosciuto';
-        this.$router.push({ name: 'chat-privata', params: { id: chat.id, userName: participantName } });
+        const memberName = this.users[chat.name] || 'Nome sconosciuto';
+        this.$router.push({ name: 'chat-privata', params: { id: chat.name, userName: memberName } });
       } else if (chat.type === 'group') {
-        this.$router.push({ name: 'chat-gruppo', params: { id: chat.id } });
+        this.$router.push({ name: 'chat-gruppo', params: { id: chat.name } });
       }
     },
 
@@ -136,7 +113,6 @@ export default {
 
     // Naviga verso la pagina di creazione di un nuovo gruppo
     createNewGroup() {
-      
       this.$router.push({ name: 'crea-nuovo-gruppo' });
     },
 
