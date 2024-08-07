@@ -42,22 +42,17 @@
           <!-- Titolo del modale -->
           <h2 class="membri">Membri Gruppo</h2>
           <!-- Pulsante per aprire il modale di aggiunta partecipanti -->
-          <button class="add-participant-btn" @click="openAddParticipantModal">+</button>
+          <button class="add-member-btn" @click="openAddMemberModal">+</button>
         </div>
-        <input
-          type="text"
-          v-model="searchQueryParticipants"
-          placeholder="Cerca partecipante..."
-          class="search-bar"
-        />
-        <div class="participants-list">
+        
+        <div class="members-list">
         <ul>
            <!-- Iterazione sui partecipanti per mostrarli in una lista -->
-          <li v-for="participant in filteredParticipants" :key="participant.id" class="participant-item">
+          <li v-for="member in members" :key="member.id" class="member-item">
               <!-- RouterLink per aprire la chat privata con il partecipante selezionato -->
-              <router-link :to="{ name: 'chat-privata', params: { participantId: participant.id }}" class="participant-item">{{ participant.name }}</router-link>
+              <router-link :to="{ name: 'chat-privata', params: { memberUsername: member.username }}" class="member-item">{{ member.username }}</router-link>
              <!-- Pulsante per rimuovere il partecipante -->
-            <button class="remove-btn" @click="removeParticipant(participant.id)">Rimuovi</button>
+            <button class="remove-btn" @click="removeMember(member.username)">Rimuovi</button>
           </li>
         </ul>
       </div>
@@ -67,30 +62,30 @@
     </div>
 
     <!-- Modale per aggiunta partecipanti -->
-    <div v-if="isAddParticipantModalOpen" class="modal">
+    <div v-if="isAddMemberModalOpen" class="modal">
       <div class="modal-content">
         <h2 class="aggiungi">Aggiungi membri</h2>
 
       <!-- Barra di ricerca -->
       <input
           type="text"
-          v-model="searchQueryUsers"
+          v-model="username"
           placeholder="Cerca utente..."
           class="search-bar"
-          @input="searchUsers"
+          @input="fetchAvailableUsers"
       />
         <div class="available-users-list">
         <ul>
           <!-- Iterazione sugli utenti disponibili per mostrarli in una lista -->
-          <li v-for="user in filteredUsers" :key="user.id" class="participant-item">
-            {{ user.name }}
+          <li v-for="user in this.availableUsers" :key="user.id" class="member-item">
+            {{ user.username }}
             <!-- Pulsante per aggiungere un partecipante -->
-            <button class="add-btn" @click="addParticipant(user.id)">Aggiungi</button>
+            <button class="add-btn" @click="addMember(user.username)">Aggiungi</button>
           </li>
         </ul>
       </div>
          <!-- Pulsante per chiudere il modale -->
-        <button class="chiudi" @click="closeAddParticipantModal">Chiudi</button>
+        <button class="chiudi" @click="closeAddMemberModal">Chiudi</button>
       </div>
     </div>
 
@@ -108,46 +103,28 @@ export default {
 data() {
   return {
 
-    participants: [], // Lista dei partecipanti al gruppo
+      members: [], // Lista dei partecipanti al gruppo
       availableUsers: [], // Lista degli utenti disponibili per essere aggiunti al gruppo
       isGroupInfoModalOpen: false, // Stato del modale con le informazioni del gruppo
-      isAddParticipantModalOpen: false, // Stato del modale per aggiungere partecipanti
+      isAddMemberModalOpen: false, // Stato del modale per aggiungere partecipanti
       group: {
+        type: '',
         description: '', // Descrizione del gruppo
         id: '', // ID del gruppo
-        title: '' // Titolo del gruppo
+        name: '' // Titolo del gruppo
       },
       isEditing: false, // Stato della modalità di modifica della descrizione
       newDescription: '', // Nuova descrizione del gruppo in fase di modifica
       searchQueryUsers: '', // Query di ricerca per gli utenti disponibili
-      searchQueryParticipants: '' // Query di ricerca per i partecipanti
+      searchQueryMembers: '' // Query di ricerca per i partecipanti
    
   };
 },
 
-computed: {
-
-   // Filtra i partecipanti in base alla query di ricerca
-  filteredParticipants() {
-    return this.participants.filter(participant =>
-      participant.name.toLowerCase().includes(this.searchQueryParticipants.toLowerCase())
-    );
-  },
-
-  // Filtra gli utenti disponibili in base alla query di ricerca
-    filteredUsers() {
-    return this.availableUsers.filter(user =>
-      user.name.toLowerCase().includes(this.searchQueryUsers.toLowerCase())
-    );
-  },
-
-},
-
 
 created() {
-  // Recupera i partecipanti, gli utenti disponibili e le info quando il componente viene creato
-  this.fetchParticipants();
-  this.fetchAvailableUsers();
+  // Recupera i partecipanti e le info quando il componente viene creato
+  this.fetchMembers();
   this.fetchGroupInfo();
 },
 
@@ -164,19 +141,19 @@ methods: {
     },
 
   // Recupera i partecipanti del gruppo
-    async fetchParticipants() {
+    async fetchMembers() {
       try {
-        const response = await axios.get(`/api/chats/${this.group.id}/participants`);
-        this.participants = response.data;
+        const response = await axios.get(`/api/chats/${this.group.id}/members`);
+        this.members = response.data;
       } catch (error) {
-        console.error('Error fetching participants:', error);
+        console.error('Error fetching members:', error);
       }
     },
 
     // Recupera gli utenti disponibili
     async fetchAvailableUsers() {
       try {
-        const response = await axios.get('/api/available-users');
+        const response = await axios.get('/api/available-users/');
         this.availableUsers = response.data;
       } catch (error) {
         console.error('Error fetching available users:', error);
@@ -195,30 +172,48 @@ methods: {
   },
 
   // Apertura del modale di aggiunta partecipanti
-  openAddParticipantModal() {
-    this.isAddParticipantModalOpen = true;
+  openAddMemberModal() {
+    this.isAddMemberModalOpen = true;
   },
 
-  // Chiusura del modale di aggiunta partecipanti
-  closeAddParticipantModal() {
-    this.isAddParticipantModalOpen = false;
+  // Chiusura del modale di aggiunta membersi
+  closeAddMemberModal() {
+    this.isAddMemberModalOpen = false;
   },
 
-  // Rimuove un partecipante dal gruppo
-  async removeParticipant(participantId) {
+  // Rimuove un memberse dal gruppo
+  async removeMember(username) {
+    /*
+      Input:
+            userId:  id dell'utente da rimuovere
+
+      - recupera l'utente dalla lista membri
+      - manda l'utente al BE
+      - rimuove l'utente dalla lista membri sul FE
+    */
     try {
-        await axios.post('/api/remove-participant', { participantId });
-        this.participants = this.participants.filter(participant => participant.id !== participantId);
+        const memberToRemove = this.members.find(member => member.username === username);
+        await axios.post('/api/remove-member', memberToRemove);
+        this.members = this.members.filter(member => member.username !== username);
     } catch (error) {
-        console.error('Errore nella rimozione del partecipante:', error);
+        console.error('Errore nella rimozione del memberse:', error);
     }
 },
 
 // Aggiunge un partecipante al gruppo
-async addParticipant(userId) {
+async addMember(username) {
+  /*
+    Input:
+          userId:    id dell'utente da aggiungere
+
+    - Cerca l'utente nella lista di utenti disponibili
+    - passa l'oggetto utente trovato al BE
+    - aggiunge l'oggetto trovato alla lista dei membri
+  */
     try {
-        await axios.post('/api/add-participant', { userId });
-        this.participants.push(this.availableUsers.find(user => user.id === userId));
+      const memberToAdd = this.availableUsers.find(user => user.username === username);
+      await axios.post('/api/add-member', memberToAdd);
+      this.members.push(memberToAdd);
     } catch (error) {
         console.error('Errore nell\'aggiunta del partecipante:', error);
     }
@@ -370,7 +365,7 @@ async addParticipant(userId) {
 }
 
 /* Modifiche di stile per i nomi dei partecipanti */
-.participant-item {
+.member-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -403,7 +398,7 @@ async addParticipant(userId) {
 }
 
 /* Modifiche di stile sul pulsante "+" */
-.add-participant-btn {
+.add-member-btn {
   background: none;
   border: none;
   font-size: 30px;
@@ -424,7 +419,7 @@ async addParticipant(userId) {
 }
 
 /* Stile per permettere lo scroll della lista dei partecipanti */
-.participants-list {
+.members-list {
   max-height: 200px; 
   overflow-y: auto;  
   margin-top: 10px;
