@@ -98,7 +98,11 @@
     // Definizione dei dati della componente
       data() {
         return {
-  
+            chat: {
+                name = this.$route.params.chatName,
+                creationDate = '';
+            },
+
           // Array di messaggi iniziali
           messages: [],
           // Nuovo messaggio inserito dall'utente
@@ -107,14 +111,13 @@
           showAdditionalOptions: false,
           // Nome del gruppo
           groupName: '',
-          users: {} 
+          members: []
           
         };
       },
       
         async created() {
-        await this.fetchMessages(); // Carica i messaggi quando il componente viene creato
-        await this.fetchGroupName(); // Carica il nome del gruppo
+        await this.fetchChatData();
       },
 
 
@@ -241,41 +244,19 @@
         this.$refs.fileInput.click();
       },
 
-      async fetchMessages() {
+      async fetchChatData() {
       try {
-      const response = await axios.get(`/api/chats/${this.chatId}/messages`);
-      this.messages = response.data;
-
-    // Supponiamo che ci sia un endpoint per ottenere i dettagli degli utenti
-      const usersResponse = await axios.get('/api/users');
-      this.users = usersResponse.data.reduce((acc, user) => {
-      acc[user.id] = user.name;
-      return acc;
-    }, {});
-  } catch (error) {
-    console.error('Errore durante il recupero dei messaggi:', error);
-  }
-},
-
-
-    async fetchGroupName() {
-        try {
-          const response = await axios.get(`/api/groups/${this.groupId}`);
-          this.groupName = response.data.name;
-        } catch (error) {
-          console.error('Errore durante il recupero del nome del gruppo:', error);
-        }
+        const response = await axios.get(`/api/chats/${this.chat.name}`);
+        this.messages = response.data.messages;
+        this.memebers = response.data.members;
+        this.chat.creationDate = response.data.creationDate;
+    
+      } catch (error) {
+        console.error('Errore durante il recupero dei messaggi:', error);
       }
-    },
-
-    computed: {
-      chatId() {
-        return this.$route.params.chatId; // Ottieni l'ID della chat dalla route
-      },
-      groupId() {
-        return this.$route.params.groupId; 
     }
-    }
+},
+        
   };
   
   </script>
