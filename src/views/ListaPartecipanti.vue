@@ -15,12 +15,12 @@
       <img class="group-icon" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8GaWwlQtPhY4LVhaahYOB8wS4qTmGO6sB_g&s alt="group-icon">
       <div class="group-details">
         <!-- Titolo dell'evento -->
-          <h2 class="event-title">{{ group.title || 'Titolo Evento' }}</h2>
+          <h2 class="event-title">{{ this.chat.name || 'Titolo Evento' }}</h2>
             
         <!-- Descrizione del gruppo -->
         <div class="description-container">
           <!-- Visualizzazione della descrizione -->
-          <p v-if="!isEditing" class="event-description">{{ group.description || 'Descrizione non disponibile' }}</p>
+          <p v-if="!isEditing" class="event-description">{{ this.chat.description || 'Descrizione non disponibile' }}</p>
         
           <!-- Modifica della descrizione -->
           <div v-if="isEditing">
@@ -48,7 +48,7 @@
         <div class="members-list">
         <ul>
            <!-- Iterazione sui partecipanti per mostrarli in una lista -->
-          <li v-for="member in members" :key="member.id" class="member-item">
+          <li v-for="member in members" :key="member.username" class="member-item">
               <!-- RouterLink per aprire la chat privata con il partecipante selezionato -->
               <router-link :to="{ name: 'chat-privata', params: { memberUsername: member.username }}" class="member-item">{{ member.username }}</router-link>
              <!-- Pulsante per rimuovere il partecipante -->
@@ -102,16 +102,17 @@ import axios from 'axios';
 export default {
 data() {
   return {
-
-      members: [], // Lista dei partecipanti al gruppo
+    
       availableUsers: [], // Lista degli utenti disponibili per essere aggiunti al gruppo
       isGroupInfoModalOpen: false, // Stato del modale con le informazioni del gruppo
       isAddMemberModalOpen: false, // Stato del modale per aggiungere partecipanti
-      group: {
-        type: '',
-        description: '', // Descrizione del gruppo
-        id: '', // ID del gruppo
-        name: '' // Titolo del gruppo
+      chat: {
+        name: this.$route.params.chatName, // Titolo del gruppo
+        members: this.$route.params.chatMembers, // Lista dei partecipanti al gruppo
+        type: this.$route.params.chatType,
+        creationdate: this.$route.params.chatCreationdate,
+  
+        description: '', // PER ORA LA DESCZIONE NON LA PASSO COME PARAMETRO PERCHÉ VA GESTITA IN UN ALTRO MODO (DA VALUTARE)
       },
       isEditing: false, // Stato della modalità di modifica della descrizione
       newDescription: '', // Nuova descrizione del gruppo in fase di modifica
@@ -122,38 +123,14 @@ data() {
 },
 
 
-created() {
-  // Recupera i partecipanti e le info quando il componente viene creato
-  this.fetchMembers();
-  this.fetchGroupInfo();
-},
 
 methods: {
+
   
-  // Recupera le informazioni del gruppo
-  async fetchGroupInfo() {
-      try {
-        const response = await axios.get(`/api/groups/${this.group.id}`);
-        this.group = response.data;
-      } catch (error) {
-        console.error('Errore nel recupero delle informazioni del gruppo:', error);
-      }
-    },
-
-  // Recupera i partecipanti del gruppo
-    async fetchMembers() {
-      try {
-        const response = await axios.get(`/api/chats/${this.group.id}/members`);
-        this.members = response.data;
-      } catch (error) {
-        console.error('Error fetching members:', error);
-      }
-    },
-
     // Recupera gli utenti disponibili
     async fetchAvailableUsers() {
       try {
-        const response = await axios.get('/api/available-users/');
+        const response = await axios.get('/api/available-users');
         this.availableUsers = response.data;
       } catch (error) {
         console.error('Error fetching available users:', error);
@@ -185,8 +162,9 @@ methods: {
   async removeMember(username) {
     /*
       Input:
-            userId:  id dell'utente da rimuovere
-
+            username:  username dell'utente da rimuovere
+                       gli utenti hanno un username univoco --> l'username è il loro id 
+                        
       - recupera l'utente dalla lista membri
       - manda l'utente al BE
       - rimuove l'utente dalla lista membri sul FE
@@ -204,7 +182,8 @@ methods: {
 async addMember(username) {
   /*
     Input:
-          userId:    id dell'utente da aggiungere
+          username:  username dell'utente da aggiungere
+                       gli utenti hanno un username univoco --> l'username è il loro id 
 
     - Cerca l'utente nella lista di utenti disponibili
     - passa l'oggetto utente trovato al BE
@@ -230,7 +209,7 @@ async addMember(username) {
     },
     
 
-// Salva la nuova descrizione
+    // Salva la nuova descrizione --> IN FASE DI VALUTAZIONE
     async updateDescription() {
       try {
         await axios.put(`/api/groups/${this.group.id}`, {
