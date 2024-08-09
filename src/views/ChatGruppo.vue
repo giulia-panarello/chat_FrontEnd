@@ -98,21 +98,19 @@
     // Definizione dei dati della componente
       data() {
         return {
+            // tutte le info riguardo la chat
             chat: {
-                name = this.$route.params.chatName,
-                creationDate = '';
+                name = this.$route.params.chatName, // prende il nome della chat dalla lista chat
+                creationDate = '',
+                // Array di messaggi iniziali
+                messages: [],
+                members: []
             },
-
-          // Array di messaggi iniziali
-          messages: [],
-          // Nuovo messaggio inserito dall'utente
-          newMessage: '',
-          // Flag per mostrare o nascondere le opzioni aggiuntive
-          showAdditionalOptions: false,
-          // Nome del gruppo
-          groupName: '',
-          members: []
-          
+            
+            // Flag per mostrare o nascondere le opzioni aggiuntive
+            showAdditionalOptions: false,
+            // Nuovo messaggio inserito dall'utente
+            newMessage: ''
         };
       },
       
@@ -244,11 +242,12 @@
         this.$refs.fileInput.click();
       },
 
+      // recupera le info della chat dal BE  
       async fetchChatData() {
       try {
         const response = await axios.get(`/api/chats/${this.chat.name}`);
-        this.messages = response.data.messages;
-        this.memebers = response.data.members;
+        this.chat.messages = response.data.messages;
+        this.chat.memebers = response.data.members;
         this.chat.creationDate = response.data.creationDate;
     
       } catch (error) {
