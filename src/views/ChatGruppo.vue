@@ -18,7 +18,7 @@
             <font-awesome-icon icon="arrow-left" class="icon" />
           </RouterLink>
         </nav>
-         <router-link to="/lista-partecipanti" > <h1 class="titolo" >{{ groupName }}</h1> </router-link>
+            <button @click="gtoToListaPartecipanti"><h1 class="titolo" >{{ this.chat.name }}</h1></button>
        
         </div>
       </div>
@@ -104,7 +104,8 @@
                 creationDate = '',
                 // Array di messaggi iniziali
                 messages: [],
-                members: []
+                members: [],
+                type: ''
             },
             
             // Flag per mostrare o nascondere le opzioni aggiuntive
@@ -249,11 +250,31 @@
         this.chat.messages = response.data.messages;
         this.chat.memebers = response.data.members;
         this.chat.creationDate = response.data.creationDate;
+        this.chat.type = response.data.type;
     
       } catch (error) {
         console.error('Errore durante il recupero dei messaggi:', error);
       }
-    }
+    },
+
+    // naviga fino alla pagina della lista partecipanti    
+    async gtoToListaPartecipanti(){
+        /*
+            chiamo un metodo che permette di passare all'altra pagina informazioni già in tuo possesso in questa
+            in questo modo non devi fare due chiamate al BE!
+        */
+        try{
+            this.$router.push({ name: '/lista-partecipanti', params: { 
+                                                                        chatName: this.chat.name, 
+                                                                        chatMembers: this.chat.members, 
+                                                                        chatCreationDate: this.chat.creationDate,
+                                                                        chatType: this.chat.type
+                                                                    } 
+                              });
+        } catch(error){
+            console.error('Errore durante l'apertura della lista partecipanti:', error);
+        }
+    },
 },
         
   };
