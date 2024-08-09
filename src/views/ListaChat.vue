@@ -60,7 +60,6 @@ export default {
     data() {
       return {
       chats: [], // Array per memorizzare le chat
-      users: [], // Array per memorizzare gli utenti
       filteredChats: [], // Array per memorizzare le chat filtrate
       searchQuery: '', // Stringa di ricerca per filtrare le chat
       showMenu: false // Booleano per mostrare o nascondere il menu
@@ -97,9 +96,9 @@ export default {
     goToChat(chat) {
       if (chat.type === 'private') {
         const memberName = this.users[chat.name] || 'Nome sconosciuto';
-        this.$router.push({ name: 'chat-privata', params: { id: chat.name, userName: memberName } });
+        this.$router.push({ name: 'chat-privata', params: { chatName: chat.name} });
       } else if (chat.type === 'group') {
-        this.$router.push({ name: 'chat-gruppo', params: { id: chat.name } });
+        this.$router.push({ name: 'chat-gruppo', params: { chatName: chat.name } });
       }
     },
 
