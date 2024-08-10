@@ -80,7 +80,7 @@
           <li v-for="user in this.availableUsers" :key="user.id" class="member-item">
             {{ user.username }}
             <!-- Pulsante per aggiungere un partecipante -->
-            <button class="add-btn" @click="addMember(user.username)">Aggiungi</button>
+            <button class="add-btn" @click="addMember(user)">Aggiungi</button>
           </li>
         </ul>
       </div>
@@ -128,9 +128,9 @@ methods: {
 
   
     // Recupera gli utenti disponibili
-    async fetchAvailableUsers() {
+    async fetchAvailableUsers(username) {
       try {
-        const response = await axios.get('/api/available-users');
+        const response = await axios.get('/api/available-users', username);
         this.availableUsers = response.data;
       } catch (error) {
         console.error('Error fetching available users:', error);
@@ -179,7 +179,7 @@ methods: {
 },
 
 // Aggiunge un partecipante al gruppo
-async addMember(username) {
+async addMember(user) {
   /*
     Input:
           username:  username dell'utente da aggiungere
@@ -191,7 +191,7 @@ async addMember(username) {
   */
     try {
       const memberToAdd = this.availableUsers.find(user => user.username === username);
-      await axios.post('/api/add-member', memberToAdd);
+      await axios.post('/api/add-member', memberToAdd, this.chat);
       this.members.push(memberToAdd);
     } catch (error) {
         console.error('Errore nell\'aggiunta del partecipante:', error);
