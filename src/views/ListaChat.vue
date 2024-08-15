@@ -67,29 +67,31 @@ export default {
     },
 
     created() {
-    // Recupera le chat quando il componente è creato
-    this.fetchChats();
-  },
+      // Recupera le chat quando il componente è creato
+      this.fetchChats();
+    },
 
     methods: {
 
-    // Chiamata al backend per recuperare la lista delle chat (utenti e gruppi sono considerati insieme)
+      // Chiamata al backend per recuperare la lista delle chat (utenti e gruppi sono considerati insieme)
       async fetchChats() {
         /*
           recupera la lista completa e formattata delle chat
           non è richiesta nessun'altra funzione
         */
-      try {
-        const response = await axios.get('/api/chats');
-        this.chats = response.data.map(chat => ({
-          name: chat.name, // il nome della chat è univoco e usato come id
-          lastMessage: chat.lastMessage,
-          type: chat.type,
-        }));
-      } catch (error) {
-        console.error('Errore nel recupero dei dati dal DB:', error);
-      }
-    },
+        try {
+          const response = await axios.get('http://localhost:8080/api/chats');
+          console.log(response.data)
+          this.chats = response.data.map(chat => ({
+            name: chat.name, // il nome della chat è univoco e usato come id
+            type: chat.type,
+            lastMessage: chat.lastMessage,
+          }));
+          this.filteredChats = this.chats;
+        } catch (error) {
+            console.error('Errore nel recupero dei dati dal DB:', error);
+        }
+      },
   
     
    // Naviga verso la chat selezionata

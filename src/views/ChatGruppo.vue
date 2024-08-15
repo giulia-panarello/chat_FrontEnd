@@ -11,52 +11,52 @@
         <div class="chat-header">
   
           <!-- Icona del gruppo -->
-          <img class="group-icon" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8GaWwlQtPhY4LVhaahYOB8wS4qTmGO6sB_g&s alt="group-icon">
+          <img class="group-icon" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8GaWwlQtPhY4LVhaahYOB8wS4qTmGO6sB_g&s" alt=group-icon>
          <!-- Titolo del gruppo -->
-         <nav>        
-          <RouterLink to="/" class="back-link"> 
-            <font-awesome-icon icon="arrow-left" class="icon" />
-          </RouterLink>
-        </nav>
+          <nav>
+            <RouterLink to="/" class="back-link">
+              <font-awesome-icon icon="arrow-left" class="icon" />
+            </RouterLink>
+          </nav>
             <button @click="gtoToListaPartecipanti"><h1 class="titolo" >{{ this.chat.name }}</h1></button>
        
         </div>
       </div>
   
       
-       <!-- Contenitore della data -->
+       <!-- Contenitore della data
         <div class="message-date-container">
-          <div class="message-date-header">{{ formatDate(messages[messages.length - 1].timestamp) }}</div>
-        </div>
+          <div class="message-date-header">{{ formatDate(chat.messages[chat.messages.content.length - 1].timestamp) }}</div>
+        </div> -->
   
     
       <!-- Contenitore dei messaggi di chat -->
       <div class="chat-messages">
-  
      
-      <!-- Iterazione attraverso i messaggi -->
-        <div v-for="(message, index) in messages" :key="index" :class="{'sent-message': message.senderId === 'Tu', 'received-message': message.senderId !== 'Tu'}">
+        <!-- Iterazione attraverso i messaggi -->
+        <div v-for="message in this.chat.messages" :class="{'sent-message': message.sender === 'Tu', 'received-message': message.sender !== 'Tu'}">
         <!-- Icona del mittente -->
           <div class="user-icon">
             <i class="fas fa-user-circle user icon"></i>
           </div>
   
           <!-- Nome del mittente -->
-          <div class="sender">{{ users[message.senderId] || 'Unknown' }}</div>
+          <div class="sender">{{ (this.chat.members.find(member => member.username === message.sender) || {}).name || 'Unknown' }}</div>
   
-        <!-- Contenuto del messaggio -->
-        <div class="message-content">
-          <!-- Se il messaggio è un'immagine, mostra l'anteprima -->
-          <img v-if="message.type === 'image' && !message.isExpanded" :src="message.text" class="message-image" @click="handleMessageClick(message)" />
-          <!-- Se il messaggio è un'immagine espansa, mostra l'immagine ingrandita -->
-          <img v-if="message.type === 'image' && message.isExpanded" :src="message.text" class="expanded-message-image" @click="handleMessageClick(message)" />
+          <!-- Contenuto del messaggio -->
+          <div class="message-content">
+            <!-- Se il messaggio è un'immagine, mostra l'anteprima -->
+            <img v-if="message.type === 'image' && !message.isExpanded" :src="message.text" class="message-image" @click="handleMessageClick(message)" />
+            <!-- Se il messaggio è un'immagine espansa, mostra l'immagine ingrandita -->
+            <img v-if="message.type === 'image' && message.isExpanded" :src="message.text" class="expanded-message-image" @click="handleMessageClick(message)" />
       
         
            <!-- Se il messaggio è di testo, mostra il testo e l'orario -->
-          <div v-if="message.type === 'text'" class="message-content">
-            <div class="text">{{ message.text }}</div>
+            <div v-if="message.type === 'text'" class="message-content">
+              <div class="text">{{ message.text }}</div>
             <div class="timestamp">{{ formatTime(new Date(message.timestamp)) }}</div>
           </div>
+
         </div>
   
         <!-- Overlay per visualizzare l'immagine ingrandita -->
@@ -96,87 +96,85 @@
   export default {
   
     // Definizione dei dati della componente
-      data() {
-        return {
-            // tutte le info riguardo la chat
-            chat: {
-                name = this.$route.params.chatName, // prende il nome della chat dalla lista chat
-                creationDate = '',
-                // Array di messaggi iniziali
-                messages: [],
-                members: [],
-                type: ''
-            },
-            
-            // Flag per mostrare o nascondere le opzioni aggiuntive
-            showAdditionalOptions: false,
-            // Nuovo messaggio inserito dall'utente
-            newMessage: ''
-        };
-      },
+    data() {
+      return {
+        // tutte le info riguardo la chat
+        chat: {
+          name: this.$route.params.chatName, // prende il nome della chat dalla lista chat
+          creationDate: '',
+          messages: [],
+          members: [],
+          type: ''
+        },
+
+        showAdditionalOptions: false,
+        newMessage: ''
+      };
+    },
       
-        async created() {
-        await this.fetchChatData();
-      },
+    created() {
+      this.fetchChatData();
+    },
 
 
     // Definizione dei metodi della componente
     methods: {
   
      
-    // Metodo per ottenere l'ora corrente
-    getCurrentTime() {
-     return new Date();
-    },
+      // Metodo per ottenere l'ora corrente
+      getCurrentTime() {
+       return new Date();
+      },
   
-    // Metodo per ottenere la data corrente formattata
-    getCurrentDate() {
-      const now = new Date();
-      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-      return now.toLocaleDateString(undefined, options); // Restituisci la data formattata
-    },
+      // Metodo per ottenere la data corrente formattata
+      getCurrentDate() {
+        const now = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        return now.toLocaleDateString(undefined, options); // Restituisci la data formattata
+      },
   
-    // Formato dell'orario
-    formatTime(timestamp) {
-          const date = new Date(timestamp);
-          const hours = date.getHours().toString().padStart(2, '0');
-          const minutes = date.getMinutes().toString().padStart(2, '0');
-          return `${hours}:${minutes}`;
-        },
+      // Formato dell'orario
+      formatTime(timestamp) {
+            const date = new Date(timestamp);
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            return `${hours}:${minutes}`;
+      },
   
-    // Metodo per ottenere la data formattata da un timestamp
-    formatDate(timestamp) {
-      const date = new Date(timestamp); // Crea un oggetto Date dal timestamp
-      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-      return date.toLocaleDateString(undefined, options); // Formatta la data come desiderato
-    },
+      // Metodo per ottenere la data formattata da un timestamp
+      formatDate(timestamp) {
+        const date = new Date(timestamp); // Crea un oggetto Date dal timestamp
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        return date.toLocaleDateString(undefined, options); // Formatta la data come desiderato
+      },
   
    
-    // Invia un messaggio di testo al server. Se newMessage non è vuoto, viene creato un oggetto message e inviato tramite axios.post. Dopo l'invio, il messaggio viene aggiunto all'array messages e il campo di input viene svuotato.
-    async sendMessage() {
-      if (this.newMessage.trim() !== '') {
-        const timestamp = this.getCurrentTime();
-        const message = {
-          sender: 'Tu',
-          text: this.newMessage.trim(),
-          timestamp: timestamp,
-          type: 'text',
-        };
+      // Invia un messaggio di testo al server. Se newMessage non è vuoto, viene creato un oggetto message e inviato tramite axios.post. Dopo l'invio, il messaggio viene aggiunto all'array messages e il campo di input viene svuotato.
+      async sendMessage() {
+        if (this.newMessage.trim() !== '') {
+          const timestamp = this.getCurrentTime();
+          const message = {
+            type: 'text', // Assuming all messages are text for now
+            text: this.newMessage.trim(),
+            sender: 'selfuser',
+            timestamp: timestamp,
+            isExpanded: false // Add this property for image expansion
+          };
 
-        try {
-          await axios.post(`/api/chats/${this.chatId}/messages`, message);
-          this.messages.push(message);
-        } catch (error) {
-          console.error('Errore durante l\'invio del messaggio:', error);
+          try {
+            await axios.post(`http://localhost:8080/api/chats/${this.chat.name}/messages`, message);
+            this.messages.push(message);
+          } catch (error) {
+            console.error('Errore durante l\'invio del messaggio:', error);
+          }
+
+          this.newMessage = '';
         }
-
-        this.newMessage = '';
-      }
-    },
+      },
   
       
       // Metodo per gestire il cambio di un file immagine
-        handleFileInputChange(event) {
+      handleFileInputChange(event) {
         const file = event.target.files[0];
         if (file) {
           console.log('Immagine selezionata:', file);
@@ -196,7 +194,24 @@
         }
       }, 
   
-      // Nasconde o mostra il contenitore della data in base al valore del parametro hide. Utilizza querySelector per selezionare l'elemento e classList per aggiungere o rimuovere una classe che gestisce la visibilità.
+
+
+      // Metodo per gestire il clic su un messaggio
+      handleMessageClick(message) {
+        if (message.type === 'image') {
+          // Se il messaggio è un'immagine e non è già espansa, espandilo
+          if (!message.isExpanded) {
+            message.isExpanded = true;
+            this.hideDateContainer(true);
+          } else {
+            // Se il messaggio è già espanso, riducilo
+            message.isExpanded = false;
+            this.hideDateContainer(false);
+          }
+        }
+      },
+        
+      // Metodo per nascondere o mostrare il contenitore della data
       hideDateContainer(hide) {
         const dateContainer = document.querySelector('.message-date-container');
         if (dateContainer) {
@@ -208,71 +223,49 @@
         }
       },
 
-        // Metodo per gestire il clic su un messaggio
-        handleMessageClick(message) {
-          if (message.type === 'image') {
-            // Se il messaggio è un'immagine e non è già espansa, espandilo
-            if (!message.isExpanded) {
-              message.isExpanded = true;
-              this.hideDateContainer(true);
-            } else {
-              // Se il messaggio è già espanso, riducilo
-              message.isExpanded = false;
-              this.hideDateContainer(false);
-            }
-          }
-        },
-        
-        // Metodo per nascondere o mostrare il contenitore della data
-        hideDateContainer(hide) {
-          const dateContainer = document.querySelector('.message-date-container');
-          if (dateContainer) {
-            if (hide) {
-              dateContainer.classList.add('hide-date-container');
-          } else {
-              dateContainer.classList.remove('hide-date-container');
-          }
-        }
-      },
-        // Metodo per attivare o disattivare le opzioni aggiuntive
-        toggleAdditionalOptions() {
+      // Metodo per attivare o disattivare le opzioni aggiuntive
+      toggleAdditionalOptions() {
         this.showAdditionalOptions = !this.showAdditionalOptions;
-        },
+      },
   
-        openImageGallery() {
+      openImageGallery() {
         this.$refs.fileInput.click();
       },
 
       // recupera le info della chat dal BE  
       async fetchChatData() {
-      try {
-        const response = await axios.get(`/api/chats/${this.chat.name}`);
-        this.chat.messages = response.data.messages;
-        this.chat.memebers = response.data.members;
-        this.chat.creationDate = response.data.creationDate;
-        this.chat.type = response.data.type;
-    
-      } catch (error) {
-        console.error('Errore durante il recupero dei messaggi:', error);
-      }
-    },
+        try {
+          const response = await axios.get(`http://localhost:8080/api/chats/${this.chat.name}`);
+          this.chat.type = response.data.type;
+          this.chat.creationDate = response.data.creationDate;
+          console.log("Members:", response.data.members)
+          this.chat.members = response.data.members;
 
-    // naviga fino alla pagina della lista partecipanti    
-    async gtoToListaPartecipanti(){
+          console.log('Messages:', response.data.messages); // Add this line
+          response.data.messages.forEach(message => {
+            this.chat.messages.push({
+              type: 'text', // Assuming all messages are text for now
+              text: message.content,
+              sender: message.sender,
+              timestamp: message.timestamp,
+              isExpanded: false // Add this property for image expansion
+            });
+          });
+        } catch (error) {
+          console.error('Errore durante il recupero delle informazioni:', error);
+        }
+      },
+
+      // naviga fino alla pagina della lista partecipanti
+      async gtoToListaPartecipanti(){
         /*
             chiamo un metodo che permette di passare all'altra pagina informazioni già in tuo possesso in questa
             in questo modo non devi fare due chiamate al BE!
         */
         try{
-            this.$router.push({ name: '/lista-partecipanti', params: { 
-                                                                        chatName: this.chat.name, 
-                                                                        chatMembers: this.chat.members, 
-                                                                        chatCreationDate: this.chat.creationDate,
-                                                                        chatType: this.chat.type
-                                                                    } 
-                              });
+            this.$router.push({ name: 'lista-partecipanti', params: { chatName: this.chat.name }});
         } catch(error){
-            console.error('Errore durante l'apertura della lista partecipanti:', error);
+            console.error("Errore durante l'apertura della lista partecipanti:", error);
         }
     },
 },

@@ -16,38 +16,56 @@
 
       <!-- Modulo per la creazione del gruppo -->
       <form @submit.prevent="createGroup">
-        <!-- Sezione per il nome del gruppo -->
+        <!-- Sezione di ricerca dell'evento a cui collegare la chat di gruppo -->
         <div class="form-group">
-          <label for="groupName" class="group-name-label">Nome del Gruppo</label>
-          <input v-model="groupName" type="text" id="groupName" required />
+          <label for="eventSearch" class="event-search-label">Cerca Evento</label>
+          <input
+              v-model="searchQuery"
+              @input="searchEvent"
+              type="text"
+              id="eventSearch"
+              placeholder="Inserisci nome dell'evento..."
+              required
+          />
+          <ul v-if="availableEvents.length" class="search-results">
+            <li
+                v-for="event in availableEvents"
+                :key="event.name"
+                @click="selectEvent(event)"
+                class="search-result-item"
+            >
+              {{ event.name }}
+            </li>
+          </ul>
         </div>
 
          <!-- Sezione per la selezione dei partecipanti -->
         <div class="form-group">
-          <button type="button" @click="showParticipants = !showParticipants">
-            Aggiungi Partecipanti
-          </button>
-
-          <!-- Lista dei partecipanti che viene mostrata/ nascosta -->
-          <div v-if="showParticipants" class="participants-list">
-            <div v-for="user in users" :key="user.id" class="user-item">
-
-              <!-- Caselle di controllo per selezionare i partecipanti. Ogni casella di controllo è associata a un utente e modifica l'array selectedParticipants -->
-              <input 
-                type="checkbox" 
-                :id="`user-${user.id}`" 
-                :value="user" 
-                v-model="selectedParticipants" 
-              />
-              <label :for="`user-${user.id}`">{{ user.name }}</label>
-            </div>
-          </div>
+          <label for="userSearch" class="user-search-label">Cerca Partecipanti</label>
+          <input
+              v-model="searchQuery"
+              @input="searchUsers"
+              type="text"
+              id="userSearch"
+              placeholder="Cerca utente da aggiungere..."
+          />
+          <ul v-if="availableUsers.length" class="search-results">
+            <li
+                v-for="user in availableUsers"
+                :key="user.username"
+                @click="selectUser(user)"
+                class="search-result-item"
+            >
+              {{ user.name}} {{user.surname}}
+            </li>
+          </ul>
         </div>
 
         <!-- Lista dei partecipanti selezionati che viene mostrata sotto il modulo -->
-        <ul class="selected-participants">
-          <li v-for="user in selectedParticipants" :key="user.id">
-            {{ user.name }}
+        <ul class="selected-Members">
+          <li v-for="user in selectedMembers" :key="user.username">
+            {{ user.name }} {{user.surname}}
+            <button @click="removeUser(user)" class="remove-button">Rimuovi</button>
           </li>
         </ul>
 
@@ -65,50 +83,95 @@ import axios from 'axios';
     name: 'CreateGroup',
     data() {
       return {
-      groupName: '', // Nome del gruppo
-      showParticipants: false, // Flag per mostrare/nascondere i partecipanti
-      users: [], // Lista degli utenti disponibili
-      selectedParticipants: [] // Partecipanti selezionati
+        groupName: '', // Nome del gruppo
+        showMembers: false, // Flag per mostrare/nascondere i partecipanti
+        availableUsers: [], // Lista degli utenti disponibili
+        selectedMembers: [], // Partecipanti selezionati
+
+        searchQuery: '',
+        availableEvents: [],
+        selectedEvent: ''
       };
     },
 
-    created() {
-    this.fetchUsers(); // Recupera la lista degli utenti quando il componente viene creato
-    },
 
     methods: {
 
-    // Recupera la lista degli utenti dal backend
-    fetchUsers() {
-        axios.get('/api/users')
-            .then(response => {
-            this.users = response.data;
-            })
-            .catch(error => {
-            console.error('Errore nel recupero degli utenti:', error);
-            });
-    },
+      //-- recupera gli eventi dal backend
+      async searchEvent() {
+          const response = await axios.get('/api/available-events', this.searchQuery);
+          this.availableEvents = response.data
+      },
 
-    // Crea un nuovo gruppo
-    createGroup() {
-      const newGroup = {
-        name: this.groupName,
-        participants: this.selectedParticipants.map(p => p.id)
-      };
-      axios.post('/api/groups', newGroup)
-        .then(response => {
-          const createdGroup = response.data;
-          
-          this.$emit('groupCreated', createdGroup);
-          
-          this.$router.push({ name: 'chat-gruppo', params: { id: createdGroup.id } });
-        })
-        .catch(error => {
-          console.error('Errore nella creazione del gruppo:', error);
-        });
+      selectEvent(event) {
+        this.selectedEvent = event;
+        this.searchQuery = event.name;
+        this.searchQuery = '';
+        this.availableEvents = []; // Nascondi i risultati della ricerca dopo la selezione
+      },
+
+      // Recupera la lista degli utenti dal backend
+      async searchUsers() {
+          const response = await axios.get('/api/available-users', this.searchQuery);
+          this.availableUsers = response.data;
+      },
+
+      selectUser(user) {
+        if (!this.selectedMembers.includes(user)) {
+          this.selectedMembers.push(user);
+        }
+        this.searchQuery = ''; // Resetta il campo di ricerca
+        this.availableUsers = []; // Nascondi i risultati della ricerca
+      },
+
+      removeUser(user) {
+        this.selectedMembers = this.selectedMembers.filter(member => member !== user);
+      },
+
+      // Crea un nuovo gruppo
+      createGroupTemp() {
+        const newGroup = {
+          name: this.groupName,
+          members: this.selectedMembers.map(p => p.id)
+        };
+        axios.post('/api/groups', newGroup)
+          .then(response => {
+            const createdGroup = response.data;
+
+          })
+          .catch(error => {
+            console.error('Errore nella creazione del gruppo:', error);
+          });
+      },
+
+      async createGroup() {
+        if (!this.selectedEvent) {
+          alert('Seleziona un evento prima di creare il gruppo.');
+          return;
+        }
+        if (this.selectedMembers.length === 0) {
+          alert('Aggiungi almeno un partecipante.');
+          return;
+        }
+
+        const today = new Date();
+        const chatDTO = {
+          name: this.selectedEvent.name,
+          type: 'group',
+          creationDate: today.getFullYear() + today.getMonth() + today.getDate(),
+          members: this.selectedMembers,
+          messages: null,
+          event: this.selectedEvent
+        }
+
+        const response = await axios.post('/api/chats/create', chatDTO);
+        const createdGroup = response.data;
+        this.$emit('groupCreated', createdGroup);
+        this.$router.push({ name: 'chat-gruppo', params: { name: createdGroup.name } });
+
+      }
     }
-  }
-};
+  };
 
 
   </script>
@@ -215,7 +278,7 @@ form {
   }
   
   /* Sezione per la lista dei partecipanti che viene visualizzata sotto la selezione dei partecipanti */
-  .participants-list {
+  .members-list {
     margin-top: 20px;
   }
   
@@ -236,7 +299,7 @@ form {
 }
 
 /* Stile per la lista dei partecipanti selezionati, con altezza massima e scroll verticale */
-.selected-participants {
+.selected-members {
   max-height: 150px; 
   overflow-y: auto; 
   margin-top: 20px;
@@ -247,19 +310,19 @@ form {
 }
 
 /* Stile per la lista non ordinata dei partecipanti selezionati. */
-.selected-participants ul {
+.selected-members ul {
   padding: 0;
   margin: 0;
   list-style-type: none;
 }
 
 /* Stile per gli elementi della lista dei partecipanti selezionati, con padding e bordo inferiore */
-.selected-participants li {
+.selected-members li {
   padding: 5px 0;
   border-bottom: 1px solid #eee;
 }
 
-.selected-participants li:last-child {
+.selected-members li:last-child {
   border-bottom: none; 
 }
 

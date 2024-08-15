@@ -104,7 +104,7 @@ import axios from 'axios';
         // Flag per mostrare o nascondere le opzioni aggiuntive
         showAdditionalOptions: false,
         // contiene info dettagliate sull'utente (nel caso si vogliano mostrare)
-        member = '';
+        member: ''
       };
     },
 
