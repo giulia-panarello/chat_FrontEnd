@@ -395,7 +395,7 @@ async addMember(user) {
   top: 4%; 
   z-index: 1000; 
   font-size: 24px; 
-  color: #146ac7;
+  color: #000000;
 }
 
 /* Stile per permettere lo scroll della lista dei partecipanti */
