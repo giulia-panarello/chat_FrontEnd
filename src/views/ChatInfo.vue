@@ -392,7 +392,7 @@ async addMember(user) {
 .back-link {
   position: fixed; 
   left: 10px; 
-  top: 4%; 
+  top: 0; 
   z-index: 1000; 
   font-size: 24px; 
   color: #000000;
