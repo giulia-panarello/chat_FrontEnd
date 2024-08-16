@@ -319,7 +319,7 @@ async addMember(user) {
 /* Modifiche di stile per le informazioni dell'evento */
 .group-details p {
   margin: 0;
-  color: #81e8ff;
+  color: #eddd51;
   font-size: 1.5rem;
 }
 
