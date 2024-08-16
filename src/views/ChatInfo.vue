@@ -504,6 +504,7 @@ textarea {
   font-weight: bold;
 }
 
+/* Stile nomi dei membri */
 .group-members ul {
   list-style: none;
   padding: 0;
