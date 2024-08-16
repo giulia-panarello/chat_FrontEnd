@@ -35,13 +35,20 @@
         </div>
     </div>
 
-    <!-- Modale informazioni gruppo -->
-    <div v-if="isGroupInfoModalOpen" class="modal">
-      <div class="modal-content">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
+
+    <!-- Lista dei membri del gruppo -->
+    <div class="group-members"
+        <div style="display: flex; justify-content: space-between; align-items: center;">
           <!-- Titolo del modale -->
           <h2 class="membri">Membri Gruppo</h2>
-          <!-- Pulsante per aprire il modale di aggiunta partecipanti -->
+          <!-- Campo di ricerca per i membri -->
+        <input
+          type="text"
+          v-model="searchQueryMembers"
+          placeholder="Cerca membro..."
+          class="search-bar"
+        />          
+        <!-- Pulsante per aprire il modale di aggiunta partecipanti -->
           <button class="add-member-btn" @click="openAddMemberModal">+</button>
         </div>
         
@@ -55,11 +62,8 @@
             <button class="remove-btn" @click="removeMember(member.username)">Rimuovi</button>
           </li>
         </ul>
-      </div>
-          <!-- Pulsante per chiudere il modale -->
-        <button class="chiudi" @click="closeGroupInfoModal">Chiudi</button>
-      </div>
     </div>
+  </div>
 
     <!-- Modale per aggiunta partecipanti -->
     <div v-if="isAddMemberModalOpen" class="modal">
@@ -88,9 +92,6 @@
         <button class="chiudi" @click="closeAddMemberModal">Chiudi</button>
       </div>
     </div>
-
-    <!-- Pulsante per aprire il modale per informazioni dei membri partecipanti o da aggiungere -->
-    <button class="info-part" @click="openGroupInfoModal">Info partecipanti</button>
   </div>
 </template>
 
@@ -468,6 +469,49 @@ textarea {
   padding: 10px;
   border: none;
   border-radius: 5px;
+}
+
+/* Stile della barra di ricerca dei membri e degli utenti */
+.search-bar {
+  width: 500px;
+  padding: 10px;
+  margin-bottom: 10px;
+  font-size: 1rem;
+  background-color: #b7dceb;
+  border-radius: 5px;
+  margin-left: 10px;
+}
+  
+/* Stile per la lista dei membri del gruppo */
+.group-members {
+  padding: 10px;
+  background-color: #ffffff;
+  border: 2px solid #0e56a3;
+  border-radius: 8px;
+  margin-top: 10px;
+  overflow-y: auto;
+  max-height: 300px;
+  box-sizing: border-box;
+  margin-left: 20px;
+  margin-right: 20px;
+
+}
+
+/* Titolo 'Membri del gruppo' */
+.group-members h2 {
+  font-size: 25px;
+  color: #0e56a3;
+  font-weight: bold;
+}
+
+.group-members ul {
+  list-style: none;
+  padding: 0;
+}
+
+.group-members li {
+  padding: 5px 0;
+  font-size: 20px;
 }
 
 
