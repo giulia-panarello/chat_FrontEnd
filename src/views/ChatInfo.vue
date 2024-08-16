@@ -477,11 +477,11 @@ textarea {
   padding: 10px;
   margin-bottom: 10px;
   font-size: 1rem;
-  background-color: #b7dceb;
+  background-color: #c9e3ed;
   border-radius: 5px;
-  margin-left: 10px;
+  margin-left: 1px;
 }
-  
+
 /* Stile per la lista dei membri del gruppo */
 .group-members {
   padding: 10px;
