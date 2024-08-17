@@ -18,7 +18,7 @@
               <font-awesome-icon icon="arrow-left" class="icon" />
             </RouterLink>
           </nav>
-            <button @click="gtoToListaPartecipanti"><h1 class="titolo" >{{ this.chat.name }}</h1></button>
+            <button @click="goToChatInfo"><h1 class="titolo" >{{ this.chat.name }}</h1></button>
        
         </div>
       </div>
@@ -34,7 +34,7 @@
       <div class="chat-messages">
      
         <!-- Iterazione attraverso i messaggi -->
-        <div v-for="message in this.chat.messages" :class="{'sent-message': message.sender === 'Tu', 'received-message': message.sender !== 'Tu'}">
+        <div v-for="message in this.chat.messages" :class="{'sent-message': message.sender === 'selfuser', 'received-message': message.sender !== 'selfuser'}">
         <!-- Icona del mittente -->
           <div class="user-icon">
             <i class="fas fa-user-circle user icon"></i>
@@ -162,8 +162,8 @@
           };
 
           try {
+            this.chat.messages.push(message);
             await axios.post(`http://localhost:8080/api/chats/${this.chat.name}/messages`, message);
-            this.messages.push(message);
           } catch (error) {
             console.error('Errore durante l\'invio del messaggio:', error);
           }
@@ -257,13 +257,13 @@
       },
 
       // naviga fino alla pagina della lista partecipanti
-      async gtoToListaPartecipanti(){
+      async goToChatInfo(){
         /*
             chiamo un metodo che permette di passare all'altra pagina informazioni già in tuo possesso in questa
             in questo modo non devi fare due chiamate al BE!
         */
         try{
-            this.$router.push({ name: 'lista-partecipanti', params: { chatName: this.chat.name }});
+            this.$router.push({ name: 'chat-info', params: { chatName: this.chat.name }});
         } catch(error){
             console.error("Errore durante l'apertura della lista partecipanti:", error);
         }

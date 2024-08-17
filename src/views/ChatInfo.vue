@@ -3,7 +3,7 @@
      <!-- Barra di navigazione: link per tornare alla pagina principale -->
       <nav> 
       <!-- RouterLink per navigare alla home page (chat di gruppo) -->     
-      <RouterLink to="/chat-gruppo" class="back-link"> 
+      <RouterLink :to="{ name: 'chat-gruppo', params: { chatName: this.chat.name }}" class="back-link">
         <!-- Icona di ritorno indietro (freccia)-->
         <font-awesome-icon icon="arrow-left" class="icon" />
       </RouterLink>
@@ -20,24 +20,16 @@
         <!-- Descrizione del gruppo -->
         <div class="description-container">
           <!-- Visualizzazione della descrizione -->
-          <p v-if="!isEditing" class="event-description">{{ this.chat.description || 'Descrizione non disponibile' }}</p>
-        
-          <!-- Modifica della descrizione -->
-          <div v-if="isEditing">
-            <textarea v-model="newDescription" placeholder="Inserisci nuova descrizione..."></textarea>
-            <button class="save-description-btn" @click="updateDescription">Salva</button>
-            <button class="cancel-description-btn" @click="toggleEditMode">Annulla</button>
-          </div>
+          <p v-if="!isEditing" class="event-description">{{ this.chat.event || 'Descrizione non disponibile' }}</p>
+
         </div>
 
-        <!-- Pulsante per modificare la descrizione -->
-        <button v-if="!isEditing" class="edit-description-btn" @click="toggleEditMode">Modifica Descrizione</button>
         </div>
     </div>
 
 
     <!-- Lista dei membri del gruppo -->
-    <div class="group-members"
+    <div class="group-members">
         <div style="display: flex; justify-content: space-between; align-items: center;">
           <!-- Titolo del modale -->
           <h2 class="membri">Membri Gruppo</h2>
@@ -55,11 +47,11 @@
         <div class="members-list">
         <ul>
            <!-- Iterazione sui partecipanti per mostrarli in una lista -->
-          <li v-for="member in members" :key="member.username" class="member-item">
+          <li v-for="member in this.chat.members" :key="member.username" class="member-item">
               <!-- RouterLink per aprire la chat privata con il partecipante selezionato -->
-              <router-link :to="{ name: 'chat-privata', params: { memberUsername: member.username }}" class="member-item">{{ member.username }}</router-link>
+              <router-link :to="{ name: 'chat-gruppo', params: { chatName: member.username }}" class="member-item" v-if="member.username !== 'selfuser'">{{ member.name }} {{member.surname}}</router-link>
              <!-- Pulsante per rimuovere il partecipante -->
-            <button class="remove-btn" @click="removeMember(member.username)">Rimuovi</button>
+            <button class="remove-btn" @click="removeMember(member.username)" v-if="member.username !== 'selfuser'">Rimuovi</button>
           </li>
         </ul>
     </div>
@@ -73,12 +65,13 @@
       <!-- Barra di ricerca -->
       <input
           type="text"
-          v-model="username"
+          v-model="searchQueryUsers"
           placeholder="Cerca utente..."
           class="search-bar"
           @input="fetchAvailableUsers"
       />
         <div class="available-users-list">
+          {{this.availableUsers}}
         <ul>
           <!-- Iterazione sugli utenti disponibili per mostrarli in una lista -->
           <li v-for="user in this.availableUsers" :key="user.id" class="member-item">
@@ -101,37 +94,53 @@
 import axios from 'axios';
 
 export default {
-data() {
-  return {
-    
-      availableUsers: [], // Lista degli utenti disponibili per essere aggiunti al gruppo
-      isGroupInfoModalOpen: false, // Stato del modale con le informazioni del gruppo
-      isAddMemberModalOpen: false, // Stato del modale per aggiungere partecipanti
-      chat: {
-        name: this.$route.params.chatName, // Titolo del gruppo
-        members: this.$route.params.chatMembers, // Lista dei partecipanti al gruppo
-        type: this.$route.params.chatType,
-        creationdate: this.$route.params.chatCreationdate,
-  
-        description: '', // PER ORA LA DESCZIONE NON LA PASSO COME PARAMETRO PERCHÉ VA GESTITA IN UN ALTRO MODO (DA VALUTARE)
-      },
-      isEditing: false, // Stato della modalità di modifica della descrizione
-      newDescription: '', // Nuova descrizione del gruppo in fase di modifica
-      searchQueryUsers: '', // Query di ricerca per gli utenti disponibili
-      searchQueryMembers: '' // Query di ricerca per i partecipanti
-   
-  };
-},
+  data() {
+    return {
 
+        availableUsers: [], // Lista degli utenti disponibili per essere aggiunti al gruppo
+        isGroupInfoModalOpen: false, // Stato del modale con le informazioni del gruppo
+        isAddMemberModalOpen: false, // Stato del modale per aggiungere partecipanti
+        chat: {
+          name: this.$route.params.chatName, // Titolo del gruppo
+          members: [], // Lista dei partecipanti al gruppo
+          type: [],
+          creationdate: [],
+          event: []
+        },
+        isEditing: false, // Stato della modalità di modifica della descrizione
+        newDescription: '', // Nuova descrizione del gruppo in fase di modifica
+        searchQueryUsers: '', // Query di ricerca per gli utenti disponibili
+        searchQueryMembers: '' // Query di ricerca per i partecipanti
 
+    };
+  },
 
-methods: {
+  created() {
+    this.fetchChatData();
+  },
+
+  methods: {
+
+    // recupera le info della chat dal BE
+    async fetchChatData() {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/chats/${this.chat.name}`);
+        this.chat.type = response.data.type;
+        this.chat.creationDate = response.data.creationDate;
+        this.chat.members = response.data.members;
+        this.chat.event = response.data.event;
+
+      } catch (error) {
+        console.error('Errore durante il recupero delle informazioni:', error);
+      }
+    },
 
   
     // Recupera gli utenti disponibili
-    async fetchAvailableUsers(username) {
+    async fetchAvailableUsers() {
       try {
-        const response = await axios.get('/api/available-users', username);
+        const response = await axios.get(`/api/available-users/${this.searchQueryUsers}`);
+        console.log(response.data);
         this.availableUsers = response.data;
       } catch (error) {
         console.error('Error fetching available users:', error);
@@ -139,27 +148,17 @@ methods: {
     },
 
 
-  // Apertura del modale delle informazioni del gruppo
-  openGroupInfoModal() {
-    this.isGroupInfoModalOpen = true;
-  },
-
-  // Chiusura del modale delle informazioni del gruppo sui partecipanti
-  closeGroupInfoModal() {
-    this.isGroupInfoModalOpen = false;
-  },
-
   // Apertura del modale di aggiunta partecipanti
   openAddMemberModal() {
     this.isAddMemberModalOpen = true;
   },
 
-  // Chiusura del modale di aggiunta membersi
+  // Chiusura del modale di aggiunta membri
   closeAddMemberModal() {
     this.isAddMemberModalOpen = false;
   },
 
-  // Rimuove un memberse dal gruppo
+  // Rimuove un membro dal gruppo
   async removeMember(username) {
     /*
       Input:
@@ -179,49 +178,25 @@ methods: {
     }
 },
 
-// Aggiunge un partecipante al gruppo
-async addMember(user) {
-  /*
-    Input:
-          username:  username dell'utente da aggiungere
-                       gli utenti hanno un username univoco --> l'username è il loro id 
+    // Aggiunge un partecipante al gruppo
+    async addMember(username) {
+      /*
+        Input:
+              username:  username dell'utente da aggiungere
+                           gli utenti hanno un username univoco --> l'username è il loro id
 
-    - Cerca l'utente nella lista di utenti disponibili
-    - passa l'oggetto utente trovato al BE
-    - aggiunge l'oggetto trovato alla lista dei membri
-  */
-    try {
-      const memberToAdd = this.availableUsers.find(user => user.username === username);
-      await axios.post('/api/add-member', memberToAdd, this.chat);
-      this.members.push(memberToAdd);
-    } catch (error) {
-        console.error('Errore nell\'aggiunta del partecipante:', error);
-    }
-},
-
-
-
-// Attiva/disattiva la modalità di modifica della descrizione
-    toggleEditMode() {
-      this.isEditing = !this.isEditing;
-      if (this.isEditing) {
-        this.newDescription = this.group.description; // Carica la descrizione corrente per modifica
+        - Cerca l'utente nella lista di utenti disponibili
+        - passa l'oggetto utente trovato al BE
+        - aggiunge l'oggetto trovato alla lista dei membri
+      */
+      try {
+        const memberToAdd = this.availableUsers.find(user => user.username === username);
+        await axios.post('/api/add-member', memberToAdd, this.chat);
+        this.members.push(memberToAdd);
+      } catch (error) {
+          console.error('Errore nell\'aggiunta del partecipante:', error);
       }
     },
-    
-
-    // Salva la nuova descrizione --> IN FASE DI VALUTAZIONE
-    async updateDescription() {
-      try {
-        await axios.put(`/api/groups/${this.group.id}`, {
-          description: this.newDescription
-        });
-        this.group.description = this.newDescription;
-        this.isEditing = false;
-      } catch (error) {
-        console.error('Errore nell\'aggiornamento della descrizione del gruppo:', error);
-      }
-    }
   }
 };
 </script>
@@ -356,15 +331,16 @@ async addMember(user) {
 }
 
 
-
 /* Modifiche di stile sul pulsante "rimuovi" */
 .remove-btn {
-  background: none;
-  border: none;
-  color: rgb(209, 28, 28);
+  background-color: #f44336;
+  border: 1px solid #f44336;
+  color: white;
   cursor: pointer;
   font-weight: bold;
   font-size: 1rem;
+  padding: 5px 10px;
+  border-radius: 5px;
 }
 
 /* Modifiche di stile sul pulsante "aggiungi" */
