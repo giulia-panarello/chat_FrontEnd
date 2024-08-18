@@ -47,7 +47,7 @@
         <div class="members-list">
         <ul>
            <!-- Iterazione sui partecipanti per mostrarli in una lista -->
-          <li v-for="member in this.chat.members" :key="member.username" class="member-item">
+          <li v-for="member in filteredParticipants" :key="member.username" class="member-item">
               <!-- RouterLink per aprire la chat privata con il partecipante selezionato -->
               <router-link :to="{ name: 'chat-gruppo', params: { chatName: member.username }}" class="member-item" v-if="member.username !== 'selfuser'">{{ member.name }} {{member.surname}}</router-link>
              <!-- Pulsante per rimuovere il partecipante -->
@@ -74,7 +74,7 @@
           {{this.availableUsers}}
         <ul>
           <!-- Iterazione sugli utenti disponibili per mostrarli in una lista -->
-          <li v-for="user in this.availableUsers" :key="user.id" class="member-item">
+          <li v-for="user in filteredUsers" :key="user.id" class="member-item">
             {{ user.username }}
             <!-- Pulsante per aggiungere un partecipante -->
             <button class="add-btn" @click="addMember(user)">Aggiungi</button>
@@ -105,7 +105,8 @@ export default {
           members: [], // Lista dei partecipanti al gruppo
           type: [],
           creationdate: [],
-          event: []
+          event: [],
+          filteredUsers: []
         },
         isEditing: false, // Stato della modalità di modifica della descrizione
         newDescription: '', // Nuova descrizione del gruppo in fase di modifica
@@ -115,6 +116,20 @@ export default {
     };
   },
 
+    computed: {
+  filteredParticipants() {
+    return this.chat.participants.filter(participant =>
+      participant.toLowerCase().includes(this.searchQueryParticipants.toLowerCase())
+    );
+  },
+  filteredUsers() {
+  return this.availableUsers.filter(user =>
+    user.toLowerCase().includes(this.searchQueryUsers.toLowerCase())
+  );
+},
+
+},
+  
   created() {
     this.fetchChatData();
   },
