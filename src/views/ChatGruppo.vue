@@ -299,7 +299,7 @@
   .titolo {
   
     max-width: 100%;
-    color: #fff;
+    color: #146ac7;
     font-size: 30px;
     font-weight: bold;
     
