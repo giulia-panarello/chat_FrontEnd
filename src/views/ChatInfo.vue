@@ -21,7 +21,6 @@
         <div class="description-container">
           <!-- Visualizzazione della descrizione -->
           <p v-if="!isEditing" class="event-description">{{ this.chat.event || 'Descrizione non disponibile' }}</p>
-
         </div>
 
         </div>
@@ -46,12 +45,20 @@
         
         <div class="members-list">
         <ul>
+          <li v-for="member in this.chat.members" :key="member.username" class="member-item">
+            <div v-if="member.username === 'selfuser'">
+              <ul>{{ member.name }}</ul>
+              <span v-if="member.admin === true">admin</span>
+            </div>
+          </li>
            <!-- Iterazione sui partecipanti per mostrarli in una lista -->
-          <li v-for="member in filteredParticipants" :key="member.username" class="member-item">
+          <li v-for="member in filteredMembers" :key="member.username" class="member-item">
               <!-- RouterLink per aprire la chat privata con il partecipante selezionato -->
               <router-link :to="{ name: 'chat-gruppo', params: { chatName: member.username }}" class="member-item" v-if="member.username !== 'selfuser'">{{ member.name }} {{member.surname}}</router-link>
-             <!-- Pulsante per rimuovere il partecipante -->
-            <button class="remove-btn" @click="removeMember(member.username)" v-if="member.username !== 'selfuser'">Rimuovi</button>
+              <span v-if="member.admin === true">admin</span>
+              <!-- Pulsante per rimuovere il partecipante -->
+              <button class="remove-btn" @click="removeMember(member.username)" v-if="member.username !== 'selfuser'">Rimuovi</button>
+            
           </li>
         </ul>
     </div>
@@ -71,11 +78,10 @@
           @input="fetchAvailableUsers"
       />
         <div class="available-users-list">
-          {{this.availableUsers}}
         <ul>
           <!-- Iterazione sugli utenti disponibili per mostrarli in una lista -->
-          <li v-for="user in filteredUsers" :key="user.id" class="member-item">
-            {{ user.username }}
+          <li v-for="user in filteredUsers" :key="user.username" class="member-item">
+            {{ user.name }} {{ user.surname }}
             <!-- Pulsante per aggiungere un partecipante -->
             <button class="add-btn" @click="addMember(user)">Aggiungi</button>
           </li>
@@ -98,40 +104,38 @@ export default {
     return {
 
         availableUsers: [], // Lista degli utenti disponibili per essere aggiunti al gruppo
-        isGroupInfoModalOpen: false, // Stato del modale con le informazioni del gruppo
         isAddMemberModalOpen: false, // Stato del modale per aggiungere partecipanti
         chat: {
           name: this.$route.params.chatName, // Titolo del gruppo
           members: [], // Lista dei partecipanti al gruppo
           type: [],
           creationdate: [],
-          event: [],
-          filteredUsers: []
+          event: []
         },
-        isEditing: false, // Stato della modalità di modifica della descrizione
-        newDescription: '', // Nuova descrizione del gruppo in fase di modifica
+
         searchQueryUsers: '', // Query di ricerca per gli utenti disponibili
         searchQueryMembers: '' // Query di ricerca per i partecipanti
 
     };
   },
 
-    computed: {
-  filteredParticipants() {
-    return this.chat.participants.filter(participant =>
-      participant.toLowerCase().includes(this.searchQueryParticipants.toLowerCase())
-    );
-  },
-  filteredUsers() {
-  return this.availableUsers.filter(user =>
-    user.toLowerCase().includes(this.searchQueryUsers.toLowerCase())
-  );
-},
+  computed: {
 
-},
+    filteredMembers() {
+      return this.chat.members.filter(member => member.name.toLowerCase().includes(this.searchQueryMembers.toLowerCase())
+      );
+    },
+
+    filteredUsers() {
+      return this.availableUsers.filter(user => user.name.toLowerCase().includes(this.searchQueryUsers.toLowerCase())
+      );
+    },
+
+  },
   
   created() {
     this.fetchChatData();
+    this.fetchAvailableUsers();
   },
 
   methods: {
@@ -154,13 +158,15 @@ export default {
     // Recupera gli utenti disponibili
     async fetchAvailableUsers() {
       try {
-        const response = await axios.get(`/api/available-users/${this.searchQueryUsers}`);
+        const response = await axios.get(`http://localhost:8080/api/available-users`);
         console.log(response.data);
         this.availableUsers = response.data;
       } catch (error) {
         console.error('Error fetching available users:', error);
       }
     },
+
+    
 
 
   // Apertura del modale di aggiunta partecipanti

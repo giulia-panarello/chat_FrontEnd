@@ -24,10 +24,10 @@
       </div>
   
       
-       <!-- Contenitore della data
+       <!-- Contenitore della data -->
         <div class="message-date-container">
-          <div class="message-date-header">{{ formatDate(chat.messages[chat.messages.content.length - 1].timestamp) }}</div>
-        </div> -->
+          <div class="message-date-header">{{ formatDate(this.chat.messages[this.chat.messages.length - 1].timestamp) }}</div>
+        </div> 
   
     
       <!-- Contenitore dei messaggi di chat -->
