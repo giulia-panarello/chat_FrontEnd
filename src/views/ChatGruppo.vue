@@ -11,7 +11,7 @@
         <div class="chat-header">
   
           <!-- Icona del gruppo -->
-          <img class="group-icon" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8GaWwlQtPhY4LVhaahYOB8wS4qTmGO6sB_g&s" alt=group-icon>
+          <img class="group-icon" src="https://img.icons8.com/?size=200&id=Xvo1JQO2ujpL&format=png" alt=group-icon>
          <!-- Titolo del gruppo -->
           <nav>
             <RouterLink to="/" class="back-link">
