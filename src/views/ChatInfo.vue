@@ -12,8 +12,8 @@
     <!-- Informazioni gruppo -->
     <div class="group-info">
       <!-- Icona del gruppo -->
-      <img class="group-icon" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8GaWwlQtPhY4LVhaahYOB8wS4qTmGO6sB_g&s alt="group-icon>
-      <div class="group-details">
+      <img class="group-icon" src="https://img.icons8.com/?size=200&id=Xvo1JQO2ujpL&format=png" alt="group-icon">              
+        <div class="group-details">
         <!-- Titolo dell'evento -->
           <h2 class="event-title">{{ this.chat.name || 'Titolo Evento' }}</h2>
             
