@@ -246,8 +246,8 @@ export default {
   
   display: flex;
   justify-content: center;
-  align-items: stretch;
-  flex-direction: column; 
+  align-items: flex-start; 
+  flex-direction: row;
   position: fixed;
   margin-top: 80px;
   left: 0;
@@ -256,8 +256,7 @@ export default {
   height: 100vh;
   background-image: url('https://i.pinimg.com/originals/c4/23/12/c4231254ad6f3a92d902a8356212809c.jpg');
   background-size: cover;
-  background-position: center;
- 
+  background-position: center; 
 }
 
 /* Modifiche di stile sul pulsante "chiudi" */
@@ -272,19 +271,6 @@ export default {
   
 }
 
-/* Modifiche di stile sul pulsante "info partecipanti" */
-.info-part{
-    color: #083b71; 
-    padding: 15px;
-    font-size: 1.5rem;
-    margin-top: 20px;
-    width: 50%;
-    margin-left: 25%;
-    border: 2px solid #083b71;
-    color: #083b71;
-    background-color: #ffffff;
-
-}
 
 /* Modifiche di stile sul pulsante "aggiungi" per aggiungere i partecipanti */
 .aggiungi{
@@ -305,11 +291,13 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center; 
-  padding: 20px;
+  text-align: center;
+  padding: 15px;
   border-radius: 10px;
-  margin: 20px;
-  
+  width: 70%; 
+  max-width: 700px;
+  margin-left: 20px;
+  margin-top: 100px;  
 }
 
 /* Modifiche di stile per l'icona del gruppo */
@@ -323,7 +311,7 @@ export default {
 /* Modifiche di stile per il titolo "Organizzazione Evento" */
 .group-details h2 {
   margin: 0;
-  font-size: 2rem;
+  font-size: 2.5rem;
   color: #ffffff;
   font-weight: bold;
 }
@@ -331,9 +319,9 @@ export default {
 /* Modifiche di stile per le informazioni dell'evento */
 .group-details p {
   margin: 0;
-  color: #eddd51;
-  font-size: 1.5rem;
-}
+  color: #ffffff;
+  font-size: 1.33rem;
+  font-style: italic;}
 
 /* Modifiche di stile per la modale sulle informazioni gruppo */
 .modal {
@@ -408,15 +396,9 @@ export default {
   top: 0; 
   z-index: 1000; 
   font-size: 24px; 
-  color: #000000;
+  color: #0e56a3
 }
 
-/* Stile per permettere lo scroll della lista dei partecipanti */
-.members-list {
-  max-height: 200px; 
-  overflow-y: auto;  
-  margin-top: 10px;
-}
 
 /* Stile per permettere lo scroll della lista dei membri da aggiungere */
 .available-users-list {
@@ -436,64 +418,17 @@ export default {
   margin: 10px 0;
 }
 
-/* Stile per la textarea della descrizione (in modalità di modifica della descrizione) */
-textarea {
-  width: 100%;
-  height: 100px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 10px;
-  margin-bottom: 10px;
-}
-
-/* Pulsante per attivare la modifica della descrizione */
-.edit-description-btn {
-  background-color: #efa8ed;
-  color: #083b71;
-  font-weight: bold;
-  font-size: 15px;
-  margin: 5px;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  
-}
-
-/* Pulsante per salvare la nuova descrizione */
-.save-description-btn {
-  background-color: #4CAF50;
-  color: white;
-  font-weight: bold;
-  margin: 5px;
-  cursor: pointer;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-}
-
-/* Pulsante per annullare la modifica della descrizione */
-.cancel-description-btn {
-  background-color: #f44336;
-  color: white;
-  font-weight: bold;
-  margin: 5px;
-  cursor: pointer;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-}
 
 /* Stile della barra di ricerca dei membri e degli utenti */
 .search-bar {
-  width: 500px;
+  width: 400px;
   padding: 10px;
   margin-bottom: 10px;
+  margin-top: 10px;
   font-size: 1rem;
-  background-color: #c9e3ed;
+  background-color: #bbe9fc;
   border-radius: 5px;
-  margin-left: 1px;
-}
+  margin-left: 25px;}
 
 /* Stile per la lista dei membri del gruppo */
 .group-members {
@@ -501,13 +436,14 @@ textarea {
   background-color: #ffffff;
   border: 2px solid #0e56a3;
   border-radius: 8px;
-  margin-top: 10px;
-  overflow-y: auto;
-  max-height: 300px;
-  box-sizing: border-box;
-  margin-left: 20px;
+  margin-top: 100px;
   margin-right: 20px;
-
+  overflow-y: auto;
+  max-height: calc(100vh - 120px); 
+  margin-left: 30px;
+  width: 70%; 
+  max-width: 500px; 
+  height: 568px;
 }
 
 /* Titolo 'Membri del gruppo' */
@@ -515,7 +451,8 @@ textarea {
   font-size: 25px;
   color: #0e56a3;
   font-weight: bold;
-}
+  margin-bottom: 10px;
+  text-align: center;}
 
 /* Stile nomi dei membri */
 .group-members ul {
