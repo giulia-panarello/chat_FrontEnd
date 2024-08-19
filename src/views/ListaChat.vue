@@ -18,7 +18,7 @@
       <!-- Icona per creare un nuovo gruppo o chat -->
       <img 
         class="new-group-icon" 
-        src="https://cdn-icons-png.flaticon.com/512/1828/1828817.png" 
+        src= "https://img.icons8.com/?size=80&id=ZBL8mQveY4Pz&format=png" 
         alt="Crea nuovo gruppo" 
         @click="toggleMenu"
     />
@@ -36,8 +36,8 @@
         <div class="chat-item">
 
           <!-- Icona dell'utente o del gruppo -->
-          <img class="utente-icon" src="https://static.vecteezy.com/ti/vettori-gratis/p3/24191738-profilo-icona-o-simbolo-nel-rosa-e-blu-colore-vettoriale.jpg" alt="utente-icon">
-           <!-- Informazioni della chat -->
+          <img class="chat-icon" :src="getChatIcon(chat.type)" alt="chat-icon">
+          <!-- Informazioni della chat -->
           <div class="chat-info">
             <!-- Nome della chat -->
             <h2>{{ chat.name }}</h2>
@@ -122,6 +122,15 @@ export default {
       this.$router.push({ name: 'seleziona-utente' });
     },
 
+      // Funzione per la gestione delle icone delle chat, distinguo la tipologia se privata o di gruppo
+    getChatIcon(type) {
+    if (type === 'private') {
+      return 'https://img.icons8.com/?size=200&id=VzoCadwFiwaQ&format=png';
+    } else if (type === 'group') {
+      return 'https://img.icons8.com/?size=200&id=Xvo1JQO2ujpL&format=png';
+    }
+  },
+      
     // Mostra o nasconde il menu per creare un nuovo gruppo o una nuova chat
     toggleMenu() {
       this.showMenu = !this.showMenu;
@@ -274,4 +283,11 @@ export default {
   background-color: #f97daa;; 
 }
 
-</style>
+/* Stile per le icone delle chat */
+.chat-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%; 
+  margin-right: 10px;
+  
+}</style>
