@@ -11,7 +11,7 @@
       <div class="chat-header">
 
         <!-- Icona -->
-        <img class="utente-icon" src="https://cdn.icon-icons.com/icons2/2760/PNG/512/profile_icon_176363.png" alt="utente-icon">
+        <img class="utente-icon" src="https://img.icons8.com/?size=200&id=VzoCadwFiwaQ&format=png" alt="utente-icon">
        <!-- Nome utente -->
        <nav>        
       <RouterLink to="/" class="back-link"> 
