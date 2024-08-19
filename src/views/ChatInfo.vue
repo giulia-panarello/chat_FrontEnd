@@ -18,13 +18,29 @@
           <h2 class="event-title">{{ this.chat.name || 'Titolo Evento' }}</h2>
             
         <!-- Descrizione del gruppo -->
-        <div class="description-container">
+    <div class="description-container">
           <!-- Visualizzazione della descrizione -->
-          <p v-if="!isEditing" class="event-description">{{ this.chat.event || 'Descrizione non disponibile' }}</p>
-        </div>
+        <div v-if="!isEditing">
+            <p class="event-description">
+              <img src="https://img.icons8.com/?size=96&id=L4aSSPqifOyh&format=png" alt="description-icon" style="width: 40px; height: 40px; margin-right: 8px;">
+            <strong>Descrizione:</strong> {{ event.description || 'Descrizione non disponibile' }}</p>
+            <p class="event-type">
+              <img src="https://img.icons8.com/?size=96&id=HkwvpNAN5QKv&format=png" alt="type-icon" style="width: 45px; height: 45px; margin-right: 8px;">
+              <strong>Tipologia:</strong> {{ event.type || 'Tipo non disponibile' }}</p>
+            <p class="event-min-age">
+              <img src="https://img.icons8.com/?size=96&id=hoaVvHdJgXL4&format=png" alt="age-icon" style="width: 50px; height: 50px; margin-right: 8px;">
+              <strong>Età minima:</strong> {{ event.minAge || 'Età minima non disponibile' }}</p>
+            <p class="event-start">
+              <img src="https://img.icons8.com/?size=96&id=QPvXANafTBwG&format=png" alt="start-icon" style="width: 50px; height: 50px; margin-right: 8px; "> 
+              <strong>Inizio:</strong> {{ event.start || 'Inizio non disponibile' }}</p>
+            <p class="event-end">
+              <img src="https://img.icons8.com/?size=96&id=rPdbSKH2ODQR&format=png" alt="end-icon" style="width: 50px; height: 50px; margin-right: 8px;"> 
+              <strong>Fine:</strong> {{ event.end || 'Fine non disponibile' }}</p>
 
+          </div>        
         </div>
     </div>
+  </div>
 
 
     <!-- Lista dei membri del gruppo -->
