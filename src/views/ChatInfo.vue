@@ -45,7 +45,7 @@
 
     <!-- Lista dei membri del gruppo -->
     <div class="group-members">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
           <!-- Titolo del modale -->
           <h2 class="membri">Membri Gruppo</h2>
           <!-- Campo di ricerca per i membri -->
@@ -465,6 +465,11 @@ export default {
   font-size: 20px;
 }
 
+.members-list {
+  overflow-y: auto;  
+  max-height: 400px; 
+  padding: 10px;    
+}
 
 </style>
 
