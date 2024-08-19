@@ -20,7 +20,7 @@
         <!-- Descrizione del gruppo -->
     <div class="description-container">
           <!-- Visualizzazione della descrizione -->
-        <div v-if="!isEditing">
+        <div>
             <p class="event-description">
               <img src="https://img.icons8.com/?size=96&id=L4aSSPqifOyh&format=png" alt="description-icon" style="width: 40px; height: 40px; margin-right: 8px;">
             <strong>Descrizione:</strong> {{ event.description || 'Descrizione non disponibile' }}</p>
