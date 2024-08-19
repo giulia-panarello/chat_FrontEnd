@@ -171,7 +171,7 @@ export default {
   box-sizing: border-box;
 }
 
-/* Titolo della sezione chat */
+/* Titolo della pagina 'Chat' */
 .nome {
   color: #ffffff;
   font-size: 50px;
