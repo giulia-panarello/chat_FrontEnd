@@ -190,8 +190,7 @@ export default {
   padding: 10px;
   background-color: #eabccd;
   border-radius: 25px; 
-  border: 5px solid #0a3665; 
-  box-sizing: border-box; 
+  border: none;
 }
 
 /* Stile lista delle chat */
