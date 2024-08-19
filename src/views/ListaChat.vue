@@ -266,14 +266,14 @@ export default {
 /* Pulsanti del menu */
 .menu button {
   padding: 10px 20px;
-  background-color: #eabccd;; /* Rosa */
-  color: #0a3665;
+  background-color: #eabccd;
+  color: #146ac7;
+  font-size: 17px;
   font-weight: bold;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  margin: 5px;
-  
+  margin: 5px;  
 }
 
 
