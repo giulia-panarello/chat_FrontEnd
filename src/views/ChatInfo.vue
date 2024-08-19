@@ -393,7 +393,7 @@ export default {
 .back-link {
   position: fixed; 
   left: 10px; 
-  top: 0; 
+  top: 4%; 
   z-index: 1000; 
   font-size: 24px; 
   color: #0e56a3
