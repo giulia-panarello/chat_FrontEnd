@@ -279,7 +279,7 @@ export default {
 
 /* Colore del pulsante al passaggio del mouse */
 .menu button:hover {
-  background-color: #f97daa;; 
+  background-color: #bbe9fc; 
 }
 
 /* Stile per le icone delle chat */
