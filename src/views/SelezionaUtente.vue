@@ -12,8 +12,9 @@
 
     <!-- Sezione dell'intestazione che contiene il titolo della pagina -->
     <div class="header">
-      <h1 class="titolo">Seleziona Utente</h1>
-    </div>
+        <img src="https://img.icons8.com/?size=128&id=bkxdvldftiZt&format=png&color=FFFFFF" alt="Icona Selezione Utenti" class="user-icon" />      
+        <h1 class="titolo">Seleziona Utente</h1>
+        <img src="https://img.icons8.com/?size=96&id=CW3n7ziCEkdG&format=png" alt="Icona Selezione Utenti" class="user-icon" />    </div>
   
     <!-- Lista degli utenti -->
       <ul>
@@ -151,5 +152,13 @@ import axios from 'axios';
     font-size: 24px; 
     color: #ffffff; 
 }
-  </style>
+
+/* Grandezza icone */
+.user-icon {
+  width: 60px; 
+  height: 60px; 
+  
+}  
+  
+</style>
   
