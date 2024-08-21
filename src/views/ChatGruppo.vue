@@ -11,23 +11,25 @@
         <div class="chat-header">
   
           <!-- Icona del gruppo -->
-          <img class="group-icon" src="https://img.icons8.com/?size=200&id=Xvo1JQO2ujpL&format=png" alt=group-icon>
+          <img class="group-icon" src="https://img.icons8.com/?size=200&id=Xvo1JQO2ujpL&format=png" alt=group-icon v-if="this.chat.type === 'group'">
+          <img class="group-icon" src="https://img.icons8.com/?size=200&id=VzoCadwFiwaQ&format=png" alt=group-icon v-if="this.chat.type === 'private'">
          <!-- Titolo del gruppo -->
           <nav>
             <RouterLink to="/" class="back-link">
               <font-awesome-icon icon="arrow-left" class="icon" />
             </RouterLink>
           </nav>
-            <button @click="goToChatInfo"><h1 class="titolo" >{{ this.chat.name }}</h1></button>
+            <button @click="goToChatInfo" v-if="this.chat.type === 'group'"><h1 class="titolo" >{{ this.chat.name }}</h1></button>
+            <button @click="goToChatInfo" v-if="this.chat.type === 'private'"><h1 class="titolo" >{{ this.chat.members[0].name }} {{ this.chat.members[0].surname }}</h1></button>
        
         </div>
       </div>
   
       
-       <!-- Contenitore della data -->
+       <!-- Contenitore della data
         <div class="message-date-container">
           <div class="message-date-header">{{ formatDate(this.chat.messages[this.chat.messages.length - 1].timestamp) }}</div>
-        </div> 
+        </div> -->
   
     
       <!-- Contenitore dei messaggi di chat -->
@@ -155,7 +157,7 @@
           const timestamp = this.getCurrentTime();
           const message = {
             type: 'text', // Assuming all messages are text for now
-            text: this.newMessage.trim(),
+            content: this.newMessage.trim(),
             sender: 'selfuser',
             timestamp: timestamp,
             isExpanded: false // Add this property for image expansion
@@ -163,7 +165,7 @@
 
           try {
             this.chat.messages.push(message);
-            await axios.post(`http://localhost:8080/api/chats/${this.chat.name}/messages`, message);
+            await axios.post(`http://localhost:8080/api/chats/${this.chat.name}/new-message`, message);
           } catch (error) {
             console.error('Errore durante l\'invio del messaggio:', error);
           }
@@ -241,16 +243,20 @@
           console.log("Members:", response.data.members)
           this.chat.members = response.data.members;
 
-          console.log('Messages:', response.data.messages); // Add this line
-          response.data.messages.forEach(message => {
-            this.chat.messages.push({
-              type: 'text', // Assuming all messages are text for now
-              text: message.content,
-              sender: message.sender,
-              timestamp: message.timestamp,
-              isExpanded: false // Add this property for image expansion
+          if(response.data.messages !== undefined) {
+            console.log('Messages:', response.data.messages); // Add this line
+            response.data.messages.forEach(message => {
+              this.chat.messages.push({
+                type: 'text', // Assuming all messages are text for now
+                text: message.content,
+                sender: message.sender,
+                timestamp: message.timestamp,
+                isExpanded: false // Add this property for image expansion
+              });
             });
-          });
+          } else {
+            this.chat.messages = [];
+          }
         } catch (error) {
           console.error('Errore durante il recupero delle informazioni:', error);
         }

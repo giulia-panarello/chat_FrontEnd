@@ -19,8 +19,8 @@
     <!-- Lista degli utenti -->
       <ul>
         <!-- Itera su tutti gli utenti e crea un elemento della lista per ciascuno, Ogni elemento della lista è cliccabile e avvia una chat con l'utente selezionato-->
-        <li v-for="user in users" :key="user.id" @click="startChat(user)">
-          {{ user.name }}
+        <li v-for="user in users" :key="user.username" @click="startChat(user)">
+          {{ user.name }} {{ user.surname }}
         </li>
       </ul>
     </div>
@@ -39,28 +39,64 @@ import axios from 'axios';
     },
 
     created() {
-    
-    // Recupera gli utenti quando il componente viene creato
-    this.fetchUsers();
+      // Recupera gli utenti quando il componente viene creato
+      this.fetchUsers();
   },
 
     methods: {
 
     // Recupera la lista degli utenti dal server
-    fetchUsers() {
-      axios.get('/api/users')
-        .then(response => {
-          this.users = response.data;
-        })
-        .catch(error => {
+    async fetchUsers() {
+      try{
+        const response = await axios.get('http://localhost:8080/api/available-users')
+        this.users = response.data;
+      } catch (error) {
           console.error('Errore nel recupero degli utenti:', error);
-        });
+      }
     },
 
     // Avvia una chat con l'utente selezionato
-      startChat(user) {
-        this.$router.push({ name: 'chat-privata', params: { id: user.id } });
+    async startChat(user) {
+
+      console.log('user', user);
+
+      const selfuser = {
+        username: 'selfuser',
+        name: 'Tu',
+        surname: 'Tu',
+        birthDate: '2002-08-29',
+        deleted: false,
+        admin: false
       }
+
+      const userToSend = {
+        username: user.username,
+        name: user.name,
+        surname: user.surname,
+        birthDate: user.birthDate.split('T')[0],
+        deleted: false,
+        admin: false,
+      };
+
+      const newChat = {
+        chatName: user.username,
+        type: 'private',
+        creationDate: null,
+        members: [selfuser, userToSend],
+        messages: null,
+        event: null
+      };
+      
+      console.log('chat: ', newChat.chatName)
+      console.log('user:', userToSend);
+      
+      //-- salvattaggio dul DB
+      await axios.post(`http://localhost:8080/api/chats/create`, newChat);
+
+
+      this.$router.push({ name: 'interfaccia-chat', params: { chatName: newChat.chatName} });
+    }
+
     }
   };
   </script>

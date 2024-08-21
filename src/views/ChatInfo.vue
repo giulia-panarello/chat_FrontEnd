@@ -3,7 +3,7 @@
      <!-- Barra di navigazione: link per tornare alla pagina principale -->
       <nav> 
       <!-- RouterLink per navigare alla home page (chat di gruppo) -->     
-      <RouterLink :to="{ name: 'chat-gruppo', params: { chatName: this.chat.name }}" class="back-link">
+      <RouterLink :to="{ name: 'interfaccia-chat', params: { chatName: this.chat.name }}" class="back-link">
         <!-- Icona di ritorno indietro (freccia)-->
         <font-awesome-icon icon="arrow-left" class="icon" />
       </RouterLink>
@@ -12,42 +12,60 @@
     <!-- Informazioni gruppo -->
     <div class="group-info">
       <!-- Icona del gruppo -->
-      <img class="group-icon" src="https://img.icons8.com/?size=200&id=Xvo1JQO2ujpL&format=png" alt="group-icon">              
+      <img class="group-icon" src="https://img.icons8.com/?size=200&id=Xvo1JQO2ujpL&format=png" alt="group-icon" v-if="this.chat.type === 'group'"> 
+      <img class='group-icon' src="https://img.icons8.com/?size=200&id=VzoCadwFiwaQ&format=png" alt="group-icon" v-if="this.chat.type === 'private'">
         <div class="group-details">
         <!-- Titolo dell'evento -->
           <h2 class="event-title">{{ this.chat.name || 'Titolo Evento' }}</h2>
             
         <!-- Descrizione del gruppo -->
-    <div class="description-container">
+    <div class="description-container" v-if="this.chat.type === 'group'">
           <!-- Visualizzazione della descrizione -->
-        <div>
-            <p class="event-description">
-              <img src="https://img.icons8.com/?size=96&id=L4aSSPqifOyh&format=png" alt="description-icon" style="width: 40px; height: 40px; margin-right: 8px;">
-            <strong>Descrizione:</strong> {{ event.description || 'Descrizione non disponibile' }}</p>
-            <p class="event-type">
-              <img src="https://img.icons8.com/?size=96&id=HkwvpNAN5QKv&format=png" alt="type-icon" style="width: 45px; height: 45px; margin-right: 8px;">
-              <strong>Tipologia:</strong> {{ event.type || 'Tipo non disponibile' }}</p>
-            <p class="event-min-age">
-              <img src="https://img.icons8.com/?size=96&id=hoaVvHdJgXL4&format=png" alt="age-icon" style="width: 50px; height: 50px; margin-right: 8px;">
-              <strong>Età minima:</strong> {{ event.minAge || 'Età minima non disponibile' }}</p>
-            <p class="event-start">
-              <img src="https://img.icons8.com/?size=96&id=QPvXANafTBwG&format=png" alt="start-icon" style="width: 50px; height: 50px; margin-right: 8px; "> 
-              <strong>Inizio:</strong> {{ event.start || 'Inizio non disponibile' }}</p>
-            <p class="event-end">
-              <img src="https://img.icons8.com/?size=96&id=rPdbSKH2ODQR&format=png" alt="end-icon" style="width: 50px; height: 50px; margin-right: 8px;"> 
-              <strong>Fine:</strong> {{ event.end || 'Fine non disponibile' }}</p>
-
-          </div>        
-        </div>
+        
+          <p class="event-description">
+            <img src="https://img.icons8.com/?size=96&id=L4aSSPqifOyh&format=png" alt="description-icon" style="width: 40px; height: 40px; margin-right: 8px;">
+          <strong>Descrizione:</strong> {{ this.chat.event.description || 'Descrizione non disponibile' }}</p>
+          <p class="event-type">
+            <img src="https://img.icons8.com/?size=96&id=HkwvpNAN5QKv&format=png" alt="type-icon" style="width: 45px; height: 45px; margin-right: 8px;">
+            <strong>Tipologia:</strong> {{ this.chat.event.type || 'Tipo non disponibile' }}</p>
+          <p class="event-min-age">
+            <img src="https://img.icons8.com/?size=96&id=hoaVvHdJgXL4&format=png" alt="age-icon" style="width: 50px; height: 50px; margin-right: 8px;">
+            <strong>Età minima:</strong> {{ this.chat.event.minAge || 'Età minima non disponibile' }}</p>
+          <p class="event-start">
+            <img src="https://img.icons8.com/?size=96&id=QPvXANafTBwG&format=png" alt="start-icon" style="width: 50px; height: 50px; margin-right: 8px; "> 
+            <strong>Inizio:</strong> {{ this.chat.event.start || 'Inizio non disponibile' }}</p>
+          <p class="event-end">
+            <img src="https://img.icons8.com/?size=96&id=rPdbSKH2ODQR&format=png" alt="end-icon" style="width: 50px; height: 50px; margin-right: 8px;"> 
+            <strong>Fine:</strong> {{ this.chat.event.end || 'Fine non disponibile' }}</p>
     </div>
+    <div class="description-container" v-if="this.chat.type === 'private'">    
+          <div v-if="this.chat.type === 'private'">
+          <p class="event-description">
+            <img src="https://img.icons8.com/?size=96&id=L4aSSPqifOyh&format=png" alt="description-icon" style="width: 40px; height: 40px; margin-right: 8px;">
+            <strong>Descrizione:</strong> {{  'Descrizione non disponibile' }}</p>
+          <p class="event-type">
+            <img src="https://img.icons8.com/?size=96&id=HkwvpNAN5QKv&format=png" alt="type-icon" style="width: 45px; height: 45px; margin-right: 8px;">
+            <strong>Tipologia:</strong> {{  'Tipo non disponibile' }}</p>
+          <p class="event-min-age">
+            <img src="https://img.icons8.com/?size=96&id=hoaVvHdJgXL4&format=png" alt="age-icon" style="width: 50px; height: 50px; margin-right: 8px;">
+            <strong>Età minima:</strong> {{  'Età minima non disponibile' }}</p>
+          <p class="event-start">
+            <img src="https://img.icons8.com/?size=96&id=QPvXANafTBwG&format=png" alt="start-icon" style="width: 50px; height: 50px; margin-right: 8px; "> 
+            <strong>Inizio:</strong> {{  'Inizio non disponibile' }}</p>
+          <p class="event-end">
+            <img src="https://img.icons8.com/?size=96&id=rPdbSKH2ODQR&format=png" alt="end-icon" style="width: 50px; height: 50px; margin-right: 8px;"> 
+            <strong>Fine:</strong> {{  'Fine non disponibile' }}</p>
+          </div>        
+      </div>
   </div>
+</div>
 
 
     <!-- Lista dei membri del gruppo -->
     <div class="group-members">
         <div>
           <!-- Titolo del modale -->
-          <h2 class="membri">Membri Gruppo</h2>
+          <h2 class="membri">Membri Chat</h2>
           <!-- Campo di ricerca per i membri -->
         <input
           type="text"
@@ -70,8 +88,8 @@
            <!-- Iterazione sui partecipanti per mostrarli in una lista -->
           <li v-for="member in filteredMembers" :key="member.username" class="member-item">
               <!-- RouterLink per aprire la chat privata con il partecipante selezionato -->
-              <router-link :to="{ name: 'chat-gruppo', params: { chatName: member.username }}" class="member-item" v-if="member.username !== 'selfuser'">{{ member.name }} {{member.surname}}</router-link>
-              <span v-if="member.admin === true">admin</span>
+              <router-link :to="{ name: 'interfaccia-chat', params: { chatName: member.username }}" class="member-item" v-if="member.username !== 'selfuser'">{{ member.name }} {{member.surname}}</router-link>
+              <span v-if="member.admin === true && member.username !=='selfuser'">admin</span>
               <!-- Pulsante per rimuovere il partecipante -->
               <button class="remove-btn" @click="removeMember(member.username)" v-if="member.username !== 'selfuser'">Rimuovi</button>
             
@@ -129,6 +147,7 @@ export default {
           event: []
         },
 
+        loggedUser: '',
         searchQueryUsers: '', // Query di ricerca per gli utenti disponibili
         searchQueryMembers: '' // Query di ricerca per i partecipanti
 
@@ -165,11 +184,30 @@ export default {
         this.chat.members = response.data.members;
         this.chat.event = response.data.event;
 
+        this.loggedUser = this.chat.members.find(user => user.username === 'selfuser');
+
+        this.reformatDate(this.chat.members);
+
       } catch (error) {
         console.error('Errore durante il recupero delle informazioni:', error);
       }
     },
 
+
+    reformatDate(users){
+      for(var i=0; i<users.length; i++){
+        //console.log(users[i]);
+        const data = Reflect.get(users[i], 'birthDate');
+        //console.log(data);
+
+        // Split della stringa sulla "T"
+        const dataFormattata = data.split('T')[0];
+        
+        // Aggiorniamo la proprietà birthDate con il nuovo formato
+        users[i].birthDate = dataFormattata;
+      }
+      console.log("Utenti con date nuove: ", users)
+    },
   
     // Recupera gli utenti disponibili
     async fetchAvailableUsers() {
@@ -177,46 +215,52 @@ export default {
         const response = await axios.get(`http://localhost:8080/api/available-users`);
         console.log(response.data);
         this.availableUsers = response.data;
+        this.reformatDate(this.availableUsers);
       } catch (error) {
         console.error('Error fetching available users:', error);
       }
     },
 
+
+    // Apertura del modale di aggiunta partecipanti
+    openAddMemberModal() {
+      this.isAddMemberModalOpen = true;
+    },
+
+    // Chiusura del modale di aggiunta membri
+    closeAddMemberModal() {
+      this.isAddMemberModalOpen = false;
+    },
+
     
-
-
-  // Apertura del modale di aggiunta partecipanti
-  openAddMemberModal() {
-    this.isAddMemberModalOpen = true;
-  },
-
-  // Chiusura del modale di aggiunta membri
-  closeAddMemberModal() {
-    this.isAddMemberModalOpen = false;
-  },
-
-  // Rimuove un membro dal gruppo
-  async removeMember(username) {
-    /*
-      Input:
-            username:  username dell'utente da rimuovere
-                       gli utenti hanno un username univoco --> l'username è il loro id 
-                        
-      - recupera l'utente dalla lista membri
-      - manda l'utente al BE
-      - rimuove l'utente dalla lista membri sul FE
-    */
-    try {
-        const memberToRemove = this.members.find(member => member.username === username);
-        await axios.post('/api/remove-member', memberToRemove);
-        this.members = this.members.filter(member => member.username !== username);
-    } catch (error) {
-        console.error('Errore nella rimozione del memberse:', error);
-    }
-},
+    async becomeAdmin(username){
+      const newAdmin = this.chat.members.find(user => user.username === username);
+      newAdmin.admin = true;
+      await axios.post(`http://localhost:8080/api/chats/${this.chat.name}/new-admin`, newAdmin);
+    },
+    
+    // Rimuove un membro dal gruppo
+    async removeMember(username) {
+      /*
+        Input:
+              username:  username dell'utente da rimuovere
+                        gli utenti hanno un username univoco --> l'username è il loro id 
+                          
+        - recupera l'utente dalla lista membri
+        - manda l'utente al BE
+        - rimuove l'utente dalla lista membri sul FE
+      */
+      try {
+          const memberToRemove = this.chat.members.find(member => member.username === username);
+          await axios.post(`http://localhost:8080/api/chats/${this.chat.name}/remove-member`, memberToRemove);
+          this.chat.members = this.chat.members.filter(member => member.username !== username);
+      } catch (error) {
+          console.error('Errore nella rimozione del memberse:', error);
+      }
+    },
 
     // Aggiunge un partecipante al gruppo
-    async addMember(username) {
+    async addMember(userToFind) {
       /*
         Input:
               username:  username dell'utente da aggiungere
@@ -227,13 +271,32 @@ export default {
         - aggiunge l'oggetto trovato alla lista dei membri
       */
       try {
-        const memberToAdd = this.availableUsers.find(user => user.username === username);
-        await axios.post('/api/add-member', memberToAdd, this.chat);
-        this.members.push(memberToAdd);
+        console.log('userToFind:', userToFind);
+        const memberToAdd = this.availableUsers.find(user => user.username === Reflect.get(userToFind, 'username'));
+        if (!memberToAdd) {
+          console.error(`User not found: ${username}`);
+          return;
+        }
+        console.log("member to add", memberToAdd)
+        const requestBody = {
+          username: memberToAdd.username,
+          name: memberToAdd.name,
+          surname: memberToAdd.surname,
+          birthDate: memberToAdd.birthDate,
+          deleted: false,
+          deleted: false,
+          admin:  false
+        }
+        
+        const chatName = this.chat.name;
+        console.log(`URL: http://localhost:8080/api/chats/${chatName}/add-member`);
+        console.log('requestBody:', requestBody)
+        await axios.post(`http://localhost:8080/api/chats/${chatName}/add-member`, requestBody);
+        this.chat.members.push(memberToAdd);
       } catch (error) {
           console.error('Errore nell\'aggiunta del partecipante:', error);
       }
-    },
+    }
   }
 };
 </script>

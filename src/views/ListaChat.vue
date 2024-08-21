@@ -96,12 +96,7 @@ export default {
     
    // Naviga verso la chat selezionata
     goToChat(chat) {
-      if (chat.type === 'private') {
-        const memberName = this.users[chat.name] || 'Nome sconosciuto';
-        this.$router.push({ name: 'chat-privata', params: { chatName: chat.name} });
-      } else if (chat.type === 'group') {
-        this.$router.push({ name: 'chat-gruppo', params: { chatName: chat.name } });
-      }
+      this.$router.push({ name: 'interfaccia-chat', params: { chatName: chat.name } });
     },
 
      // Filtra le chat in base alla query di ricerca
