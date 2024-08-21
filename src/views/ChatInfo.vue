@@ -89,7 +89,15 @@
           <li v-for="member in filteredMembers" :key="member.username" class="member-item">
               <!-- RouterLink per aprire la chat privata con il partecipante selezionato -->
               <router-link :to="{ name: 'interfaccia-chat', params: { chatName: member.username }}" class="member-item" v-if="member.username !== 'selfuser'">{{ member.name }} {{member.surname}}</router-link>
-              <span v-if="member.admin === true && member.username !=='selfuser'">admin</span>
+              <!-- Visualizza la scritta e l'icona se il partecipante è un amministratore -->
+              <span v-if="chat.admins.includes(participant)" class="admin-label">
+                <img src="https://img.icons8.com/?size=96&id=6RmLEldWK5Wj&format=png&color=737373" alt="admin-icon" class="admin-icon">
+                  Amministratore
+              </span>
+              <button class="admin-btn" @click="makeAdmin(index)" v-else>
+                Aggiungi amministratore
+              </button>              
+            <span v-if="member.admin === true && member.username !=='selfuser'">admin</span>
               <!-- Pulsante per rimuovere il partecipante -->
               <button class="remove-btn" @click="removeMember(member.username)" v-if="member.username !== 'selfuser'">Rimuovi</button>
             
@@ -607,6 +615,7 @@ export default {
   cursor: pointer;
 }
 
+/* Quando passo con il mouse sul tasto 'Abbandona gruppo' cambia colore */
 .exit-group-btn:hover {
   background-color: #c0392b;
 }
