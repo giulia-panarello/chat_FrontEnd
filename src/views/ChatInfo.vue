@@ -125,6 +125,12 @@
         <button class="chiudi" @click="closeAddMemberModal">Chiudi</button>
       </div>
     </div>
+            <!-- Pulsante che permette di abbandonare il gruppo -->
+        <div class="exit-group-container">
+      <button class="exit-group-btn" @click="leaveGroup">
+        <img class="exit-icon" src="https://img.icons8.com/?size=96&id=frR9lkKcDWV8&format=png&color=FFFFFF" alt="exit-icon">
+        Abbandona gruppo</button>
+    </div>
   </div>
 </template>
 
@@ -259,6 +265,20 @@ export default {
       }
     },
 
+    // Rende un membro amministratore 
+    makeAdmin(index) {
+      const member = this.chat.members[index];
+      if (!this.chat.admins.includes(member)) {
+        this.chat.admins.push(member);
+      }
+    },    
+
+        leaveGroup() {
+      // Logica per uscire dal gruppo
+      alert("Hai lasciato il gruppo.");
+      this.$router.push('/chat-gruppo');
+    },
+    
     // Aggiunge un partecipante al gruppo
     async addMember(userToFind) {
       /*
@@ -534,6 +554,69 @@ export default {
   padding: 10px;    
 }
 
+/* Stile per la scritta "Amministratore" */
+.admin-label {
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  color: #0000008d;
+  font-weight: bold;
+  margin-right: 10px;
+  font-style: italic;
+}
+
+/* Stile per l'icona dell'amministratore, in particolare gestione della dimensione */
+.admin-icon {
+  width: 30px;
+  height: 30px;
+  margin-right: 5px;
+}
+
+/* Stile per il pulsante "Rendi Amministratore" */
+.admin-btn {
+  background: none;
+  border: none;
+  color: #0000008d;
+  font-style: italic;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+  margin-right: 10px;
+}
+
+/* Contenitore del pulsante "Abbandona gruppo" (posizione di esso nella pagina) */
+.exit-group-container {
+  position: fixed;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* Stile per il pulsante "Abbandona gruppo" */
+.exit-group-btn {
+  padding: 20px 20px;
+  background-color: #146ac7;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.exit-group-btn:hover {
+  background-color: #c0392b;
+}
+
+/* Stile dell'icona all'interno del tasto Abbandona Gruppo, dimensione in particolare */
+.exit-icon {
+  width: 30px;
+  height: 30px;
+  margin-right: 5px;
+}
 </style>
 
 
