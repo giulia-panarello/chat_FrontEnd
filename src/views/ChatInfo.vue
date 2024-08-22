@@ -4,43 +4,57 @@
       <nav> 
       <!-- RouterLink per navigare alla home page (chat di gruppo) -->     
       <RouterLink :to="{ name: 'interfaccia-chat', params: { chatName: this.chat.name }}" class="back-link">
-        <!-- Icona di ritorno indietro (freccia)-->
+        <!-- Icona di navigazione per tornare indietro: rappresentata da una freccia -->
         <font-awesome-icon icon="arrow-left" class="icon" />
       </RouterLink>
      </nav>
 
-    <!-- Informazioni gruppo -->
+    <!-- Sezione per le informazioni dettagliate del gruppo/chat -->
     <div class="group-info">
-      <!-- Icona del gruppo -->
+      <!-- Icona del gruppo se il tipo di chat è 'group' -->
       <img class="group-icon" src="https://img.icons8.com/?size=200&id=Xvo1JQO2ujpL&format=png" alt="group-icon" v-if="this.chat.type === 'group'"> 
+       <!-- Icona alternativa se il tipo di chat è 'private' -->
       <img class='group-icon' src="https://img.icons8.com/?size=200&id=VzoCadwFiwaQ&format=png" alt="group-icon" v-if="this.chat.type === 'private'">
-        <div class="group-details">
-        <!-- Titolo dell'evento -->
-          <h2 class="event-title">{{ this.chat.name || 'Titolo Evento' }}</h2>
+
+      <!-- Contenitore per i dettagli del gruppo/chat -->
+      <div class="group-details">
+         <!-- Titolo dell'evento/chat: visualizza il nome della chat se disponibile -->
+         <h2 class="event-title">{{ this.chat.name || 'Titolo Evento' }}</h2>
             
-        <!-- Descrizione del gruppo -->
-    <div class="description-container" v-if="this.chat.type === 'group'">
-          <!-- Visualizzazione della descrizione -->
-        
+     <!-- Sezione per la descrizione e i dettagli dell'evento per chat di tipo 'group' -->
+        <div class="description-container" v-if="this.chat.type === 'group'">
+          
+         <!-- Descrizione dell'evento/chat -->
           <p class="event-description">
             <img src="https://img.icons8.com/?size=96&id=L4aSSPqifOyh&format=png" alt="description-icon" style="width: 40px; height: 40px; margin-right: 8px;">
           <strong>Descrizione:</strong> {{ this.chat.event.description || 'Descrizione non disponibile' }}</p>
+
+          <!-- Tipologia dell'evento/chat -->
           <p class="event-type">
             <img src="https://img.icons8.com/?size=96&id=HkwvpNAN5QKv&format=png" alt="type-icon" style="width: 45px; height: 45px; margin-right: 8px;">
             <strong>Tipologia:</strong> {{ this.chat.event.type || 'Tipo non disponibile' }}</p>
+
+           <!-- Età minima per partecipare all'evento/chat -->
           <p class="event-min-age">
             <img src="https://img.icons8.com/?size=96&id=hoaVvHdJgXL4&format=png" alt="age-icon" style="width: 50px; height: 50px; margin-right: 8px;">
             <strong>Età minima:</strong> {{ this.chat.event.minAge || 'Età minima non disponibile' }}</p>
+
+          <!-- Data e ora di inizio dell'evento/chat -->
           <p class="event-start">
             <img src="https://img.icons8.com/?size=96&id=QPvXANafTBwG&format=png" alt="start-icon" style="width: 50px; height: 50px; margin-right: 8px; "> 
             <strong>Inizio:</strong> {{ this.chat.event.start || 'Inizio non disponibile' }}</p>
+
+           <!-- Data e ora di fine dell'evento/chat -->
           <p class="event-end">
             <img src="https://img.icons8.com/?size=96&id=rPdbSKH2ODQR&format=png" alt="end-icon" style="width: 50px; height: 50px; margin-right: 8px;"> 
             <strong>Fine:</strong> {{ this.chat.event.end || 'Fine non disponibile' }}</p>
     </div>
-    <div class="description-container" v-if="this.chat.type === 'private'">    
+
+       <!-- Sezione per la descrizione e i dettagli dell'evento per chat di tipo 'private' -->
+        <div class="description-container" v-if="this.chat.type === 'private'">    
           <div v-if="this.chat.type === 'private'">
-          <p class="event-description">
+
+            <p class="event-description">
             <img src="https://img.icons8.com/?size=96&id=L4aSSPqifOyh&format=png" alt="description-icon" style="width: 40px; height: 40px; margin-right: 8px;">
             <strong>Descrizione:</strong> {{  'Descrizione non disponibile' }}</p>
           <p class="event-type">
