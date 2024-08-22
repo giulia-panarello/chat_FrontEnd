@@ -3,11 +3,12 @@
 
     <!-- Input per selezionare un file immagine -->
     <input ref="fileInput" type="file" accept="image/*" capture="camera" style="display: none;" @change="handleFileInputChange">
-    <!-- Contenitore principale della chat -->
+    <!-- Contenitore principale della chat: contiene l'intera chat, strutturata in diverse sezioni: intestazione, messaggi e input.-->
     <div class="chat-container">
   
       <!-- Intestazione del gruppo di chat -->
       <div class="group-container">
+        <!-- La chat header include un'icona del gruppo (o dell'utente nel caso di chat private) e un titolo che mostra il nome del gruppo o il nome del contatto. v-if viene usato per visualizzare l'elemento corretto a seconda del tipo di chat (group o private).-->
         <div class="chat-header">
   
           <!-- Icona del gruppo -->
@@ -32,10 +33,9 @@
         </div> -->
   
     
-      <!-- Contenitore dei messaggi di chat -->
+      <!-- Contenitore dei messaggi di chat: Qui viene gestito il rendering dei messaggi. v-for itera attraverso l'array this.chat.messages, e in base al mittente (selfuser o un altro), il messaggio viene visualizzato con una classe CSS diversa -->
       <div class="chat-messages">
      
-        <!-- Iterazione attraverso i messaggi -->
         <div v-for="message in this.chat.messages" :class="{'sent-message': message.sender === 'selfuser', 'received-message': message.sender !== 'selfuser'}">
         <!-- Icona del mittente -->
           <div class="user-icon">
@@ -47,13 +47,13 @@
   
           <!-- Contenuto del messaggio -->
           <div class="message-content">
-            <!-- Se il messaggio è un'immagine, mostra l'anteprima -->
+            <!-- Se il messaggio è di tipo immagine, viene visualizzata l'immagine e, se cliccata, viene ingrandita. Se è di tipo testo, viene mostrato il contenuto e l'ora di invio. -->
             <img v-if="message.type === 'image' && !message.isExpanded" :src="message.text" class="message-image" @click="handleMessageClick(message)" />
             <!-- Se il messaggio è un'immagine espansa, mostra l'immagine ingrandita -->
             <img v-if="message.type === 'image' && message.isExpanded" :src="message.text" class="expanded-message-image" @click="handleMessageClick(message)" />
       
         
-           <!-- Se il messaggio è di testo, mostra il testo e l'orario -->
+
             <div v-if="message.type === 'text'" class="message-content">
               <div class="text">{{ message.text }}</div>
             <div class="timestamp">{{ formatTime(new Date(message.timestamp)) }}</div>
@@ -69,7 +69,7 @@
     </div>
   
     
-    <!-- Barra di input per inviare messaggi -->
+    <!--Questa sezione include un campo di input per scrivere nuovi messaggi e un pulsante per inviarli. -->
     <div class="chat-input">
         <!-- Icona per aprire le opzioni aggiuntive -->
         <div class="additional-features" @click="toggleAdditionalOptions">
@@ -113,8 +113,9 @@
         newMessage: ''
       };
     },
-      
-    created() {
+
+    // Questo metodo viene eseguito quando la componente è creata e richiama fetchChatData per ottenere i dati della chat dal backend
+      created() {
       this.fetchChatData();
     },
 
@@ -122,7 +123,6 @@
     // Definizione dei metodi della componente
     methods: {
   
-     
       // Metodo per ottenere l'ora corrente
       getCurrentTime() {
        return new Date();
@@ -151,8 +151,8 @@
       },
   
    
-      // Invia un messaggio di testo al server. Se newMessage non è vuoto, viene creato un oggetto message e inviato tramite axios.post. Dopo l'invio, il messaggio viene aggiunto all'array messages e il campo di input viene svuotato.
-      async sendMessage() {
+      // Questo metodo invia un nuovo messaggio di testo al server, lo aggiunge all'array dei messaggi della chat, e svuota il campo di input.
+        async sendMessage() {
         if (this.newMessage.trim() !== '') {
           const timestamp = this.getCurrentTime();
           const message = {
@@ -175,8 +175,8 @@
       },
   
       
-      // Metodo per gestire il cambio di un file immagine
-      handleFileInputChange(event) {
+      // Questo metodo gestisce la selezione di un file immagine, lo converte in un URL di dati, e lo aggiunge come un messaggio di tipo immagine nella chat.
+        handleFileInputChange(event) {
         const file = event.target.files[0];
         if (file) {
           console.log('Immagine selezionata:', file);
@@ -234,7 +234,7 @@
         this.$refs.fileInput.click();
       },
 
-      // recupera le info della chat dal BE  
+      // Recupera le info della chat dal BE  
       async fetchChatData() {
         try {
           const response = await axios.get(`http://localhost:8080/api/chats/${this.chat.name}`);
