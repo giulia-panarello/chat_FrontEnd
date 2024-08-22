@@ -167,15 +167,16 @@ export default {
 
         availableUsers: [], // Lista degli utenti disponibili per essere aggiunti al gruppo
         isAddMemberModalOpen: false, // Stato del modale per aggiungere partecipanti
-        chat: {
+      // Oggetto chat che contiene dettagli sulla chat
+      chat: {
           name: this.$route.params.chatName, // Titolo del gruppo
           members: [], // Lista dei partecipanti al gruppo
-          type: [],
+          type: [],    // Tipo di chat (es. group, private)
           creationdate: [],
-          event: []
+          event: []  // Dettagli dell'evento associato alla chat
         },
 
-        loggedUser: '',
+        loggedUser: '', // Nome dell'utente attualmente loggato
         searchQueryUsers: '', // Query di ricerca per gli utenti disponibili
         searchQueryMembers: '' // Query di ricerca per i partecipanti
 
@@ -184,18 +185,21 @@ export default {
 
   computed: {
 
+    // Filtra i membri della chat in base alla query di ricerca
     filteredMembers() {
       return this.chat.members.filter(member => member.name.toLowerCase().includes(this.searchQueryMembers.toLowerCase())
       );
     },
 
+    // Filtra gli utenti disponibili in base alla query di ricerca
     filteredUsers() {
       return this.availableUsers.filter(user => user.name.toLowerCase().includes(this.searchQueryUsers.toLowerCase())
       );
     },
 
   },
-  
+
+     // Recupera i dati della chat e gli utenti disponibili quando il componente viene creato
   created() {
     this.fetchChatData();
     this.fetchAvailableUsers();
@@ -203,7 +207,7 @@ export default {
 
   methods: {
 
-    // recupera le info della chat dal BE
+    // Recupera le info della chat dal BE
     async fetchChatData() {
       try {
         const response = await axios.get(`http://localhost:8080/api/chats/${this.chat.name}`);
@@ -222,6 +226,7 @@ export default {
     },
 
 
+     // Riformatta la data di nascita degli utenti nel formato 'YYYY-MM-DD'
     reformatDate(users){
       for(var i=0; i<users.length; i++){
         //console.log(users[i]);
@@ -237,7 +242,7 @@ export default {
       console.log("Utenti con date nuove: ", users)
     },
   
-    // Recupera gli utenti disponibili
+    // Recupera gli utenti disponibili dal backend
     async fetchAvailableUsers() {
       try {
         const response = await axios.get(`http://localhost:8080/api/available-users`);
@@ -260,7 +265,7 @@ export default {
       this.isAddMemberModalOpen = false;
     },
 
-    
+    // Rende un utente amministratore
     async becomeAdmin(username){
       const newAdmin = this.chat.members.find(user => user.username === username);
       newAdmin.admin = true;
