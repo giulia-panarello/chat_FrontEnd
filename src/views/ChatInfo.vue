@@ -511,7 +511,7 @@ export default {
   font-size: 1rem;
 }
 
-/* Modifiche di stile sul pulsante "+" */
+/* Modifiche di stile sul pulsante "+" per aggiungere i membri */
 .add-member-btn {
   background: none;
   border: none;
@@ -533,8 +533,8 @@ export default {
 }
 
 
-/* Stile per permettere lo scroll della lista dei membri da aggiungere */
-.available-users-list {
+/* Stile per la lista degli utenti disponibili: consente lo scroll per la visualizzazione di molti utenti. */
+  .available-users-list {
   max-height: 200px; 
   overflow-y: auto;  
   margin-top: 10px;
@@ -545,7 +545,7 @@ export default {
   margin: 20px 0;
 }
 
-/* Stile per la descrizione dell'evento */
+/* Stile per la descrizione del gruppo */
 .event-description {
   font-size: 1.2rem;
   margin: 10px 0;
@@ -587,18 +587,19 @@ export default {
   margin-bottom: 10px;
   text-align: center;}
 
-/* Stile nomi dei membri */
+/* Stile per la lista dei membri: rimuove gli stili predefiniti per migliorare l'estetica */
 .group-members ul {
   list-style: none;
   padding: 0;
 }
 
-.group-members li {
+/* Stile per ogni membro della lista */
+  .group-members li {
   padding: 5px 0;
   font-size: 20px;
 }
-
-.members-list {
+/* Contenitore per la lista dei membri: scroll abilitato per visualizzare un lungo elenco di membri. */
+  .members-list {
   overflow-y: auto;  
   max-height: 400px; 
   padding: 10px;    
