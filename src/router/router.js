@@ -1,5 +1,5 @@
 import { createWebHistory, createRouter } from 'vue-router';
-import ChatGruppo from '@/views/ChatGruppo.vue';
+import ChatGruppo from '@/views/InterfacciaChat.vue';
 import ListaChat from '@/views/ListaChat.vue';
 import CreaGruppo from '@/views/CreaGruppo.vue';
 import SelezionaUtente from '@/views/SelezionaUtente.vue'

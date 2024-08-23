@@ -9,6 +9,7 @@
       </RouterLink>
      </nav>
 
+
     <!-- Informazioni gruppo -->
     <div class="group-info">
       <!-- Icona del gruppo -->
@@ -16,9 +17,11 @@
       <img class='group-icon' src="https://img.icons8.com/?size=200&id=VzoCadwFiwaQ&format=png" alt="group-icon" v-if="this.chat.type === 'private'">
         <div class="group-details">
         <!-- Titolo dell'evento -->
-          <h2 class="event-title">{{ this.chat.name || 'Titolo Evento' }}</h2>
-            
-        <!-- Descrizione del gruppo -->
+          <h2 class="event-title" v-if="this.chat.type == 'group'">{{ this.chat.name || 'Titolo Evento' }}</h2>
+          <h2 class="event-title" v-else>{{  this.otherUser.name }} {{ this.otherUser.surname }}</h2>
+
+
+    <!-- Descrizione del gruppo -->
     <div class="description-container" v-if="this.chat.type === 'group'">
           <!-- Visualizzazione della descrizione -->
         
@@ -38,24 +41,15 @@
             <img src="https://img.icons8.com/?size=96&id=rPdbSKH2ODQR&format=png" alt="end-icon" style="width: 50px; height: 50px; margin-right: 8px;"> 
             <strong>Fine:</strong> {{ this.chat.event.end || 'Fine non disponibile' }}</p>
     </div>
+
+    <!-- Informazioni utente in chat singola -->
     <div class="description-container" v-if="this.chat.type === 'private'">    
-          <div v-if="this.chat.type === 'private'">
           <p class="event-description">
             <img src="https://img.icons8.com/?size=96&id=L4aSSPqifOyh&format=png" alt="description-icon" style="width: 40px; height: 40px; margin-right: 8px;">
-            <strong>Descrizione:</strong> {{  'Descrizione non disponibile' }}</p>
+            <strong>@</strong>{{ this.chat.name ||'Descrizione non disponibile' }}</p>
           <p class="event-type">
             <img src="https://img.icons8.com/?size=96&id=HkwvpNAN5QKv&format=png" alt="type-icon" style="width: 45px; height: 45px; margin-right: 8px;">
-            <strong>Tipologia:</strong> {{  'Tipo non disponibile' }}</p>
-          <p class="event-min-age">
-            <img src="https://img.icons8.com/?size=96&id=hoaVvHdJgXL4&format=png" alt="age-icon" style="width: 50px; height: 50px; margin-right: 8px;">
-            <strong>Età minima:</strong> {{  'Età minima non disponibile' }}</p>
-          <p class="event-start">
-            <img src="https://img.icons8.com/?size=96&id=QPvXANafTBwG&format=png" alt="start-icon" style="width: 50px; height: 50px; margin-right: 8px; "> 
-            <strong>Inizio:</strong> {{  'Inizio non disponibile' }}</p>
-          <p class="event-end">
-            <img src="https://img.icons8.com/?size=96&id=rPdbSKH2ODQR&format=png" alt="end-icon" style="width: 50px; height: 50px; margin-right: 8px;"> 
-            <strong>Fine:</strong> {{  'Fine non disponibile' }}</p>
-          </div>        
+            <strong>Data di nascita:</strong> {{  this.otherUser.birthDate ||'Tipo non disponibile' }}</p>
       </div>
   </div>
 </div>
@@ -71,10 +65,10 @@
           type="text"
           v-model="searchQueryMembers"
           placeholder="Cerca membro..."
-          class="search-bar"
+          class="search-bar" v-if="this.chat.type === 'group'"
         />          
         <!-- Pulsante per aprire il modale di aggiunta partecipanti -->
-          <button class="add-member-btn" @click="openAddMemberModal">+</button>
+          <button class="add-member-btn" @click="openAddMemberModal" v-if="this.chat.type === 'group'">+</button>
         </div>
         
         <div class="members-list">
@@ -82,24 +76,28 @@
           <li v-for="member in this.chat.members" :key="member.username" class="member-item">
             <div v-if="member.username === 'selfuser'">
               <ul>{{ member.name }}</ul>
-              <span v-if="member.admin === true">admin</span>
+              <span v-if="member.admin === true" class="admin-label">
+                <img src="https://img.icons8.com/?size=96&id=6RmLEldWK5Wj&format=png&color=737373" alt="admin-icon" class="admin-icon">
+                  Amministratore
+              </span>
             </div>
           </li>
            <!-- Iterazione sui partecipanti per mostrarli in una lista -->
           <li v-for="member in filteredMembers" :key="member.username" class="member-item">
+
               <!-- RouterLink per aprire la chat privata con il partecipante selezionato -->
               <router-link :to="{ name: 'interfaccia-chat', params: { chatName: member.username }}" class="member-item" v-if="member.username !== 'selfuser'">{{ member.name }} {{member.surname}}</router-link>
+
               <!-- Visualizza la scritta e l'icona se il partecipante è un amministratore -->
-              <span v-if="chat.admins.includes(participant)" class="admin-label">
+              <span v-if="member.admin === true && member.username !== 'selfuser'" class="admin-label">
                 <img src="https://img.icons8.com/?size=96&id=6RmLEldWK5Wj&format=png&color=737373" alt="admin-icon" class="admin-icon">
                   Amministratore
               </span>
-              <button class="admin-btn" @click="makeAdmin(index)" v-else>
+              <button class="admin-btn" @click="makeAdmin(member)" v-else-if="this.loggedUser.admin === true && member.username !== 'selfuser'">
                 Aggiungi amministratore
               </button>              
-            <span v-if="member.admin === true && member.username !=='selfuser'">admin</span>
               <!-- Pulsante per rimuovere il partecipante -->
-              <button class="remove-btn" @click="removeMember(member.username)" v-if="member.username !== 'selfuser'">Rimuovi</button>
+              <button class="remove-btn" @click="removeMember(member.username)" v-if="member.username !== 'selfuser' && this.loggedUser.admin === true">Rimuovi</button>
             
           </li>
         </ul>
@@ -109,7 +107,7 @@
     <!-- Modale per aggiunta partecipanti -->
     <div v-if="isAddMemberModalOpen" class="modal">
       <div class="modal-content">
-        <h2 class="aggiungi">Aggiungi membri</h2>
+        <h2 class="aggiungi" v-if="this.loggedUser.admin === true">Aggiungi membri</h2>
 
       <!-- Barra di ricerca -->
       <input
@@ -135,7 +133,7 @@
     </div>
             <!-- Pulsante che permette di abbandonare il gruppo -->
         <div class="exit-group-container">
-      <button class="exit-group-btn" @click="leaveGroup">
+      <button class="exit-group-btn" @click="leaveGroup" v-if="this.chat.type === 'group'">
         <img class="exit-icon" src="https://img.icons8.com/?size=96&id=frR9lkKcDWV8&format=png&color=FFFFFF" alt="exit-icon">
         Abbandona gruppo</button>
     </div>
@@ -162,6 +160,7 @@ export default {
         },
 
         loggedUser: '',
+        otherUser: '',
         searchQueryUsers: '', // Query di ricerca per gli utenti disponibili
         searchQueryMembers: '' // Query di ricerca per i partecipanti
 
@@ -189,7 +188,8 @@ export default {
 
   methods: {
 
-    // recupera le info della chat dal BE
+
+    //--- RECUPERA LE INFO DELLA CHAT ---
     async fetchChatData() {
       try {
         const response = await axios.get(`http://localhost:8080/api/chats/${this.chat.name}`);
@@ -197,9 +197,12 @@ export default {
         this.chat.creationDate = response.data.creationDate;
         this.chat.members = response.data.members;
         this.chat.event = response.data.event;
-
-        this.loggedUser = this.chat.members.find(user => user.username === 'selfuser');
-
+  
+        if (this.chat.members.length === 2){
+            this.selfUser = this.chat.members.find(member => member.username === 'selfuser');
+            this.otherUser = this.chat.members.find(member => member.username !== 'selfuser');
+          }
+        
         this.reformatDate(this.chat.members);
 
       } catch (error) {
@@ -208,25 +211,10 @@ export default {
     },
 
 
-    reformatDate(users){
-      for(var i=0; i<users.length; i++){
-        //console.log(users[i]);
-        const data = Reflect.get(users[i], 'birthDate');
-        //console.log(data);
-
-        // Split della stringa sulla "T"
-        const dataFormattata = data.split('T')[0];
-        
-        // Aggiorniamo la proprietà birthDate con il nuovo formato
-        users[i].birthDate = dataFormattata;
-      }
-      console.log("Utenti con date nuove: ", users)
-    },
-  
-    // Recupera gli utenti disponibili
+    //--- RECUPERA GLI UTENTI DISPONIBILI PER QUESTA CHAT ---
     async fetchAvailableUsers() {
       try {
-        const response = await axios.get(`http://localhost:8080/api/available-users`);
+        const response = await axios.get(`http://localhost:8080/api/${this.chat.mame}/available-users`);
         console.log(response.data);
         this.availableUsers = response.data;
         this.reformatDate(this.availableUsers);
@@ -236,24 +224,7 @@ export default {
     },
 
 
-    // Apertura del modale di aggiunta partecipanti
-    openAddMemberModal() {
-      this.isAddMemberModalOpen = true;
-    },
-
-    // Chiusura del modale di aggiunta membri
-    closeAddMemberModal() {
-      this.isAddMemberModalOpen = false;
-    },
-
-    
-    async becomeAdmin(username){
-      const newAdmin = this.chat.members.find(user => user.username === username);
-      newAdmin.admin = true;
-      await axios.post(`http://localhost:8080/api/chats/${this.chat.name}/new-admin`, newAdmin);
-    },
-    
-    // Rimuove un membro dal gruppo
+    //--- RIMUOVE UN MEMBRO DAL GRUPPO ---
     async removeMember(username) {
       /*
         Input:
@@ -273,21 +244,8 @@ export default {
       }
     },
 
-    // Rende un membro amministratore 
-    makeAdmin(index) {
-      const member = this.chat.members[index];
-      if (!this.chat.admins.includes(member)) {
-        this.chat.admins.push(member);
-      }
-    },    
 
-        leaveGroup() {
-      // Logica per uscire dal gruppo
-      alert("Hai lasciato il gruppo.");
-      this.$router.push('/chat-gruppo');
-    },
-    
-    // Aggiunge un partecipante al gruppo
+    //--- AGGIUNGE UN MEMBRO ---
     async addMember(userToFind) {
       /*
         Input:
@@ -324,7 +282,61 @@ export default {
       } catch (error) {
           console.error('Errore nell\'aggiunta del partecipante:', error);
       }
-    }
+    },
+
+
+    //--- RENDE UN MEMBRO AMMINISTRATORE ---
+    async makeAdmin(member) {
+      try{
+        await axios.push(`http://localhost:8080/api/chats/${this.chat.name}/new-admin`, member);
+      } catch(error){
+        console.error('Errore nel rednere admin il membro: ', member);
+      }
+      
+    },    
+
+
+    //--- LASCIA IL GRUPPO ---
+    async leaveGroup() {
+
+      await axios.push(`http://localhost:8080/api/chats/${this.chat.name}/leave-chat`);
+      // Logica per uscire dal gruppo
+      alert("Hai lasciato il gruppo.");
+      this.$router.push('/chat-gruppo');
+    },
+
+
+
+    //--- Riformatta la data ---
+    reformatDate(users){
+      for(var i=0; i<users.length; i++){
+        //console.log(users[i]);
+        const data = Reflect.get(users[i], 'birthDate');
+        //console.log(data);
+
+        // Split della stringa sulla "T"
+        const dataFormattata = data.split('T')[0];
+        
+        // Aggiorniamo la proprietà birthDate con il nuovo formato
+        users[i].birthDate = dataFormattata;
+      }
+      console.log("Utenti con date nuove: ", users)
+    },
+  
+
+    // Apertura del modale di aggiunta partecipanti
+    openAddMemberModal() {
+      this.isAddMemberModalOpen = true;
+    },
+
+
+    // Chiusura del modale di aggiunta membri
+    closeAddMemberModal() {
+      this.isAddMemberModalOpen = false;
+    },
+
+    
+  
   }
 };
 </script>

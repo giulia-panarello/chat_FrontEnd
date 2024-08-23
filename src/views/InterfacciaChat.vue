@@ -20,16 +20,16 @@
             </RouterLink>
           </nav>
             <button @click="goToChatInfo" v-if="this.chat.type === 'group'"><h1 class="titolo" >{{ this.chat.name }}</h1></button>
-            <button @click="goToChatInfo" v-if="this.chat.type === 'private'"><h1 class="titolo" >{{ this.chat.members[0].name }} {{ this.chat.members[0].surname }}</h1></button>
+            <button @click="goToChatInfo" v-if="this.chat.type === 'private'"><h1 class="titolo" >{{ this.otherUser.name }} {{ this.otherUser.surname }}</h1></button>
        
         </div>
       </div>
   
       
-       <!-- Contenitore della data
-        <div class="message-date-container">
-          <div class="message-date-header">{{ formatDate(this.chat.messages[this.chat.messages.length - 1].timestamp) }}</div>
-        </div> -->
+       <!-- Contenitore della data -->
+        <div class="message-date-container" v-if="this.chat.messages.length > 0">
+          <div class="message-date-header">{{ formatDate(this.chat.messages[this.chat.messages.length - 1].timestamp) || null }}</div>
+        </div>
   
     
       <!-- Contenitore dei messaggi di chat -->
@@ -47,40 +47,24 @@
   
           <!-- Contenuto del messaggio -->
           <div class="message-content">
-            <!-- Se il messaggio è un'immagine, mostra l'anteprima -->
-            <img v-if="message.type === 'image' && !message.isExpanded" :src="message.text" class="message-image" @click="handleMessageClick(message)" />
-            <!-- Se il messaggio è un'immagine espansa, mostra l'immagine ingrandita -->
-            <img v-if="message.type === 'image' && message.isExpanded" :src="message.text" class="expanded-message-image" @click="handleMessageClick(message)" />
-      
-        
+           
            <!-- Se il messaggio è di testo, mostra il testo e l'orario -->
             <div v-if="message.type === 'text'" class="message-content">
               <div class="text">{{ message.text }}</div>
             <div class="timestamp">{{ formatTime(new Date(message.timestamp)) }}</div>
+
           </div>
 
         </div>
   
-        <!-- Overlay per visualizzare l'immagine ingrandita -->
-        <div v-if="message.type === 'image' && message.isExpanded" class="overlay" @click="handleMessageClick(message)">
-          <img :src="message.text" class="expanded-image" />
-        </div>
+  
       </div>
     </div>
   
     
     <!-- Barra di input per inviare messaggi -->
     <div class="chat-input">
-        <!-- Icona per aprire le opzioni aggiuntive -->
-        <div class="additional-features" @click="toggleAdditionalOptions">
-          <i class="fas fa-plus"></i>
-        </div>
-        <!-- Opzioni aggiuntive -->
-        <div v-if="showAdditionalOptions" class="additional-options">
-          <div @click="openImageGallery">
-            <i class="fas fa-images"></i> Galleria
-          </div>
-        </div>
+      
         <!-- Barra di input per scrivere un nuovo messaggio -->
         <input v-model="newMessage" @keyup.enter="sendMessage" placeholder="Scrivi un messaggio...">
         <button class="invia" @click="sendMessage">Invia</button>
@@ -110,7 +94,10 @@
         },
 
         showAdditionalOptions: false,
-        newMessage: ''
+        newMessage: '',
+
+        selfUser: '',
+        otherUser: '',
       };
     },
       
@@ -145,8 +132,16 @@
   
       // Metodo per ottenere la data formattata da un timestamp
       formatDate(timestamp) {
-        const date = new Date(timestamp); // Crea un oggetto Date dal timestamp
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        let date;
+        let options;
+        if (timestamp === null) {
+          date = new Date();
+          options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        } else {
+          date = new Date(timestamp); // Crea un oggetto Date dal timestamp
+          options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        }
+        
         return date.toLocaleDateString(undefined, options); // Formatta la data come desiderato
       },
   
@@ -175,44 +170,6 @@
       },
   
       
-      // Metodo per gestire il cambio di un file immagine
-      handleFileInputChange(event) {
-        const file = event.target.files[0];
-        if (file) {
-          console.log('Immagine selezionata:', file);
-  
-          // Leggi il file come URL dati
-          const reader = new FileReader();
-          reader.onload = () => {
-            // Aggiungi un nuovo messaggio con l'immagine
-            this.messages.push({
-              sender: 'Tu',
-              text: reader.result, // Usa il risultato del caricamento del file come testo
-              timestamp: this.getCurrentTime(),
-              type: 'image'
-            });
-          };
-          reader.readAsDataURL(file);
-        }
-      }, 
-  
-
-
-      // Metodo per gestire il clic su un messaggio
-      handleMessageClick(message) {
-        if (message.type === 'image') {
-          // Se il messaggio è un'immagine e non è già espansa, espandilo
-          if (!message.isExpanded) {
-            message.isExpanded = true;
-            this.hideDateContainer(true);
-          } else {
-            // Se il messaggio è già espanso, riducilo
-            message.isExpanded = false;
-            this.hideDateContainer(false);
-          }
-        }
-      },
-        
       // Metodo per nascondere o mostrare il contenitore della data
       hideDateContainer(hide) {
         const dateContainer = document.querySelector('.message-date-container');
@@ -225,14 +182,13 @@
         }
       },
 
+
       // Metodo per attivare o disattivare le opzioni aggiuntive
       toggleAdditionalOptions() {
         this.showAdditionalOptions = !this.showAdditionalOptions;
       },
   
-      openImageGallery() {
-        this.$refs.fileInput.click();
-      },
+
 
       // recupera le info della chat dal BE  
       async fetchChatData() {
@@ -243,15 +199,20 @@
           console.log("Members:", response.data.members)
           this.chat.members = response.data.members;
 
+          if (this.chat.members.length === 2){
+            this.selfUser = this.chat.members.find(member => member.username === 'selfuser');
+            this.otherUser = this.chat.members.find(member => member.username !== 'selfuser');
+          }
+
           if(response.data.messages !== undefined) {
             console.log('Messages:', response.data.messages); // Add this line
             response.data.messages.forEach(message => {
               this.chat.messages.push({
-                type: 'text', // Assuming all messages are text for now
+                type: 'text',
                 text: message.content,
                 sender: message.sender,
                 timestamp: message.timestamp,
-                isExpanded: false // Add this property for image expansion
+                
               });
             });
           } else {
