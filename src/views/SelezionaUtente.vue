@@ -30,22 +30,22 @@
 
 import axios from 'axios';
 
-  export default {
-    name: 'SelezionaUtente',
-    data() {
-      return {
-        users: []  // Array per memorizzare la lista degli utenti
-      };
-    },
-
-    created() {
-      // Recupera gli utenti quando il componente viene creato
-      this.fetchUsers();
+export default {
+  name: 'SelezionaUtente',
+  data() {
+    return {
+      users: []  // Array per memorizzare la lista degli utenti
+    };
   },
 
-    methods: {
+  created() {
+    // Recupera gli utenti quando il componente viene creato
+    this.fetchUsers();
+  },
 
-    // Recupera la lista degli utenti dal server
+  methods: {
+
+    //--- RECUPERA GLI UTENTI ----------------------------------------------------------------------------------------------------------------------
     async fetchUsers() {
       try{
         const response = await axios.get('http://localhost:8080/api/available-users')
@@ -55,7 +55,7 @@ import axios from 'axios';
       }
     },
 
-    // Avvia una chat con l'utente selezionato
+    //--- CREA UNA NUOVA CHAT CON L'UTENTE SELEZIONATO -------------------------------------------------------------------------------------------
     async startChat(user) {
 
       console.log('user', user);

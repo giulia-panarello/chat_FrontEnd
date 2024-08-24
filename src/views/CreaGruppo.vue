@@ -145,7 +145,7 @@ export default {
 
   computed: {
 
-    // Filtra gli utenti in base alla query di ricerca
+    //-- Filtra gli utenti in base alla query di ricerca --
     filteredUsers() {
       const query = this.searchQuery.toLowerCase();
       return this.users.filter(user => 
@@ -153,7 +153,7 @@ export default {
       );
     },
 
-     // Filtra gli eventi in base alla query di ricerca
+     //-- Filtra gli eventi in base alla query di ricerca --
     filteredEvents() {
       const query = this.searchEventQuery.toLowerCase();
       return this.events.filter(event => 
@@ -170,8 +170,14 @@ export default {
 
   methods: {
 
-    //-- recupera gli utenti dal BE
+    //--- RECUPERA GLI UTENTI -----------------------------------------------------------------------------------------------------------------------
     async getAvailableUsers(){
+      /*
+        effettua una chiamata al BE per recuperare gli utenti
+
+        Output:
+                lista di utenti da poter aggiungere al gruppo
+      */
       try{
         const respose = await axios.get('http://localhost:8080/api/available-users');
         console.log('Response: ', respose.data);
@@ -183,8 +189,16 @@ export default {
       }
     },
 
-    //-- recupera gli eventi dal BE
+
+    //--- RECUPERA GLI EVENTI -----------------------------------------------------------------------------------------------------------------------
     async getAvailableEvents(){
+      /*
+        effettua una chiamata al BE per recuperare gli eventi
+
+        Output:
+                lista di eventi a cui poter collegare la chat
+                (sono mostrati solo gli eventi per i quali non esiste una chat)
+      */
       try{
         const respose = await axios.get('http://localhost:8080/api/available-events');
         this.events = respose.data;
@@ -194,9 +208,13 @@ export default {
       }
     },
 
-    // Crea un nuovo gruppo e naviga alla pagina del gruppo
+    
+    //--- CREA GRUPPO -------------------------------------------------------------------------------------------------------------------------------
     async createGroup() {
-
+      /*
+        crea un nuovo gruppo e lo manda al BE
+        naviga fino alla lista delle chat
+      */
       // Controllo se ci sono membri selezionati
       if (this.selectedMembers.length === 0) {
         alert('Aggiungi almeno un membro prima di creare il gruppo.');
@@ -265,37 +283,47 @@ export default {
       this.$router.push({ name: 'lista-chat'});
     },
 
-    // Aggiungi un partecipante alla lista dei selezionati
+
+    //--- AGGIUNGI UN UTENTE AI MEMBRI --------------------------------------------------------------------------------------------------------------
     addMember(user) {
       if (!this.isUserAdded(user)) { // Verifica se l'utente è già stato aggiunto
         this.selectedMembers.push(user); // Aggiunge l'utente alla lista dei membri selezionati
       }
     },
 
-    // Verifica se un utente è già stato aggiunto
-    isUserAdded(user) {
-      return this.selectedMembers.some(member => member.username === user.username);
-    },
 
-    // Rimuove un partecipante dalla lista dei selezionati
+    //--- RIMUOVE UN UTENTE DAI MEMBRI -------------------------------------------------------------------------------------------------------------
     removeMember(user) {
       this.selectedMembers = this.selectedMembers.filter(member => member.username !== user.username);
     },
 
-    // Aggiungi un evento alla lista degli eventi selezionati
+  
+    //--- SELEZIONA UN EVENTO ----------------------------------------------------------------------------------------------------------------------
     selectEvent(event) {
+      /*
+        seleziona un evento
+        (si può selezionare solo un evento alla volta)
+      */
       if (!this.isEventPresent()) { // Verifica se l'evento è già stato aggiunto
         this.selectedEvent.push(event);  // Aggiunge l'evento alla lista degli eventi selezionati
       }
     },
 
 
-    // Verifica se un evento è già stato aggiunto
+    //### UTILS ###################################################################################################################################
+
+
+    //-- Verifica se un utente è già stato aggiunto --
+    isUserAdded(user) {
+      return this.selectedMembers.some(member => member.username === user.username);
+    },
+
+    //-- Verifica se un evento è già stato aggiunto --
     isEventPresent() {
       return this.selectedEvent.length === 1; // Restituisce true se l'evento è già nella lista degli eventi selezionati
     },
 
-    // Rimuove un evento dalla lista degli eventi selezionati
+    //-- Rimuove un evento dalla lista degli eventi selezionati --
     resetEvent() {
       this.selectedEvent = []; // Filtra l'evento da rimuovere
     }

@@ -73,11 +73,11 @@ export default {
 
     methods: {
 
-      // Chiamata al backend per recuperare la lista delle chat (utenti e gruppi sono considerati insieme)
+      //--- RECUPERA LE CHAT -------------------------------------------------------------------------------------------------------------------
       async fetchChats() {
         /*
-          recupera la lista completa e formattata delle chat
-          non è richiesta nessun'altra funzione
+          recupera la lista completa delle chat
+          chat di gruppo e singole sono considerate insieme
         */
         try {
           const response = await axios.get('http://localhost:8080/api/chats');
@@ -94,12 +94,12 @@ export default {
       },
   
     
-   // Naviga verso la chat selezionata
+    //-- Naviga verso la chat selezionata --
     goToChat(chat) {
       this.$router.push({ name: 'interfaccia-chat', params: { chatName: chat.name } });
     },
 
-     // Filtra le chat in base alla query di ricerca
+     //-- Filtra le chat in base alla query di ricerca --
      filterChats() {
       const query = this.searchQuery.toLowerCase();
       this.filteredChats = this.chats.filter(chat => 
@@ -107,24 +107,29 @@ export default {
       );
     },
 
-    // Naviga verso la pagina di creazione di un nuovo gruppo
+    //-- Naviga verso la pagina di creazione di un nuovo gruppo --
     createNewGroup() {
       this.$router.push({ name: 'crea-nuovo-gruppo' });
     },
 
-    // Naviga verso la pagina di selezione utente per una nuova chat vuota con un nuovo utente
+    //-- Naviga verso la pagina di selezione utente per una nuova chat vuota con un nuovo utente --
     newChat() {
       this.$router.push({ name: 'seleziona-utente' });
     },
 
-      // Funzione per la gestione delle icone delle chat, distinguo la tipologia se privata o di gruppo
+    //-- Funzione per la gestione delle icone delle chat --
     getChatIcon(type) {
-    if (type === 'private') {
-      return 'https://img.icons8.com/?size=200&id=VzoCadwFiwaQ&format=png';
-    } else if (type === 'group') {
-      return 'https://img.icons8.com/?size=200&id=Xvo1JQO2ujpL&format=png';
-    }
-  },
+      /*
+        l'icona della chat viene distinta in base al tipo
+        - private
+        - group
+      */
+      if (type === 'private') {
+        return 'https://img.icons8.com/?size=200&id=VzoCadwFiwaQ&format=png';
+      } else if (type === 'group') {
+        return 'https://img.icons8.com/?size=200&id=Xvo1JQO2ujpL&format=png';
+      }
+    },
       
     // Mostra o nasconde il menu per creare un nuovo gruppo o una nuova chat
     toggleMenu() {

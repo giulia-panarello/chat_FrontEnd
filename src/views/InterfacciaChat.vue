@@ -34,9 +34,9 @@
   
     
       <!-- Contenitore dei messaggi di chat: Qui viene gestito il rendering dei messaggi. v-for itera attraverso l'array this.chat.messages, e in base al mittente (selfuser o un altro), il messaggio viene visualizzato con una classe CSS diversa -->
-      <div class="chat-messages">
+      <div class="chat-messages-container">
      
-        <div v-for="message in this.chat.messages" :class="{'sent-message': message.sender === 'selfuser', 'received-message': message.sender !== 'selfuser'}">
+        <div class="chat-messages" v-for="message in this.chat.messages" :class="{'sent-message': message.sender === 'selfuser', 'received-message': message.sender !== 'selfuser'}">
         <!-- Icona del mittente -->
           <div class="user-icon">
             <i class="fas fa-user-circle user icon"></i>
@@ -50,7 +50,7 @@
       
            <!-- Se il messaggio è di testo, mostra il testo e l'orario -->
             <div v-if="message.type === 'text'" class="message-content">
-              <div class="text">{{ message.text }}</div>
+              <div class="text">{{ message.content }}</div>
             <div class="timestamp">{{ formatTime(new Date(message.timestamp)) }}</div>
 
           </div>
@@ -109,89 +109,16 @@
 
     // Definizione dei metodi della componente
     methods: {
-  
-      // Metodo per ottenere l'ora corrente
-      getCurrentTime() {
-       return new Date();
-      },
-  
-      // Metodo per ottenere la data corrente formattata
-      getCurrentDate() {
-        const now = new Date();
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        return now.toLocaleDateString(undefined, options); // Restituisci la data formattata
-      },
-  
-      // Formato dell'orario
-      formatTime(timestamp) {
-            const date = new Date(timestamp);
-            const hours = date.getHours().toString().padStart(2, '0');
-            const minutes = date.getMinutes().toString().padStart(2, '0');
-            return `${hours}:${minutes}`;
-      },
-  
-      // Metodo per ottenere la data formattata da un timestamp
-      formatDate(timestamp) {
-        let date;
-        let options;
-        if (timestamp === null) {
-          date = new Date();
-          options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        } else {
-          date = new Date(timestamp); // Crea un oggetto Date dal timestamp
-          options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        }
-        
-        return date.toLocaleDateString(undefined, options); // Formatta la data come desiderato
-      },
-  
-   
-      // Questo metodo invia un nuovo messaggio di testo al server, lo aggiunge all'array dei messaggi della chat, e svuota il campo di input.
-        async sendMessage() {
-        if (this.newMessage.trim() !== '') {
-          const timestamp = this.getCurrentTime();
-          const message = {
-            type: 'text', // Assuming all messages are text for now
-            content: this.newMessage.trim(),
-            sender: 'selfuser',
-            timestamp: timestamp,
-            isExpanded: false // Add this property for image expansion
-          };
-
-          try {
-            this.chat.messages.push(message);
-            await axios.post(`http://localhost:8080/api/chats/${this.chat.name}/new-message`, message);
-          } catch (error) {
-            console.error('Errore durante l\'invio del messaggio:', error);
-          }
-
-          this.newMessage = '';
-        }
-      },
-  
-      
-      // Metodo per nascondere o mostrare il contenitore della data
-      hideDateContainer(hide) {
-        const dateContainer = document.querySelector('.message-date-container');
-        if (dateContainer) {
-          if (hide) {
-            dateContainer.classList.add('hide-date-container');
-          } else {
-            dateContainer.classList.remove('hide-date-container');
-          }
-        }
-      },
 
 
-      // Metodo per attivare o disattivare le opzioni aggiuntive
-      toggleAdditionalOptions() {
-        this.showAdditionalOptions = !this.showAdditionalOptions;
-      },
-  
-
-
-      // Recupera le info della chat dal BE  
+      //--- RECUPERA LE INFO DELLA CHAT ------------------------------------------------------------------------------
       async fetchChatData() {
+        /*
+          invia una richiesta al BE, il quale restituisce
+          - informazioni della chat
+          - membri
+          - messaggi
+        */
         try {
           const response = await axios.get(`http://localhost:8080/api/chats/${this.chat.name}`);
           this.chat.type = response.data.type;
@@ -209,7 +136,7 @@
             response.data.messages.forEach(message => {
               this.chat.messages.push({
                 type: 'text',
-                text: message.content,
+                content: message.content,
                 sender: message.sender,
                 timestamp: message.timestamp,
                 
@@ -223,11 +150,75 @@
         }
       },
 
-      // naviga fino alla pagina della lista partecipanti
+      //--- INVIO MESSAGGIO ------------------------------------------------------------------------------------------
+      async sendMessage() {
+        /* 
+          Questo metodo invia un nuovo messaggio di testo al server,
+          lo aggiunge all'array dei messaggi della chat, e svuota il campo di input. 
+        */
+        if (this.newMessage.trim() !== '') {
+          const timestamp = this.getCurrentTime();
+          const message = {
+            type: 'text',
+            content: this.newMessage.trim(),
+            sender: 'selfuser',
+            timestamp: timestamp,
+          };
+
+          try {
+            this.chat.messages.push(message);
+            await axios.post(`http://localhost:8080/api/chats/${this.chat.name}/new-message`, message);
+          } catch (error) {
+            console.error('Errore durante l\'invio del messaggio:', error);
+          }
+
+          this.newMessage = '';
+        }
+      },
+
+
+      //### UTILS ##################################################################################################
+  
+
+      //-- Restituisce l'ora corrente --
+      getCurrentTime() {
+       return new Date();
+      },
+  
+      //-- Restituisce la data corrente --
+      getCurrentDate() {
+        const now = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        return now.toLocaleDateString(undefined, options); // Restituisci la data formattata
+      },
+  
+      //-- Formatta l'orario --
+      formatTime(timestamp) {
+        const date = new Date(timestamp);
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        return `${hours}:${minutes}`;
+      },
+  
+      //-- Formatta la data --
+      formatDate(timestamp) {
+        let date;
+        let options;
+        if (timestamp === null) {
+          date = new Date();
+          options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        } else {
+          date = new Date(timestamp); // Crea un oggetto Date dal timestamp
+          options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        }
+        
+        return date.toLocaleDateString(undefined, options); // Formatta la data come desiderato
+      },
+
+      //-- Naviga fino alla pagina della lista partecipanti --
       async goToChatInfo(){
         /*
-            chiamo un metodo che permette di passare all'altra pagina informazioni già in tuo possesso in questa
-            in questo modo non devi fare due chiamate al BE!
+          metodo di routing alla pagina con informazioni più dettagliate
         */
         try{
             this.$router.push({ name: 'chat-info', params: { chatName: this.chat.name }});
@@ -237,7 +228,7 @@
     },
 },
         
-  };
+};
   
   </script>
   
@@ -304,11 +295,17 @@
     margin: 20px auto;
     max-width: 300px;
   }
-  
+
+  .chat-messages-container {
+    overflow-y: auto;
+    height: 70vh;
+    padding: 10px;
+  }
+
   /* Stile per la visualizzazione dei messaggi nel contenitore della chat */
   .chat-messages {
     max-height: 700px;
-    overflow-y: auto;
+    /*overflow-y: auto;*/
     flex-grow: 1;
   
   }

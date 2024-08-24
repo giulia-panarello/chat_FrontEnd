@@ -78,7 +78,7 @@
           class="search-bar" v-if="this.chat.type === 'group'"
         />          
         <!-- Pulsante per aprire il modale di aggiunta partecipanti -->
-          <button class="add-member-btn" @click="openAddMemberModal" v-if="this.chat.type === 'group'">+</button>
+          <button class="add-member-btn" @click="openAddMemberModal" v-if="this.chat.type === 'group' && this.loggedUser.admin === true">+</button>
         </div>
         
         <div class="members-list">
@@ -103,7 +103,7 @@
                 <img src="https://img.icons8.com/?size=96&id=6RmLEldWK5Wj&format=png&color=737373" alt="admin-icon" class="admin-icon">
                   Amministratore
               </span>
-              <button class="admin-btn" @click="makeAdmin(member)" v-else-if="this.loggedUser.admin === true && member.username !== 'selfuser'">
+              <button class="admin-btn" @click="makeAdmin(member)" v-else-if="member.username !== 'selfuser' && this.loggedUser.admin === true">
                 Aggiungi amministratore
               </button>              
               <!-- Pulsante per rimuovere il partecipante -->
@@ -194,7 +194,7 @@ export default {
 
   },
 
-     // Recupera i dati della chat e gli utenti disponibili quando il componente viene creato
+  // Recupera i dati della chat e gli utenti disponibili quando il componente viene creato
   created() {
     this.fetchChatData();
     this.fetchAvailableUsers();
@@ -203,14 +203,22 @@ export default {
   methods: {
 
 
-    //--- RECUPERA LE INFO DELLA CHAT ---
+    //--- RECUPERA LE INFO DELLA CHAT -----------------------------------------------------------------------------------------------------------
     async fetchChatData() {
+      /*
+        effetua una chiamata al BE, il quale restituisce:
+        - informazioni della chat
+        - membri
+        - informazioni dell'evento
+      */
       try {
         const response = await axios.get(`http://localhost:8080/api/chats/${this.chat.name}`);
         this.chat.type = response.data.type;
         this.chat.creationDate = response.data.creationDate;
         this.chat.members = response.data.members;
         this.chat.event = response.data.event;
+
+        this.loggedUser = this.chat.members.find(member => member.username === 'selfuser');
   
         if (this.chat.members.length === 2){
             this.selfUser = this.chat.members.find(member => member.username === 'selfuser');
@@ -225,45 +233,17 @@ export default {
     },
 
 
-    // Riformatta la data di nascita degli utenti nel formato 'YYYY-MM-DD'
-    reformatDate(users){
-      for(var i=0; i<users.length; i++){
-        //console.log(users[i]);
-        const data = Reflect.get(users[i], 'birthDate');
-        //console.log(data);
-
-        // Split della stringa sulla "T"
-        const dataFormattata = data.split('T')[0];
-        
-        // Aggiorniamo la proprietà birthDate con il nuovo formato
-        users[i].birthDate = dataFormattata;
-      }
-      console.log("Utenti con date nuove: ", users)
-    },
-  
-    // Recupera gli utenti disponibili dal backend
-    async fetchAvailableUsers() {
-      try {
-        const response = await axios.get(`http://localhost:8080/api/${this.chat.mame}/available-users`);
-        console.log(response.data);
-        this.availableUsers = response.data;
-        this.reformatDate(this.availableUsers);
-      } catch (error) {
-        console.error('Error fetching available users:', error);
-      }
-    },
-
-
-    //--- RIMUOVE UN MEMBRO DAL GRUPPO ---
+    //--- RIMUOVE UN MEMBRO DAL GRUPPO -----------------------------------------------------------------------------------------------------------
     async removeMember(username) {
       /*
-        Input:
-              username:  username dell'utente da rimuovere
-                        gli utenti hanno un username univoco --> l'username è il loro id 
-                          
         - recupera l'utente dalla lista membri
         - manda l'utente al BE
         - rimuove l'utente dalla lista membri sul FE
+
+        Input:
+              username:  username dell'utente da rimuovere
+              string     gli utenti hanno un username univoco --> l'username è il loro id 
+
       */
       try {
           const memberToRemove = this.chat.members.find(member => member.username === username);
@@ -275,7 +255,7 @@ export default {
     },
 
 
-    //--- AGGIUNGE UN MEMBRO ---
+    //--- AGGIUNGE UN MEMBRO ---------------------------------------------------------------------------------------------------------------------
     async addMember(userToFind) {
       /*
         Input:
@@ -304,10 +284,7 @@ export default {
           admin:  false
         }
         
-        const chatName = this.chat.name;
-        console.log(`URL: http://localhost:8080/api/chats/${chatName}/add-member`);
-        console.log('requestBody:', requestBody)
-        await axios.post(`http://localhost:8080/api/chats/${chatName}/add-member`, requestBody);
+        await axios.post(`http://localhost:8080/api/chats/${this.chat.name}/add-member`, requestBody);
         this.chat.members.push(memberToAdd);
       } catch (error) {
           console.error('Errore nell\'aggiunta del partecipante:', error);
@@ -315,30 +292,41 @@ export default {
     },
 
 
-    //--- RENDE UN MEMBRO AMMINISTRATORE ---
-    async makeAdmin(member) {
+    //--- RENDE UN MEMBRO AMMINISTRATORE ----------------------------------------------------------------------------------------------------------
+    async makeAdmin(user) {
       try{
-        await axios.push(`http://localhost:8080/api/chats/${this.chat.name}/new-admin`, member);
+        this.chat.members[this.chat.members.indexOf(user)].admin = true;
+        await axios.post(`http://localhost:8080/api/chats/${this.chat.name}/new-admin`, user);
       } catch(error){
-        console.error('Errore nel rednere admin il membro: ', member);
+        console.error('Errore nel rendere admin il membro: ', user);
       }
       
     },    
 
 
-    //--- LASCIA IL GRUPPO ---
+    //--- LASCIA IL GRUPPO ------------------------------------------------------------------------------------------------------------------------
     async leaveGroup() {
 
-      await axios.push(`http://localhost:8080/api/chats/${this.chat.name}/leave-chat`);
+      await axios.post(`http://localhost:8080/api/chats/${this.chat.name}/leave-chat`);
       // Logica per uscire dal gruppo
       alert("Hai lasciato il gruppo.");
-      this.$router.push('/chat-gruppo');
+      this.$router.push({ name: 'lista-chat'});
     },
 
 
+    
+    //### UTILS #################################################################################################################################
 
-    //--- Riformatta la data ---
+
+    //-- Riformatta la data --
     reformatDate(users){
+      /*
+        Riformatta la data di nascita degli utenti nel formato 'YYYY-MM-DD'
+
+        Input:
+                users:    lista degli utenti
+                list
+      */
       for(var i=0; i<users.length; i++){
         //console.log(users[i]);
         const data = Reflect.get(users[i], 'birthDate');
@@ -353,14 +341,32 @@ export default {
       console.log("Utenti con date nuove: ", users)
     },
   
+    //-- Recupera gli utenti disponibili dal backend --
+    async fetchAvailableUsers() {
+      /*
+        effettua una chiamata la BE
 
-    // Apertura del modale di aggiunta partecipanti
+        Output:
+                lista di utenti disponibili
+                (non ancora aggiunti al gruppo)
+      */
+      try {
+        const response = await axios.get(`http://localhost:8080/api/${this.chat.mame}/available-users`);
+        console.log(response.data);
+        this.availableUsers = response.data;
+        this.reformatDate(this.availableUsers);
+      } catch (error) {
+        console.error('Error fetching available users:', error);
+      }
+    },
+
+    //-- Apertura del modale di aggiunta partecipanti --
     openAddMemberModal() {
       this.isAddMemberModalOpen = true;
     },
 
 
-    // Chiusura del modale di aggiunta membri
+    //-- Chiusura del modale di aggiunta membri --
     closeAddMemberModal() {
       this.isAddMemberModalOpen = false;
     },
