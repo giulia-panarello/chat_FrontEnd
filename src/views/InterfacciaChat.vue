@@ -14,10 +14,12 @@
           <img class="group-icon" src="https://img.icons8.com/?size=200&id=VzoCadwFiwaQ&format=png" alt=group-icon v-if="this.chat.type === 'private'">
          <!-- Titolo del gruppo -->
           <nav>
+            <!-- Link per tornare alla pagina precedente -->
             <RouterLink to="/" class="back-link">
               <font-awesome-icon icon="arrow-left" class="icon" />
             </RouterLink>
           </nav>
+            <!-- Titolo della chat: mostra il nome del gruppo o dell'utente a seconda del tipo di chat -->
             <button @click="goToChatInfo" v-if="this.chat.type === 'group'"><h1 class="titolo" >{{ this.chat.name }}</h1></button>
             <button @click="goToChatInfo" v-if="this.chat.type === 'private'"><h1 class="titolo" >{{ this.otherUser.name }} {{ this.otherUser.surname }}</h1></button>
        
@@ -91,12 +93,10 @@
           type: ''
         },
 
-        showAdditionalOptions: false,
-        newMessage: '',
-
-        selfUser: '',
-        otherUser: '',
-      };
+        newMessage: '', // variabile che contiene il nuovo messaggio da inviare
+        selfUser: '', // informazione sull'utente che sta usando l'app
+        otherUser: '', // informazione sull'altro utente (se è una chat privata)
+        };
     },
 
     // Questo metodo viene eseguito quando la componente è creata e richiama fetchChatData per ottenere i dati della chat dal backend
