@@ -9,7 +9,7 @@
         <!-- La chat header include un'icona del gruppo (o dell'utente nel caso di chat private) e un titolo che mostra il nome del gruppo o il nome del contatto. v-if viene usato per visualizzare l'elemento corretto a seconda del tipo di chat (group o private).-->
         <div class="chat-header">
   
-          <!-- Icona del gruppo -->
+          <!-- Icona del gruppo: distinzione se è privata o di gruppo -->
           <img class="group-icon" src="https://img.icons8.com/?size=200&id=Xvo1JQO2ujpL&format=png" alt=group-icon v-if="this.chat.type === 'group'">
           <img class="group-icon" src="https://img.icons8.com/?size=200&id=VzoCadwFiwaQ&format=png" alt=group-icon v-if="this.chat.type === 'private'">
          <!-- Titolo del gruppo -->
