@@ -1,8 +1,6 @@
 
 <template>
 
-    <!-- Input per selezionare un file immagine -->
-    <input ref="fileInput" type="file" accept="image/*" capture="camera" style="display: none;" @change="handleFileInputChange">
     <!-- Contenitore principale della chat: contiene l'intera chat, strutturata in diverse sezioni: intestazione, messaggi e input.-->
     <div class="chat-container">
   
@@ -305,7 +303,6 @@
   /* Stile per la visualizzazione dei messaggi nel contenitore della chat */
   .chat-messages {
     max-height: 700px;
-    /*overflow-y: auto;*/
     flex-grow: 1;
   
   }
@@ -400,17 +397,6 @@
     
   }
   
-  /* Stile per le immagini all'interno dei messaggi, qunado mando delle immagini da galleria */
-  .message-content img {
-    
-    display: block;
-    width: 100px;
-    max-width: 100%;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  
  
   /* Stile per il testo dei messaggi */
   .text {
@@ -432,81 +418,6 @@
     padding: 10px;
   }
   
-  /* Stile per il pulsante delle opzioni aggiungive '+' */
-  .additional-features {
-    
-    background-color: #146ac7;
-    color: #fff;
-    width: 30px;
-    height: 56px;
-    padding: 18px;
-    padding-left: 20px;
-    padding-right: 20px;
-    border-radius: 5px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    position: relative;
-    z-index: 1;
-    font-size: 20px;
-    
-  }
-  
-  
-  
-  /* Stile per l'opzione aggiuntiva "Galleria" */
-  .additional-options {
-   
-    position: absolute;
-    bottom: calc(100% + 10px);
-    left: 10px;
-    bottom: 60px;
-    background-color: #ffffff;
-    color: #0e4c8e;
-    font-size: 20px;
-    border: 3px solid #0e4c8e;
-    border-radius: 5px;
-    padding: 10px;
-    padding-left: 45px;
-    padding-right: 120px;
-    border-radius: 5px;
-    display: flex;
-    flex-direction: column;
-    z-index: 1;
-  
-  }
-  
-  
-  
-  /* Stile per l'immagine espansa nel messaggio quando mando un'immagine */
-  .expanded-message-image {
-   
-    max-width: 100%;
-    max-height: 100%;
-    cursor: pointer;
-  }
-  
-  /* Stili per l'overlay dell'immagine espansa, ovvero lo sfondo trasparente sotto l'immagine espansa quando la clicco dal messaggio per ingrandirla  */
-  .overlay {
-    
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  
-  /* Stili per l'immagine all'interno dell'overlay (quando clicco l'immagine e si espande nello schermo) */
-  .overlay img {
-    max-width: 90%;
-    max-height: 90vh;
-  }
   
   /* Stili per il contenitore della data */
   .message-date-container {
@@ -533,10 +444,6 @@
    
   }
   
-  /* Nascondi il contenitore della data quando apro un'immagine*/
-.hide-date-container {
-  display: none;
-}
 
 /* Stile per l'icona con la freccia che porta alla pagina precedente */
 .back-link {
