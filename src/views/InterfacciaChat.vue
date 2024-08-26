@@ -294,6 +294,7 @@
     max-width: 300px;
   }
 
+    /* Contenitore dei messaggi della chat */
   .chat-messages-container {
     overflow-y: auto;
     height: 70vh;
