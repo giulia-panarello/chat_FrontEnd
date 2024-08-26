@@ -87,15 +87,15 @@
         // tutte le info riguardo la chat
         chat: {
           name: this.$route.params.chatName, // prende il nome della chat dalla lista chat
-          creationDate: '',
-          messages: [],
-          members: [],
-          type: ''
+          creationDate: '', // la data di creazione della chat
+          messages: [], // un array che conterrà tutti i messaggi della chat
+          members: [], // un array che conterrà tutti i membri della chat
+          type: '' // il tipo di chat, "gruppo" o "privata"
         },
 
         newMessage: '', // variabile che contiene il nuovo messaggio da inviare
         selfUser: '', // informazione sull'utente che sta usando l'app
-        otherUser: '', // informazione sull'altro utente (se è una chat privata)
+        otherUser: '', // informazione sull'altro utente che manda messaggi
         };
     },
 
